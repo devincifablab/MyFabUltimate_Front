@@ -35,6 +35,7 @@ const GestionTicket = ({ ticket, user }) => {
   const [description, setDescription] = useState(null);
   const [alertTitle, setAlertTitle] = useState('');
   const [alertDescription, setAlertDescription] = useState('');
+  const [urlStl, setUrlStl] = useState('');
 
 
   const timelines = ticket.data.attributes.timeline;
@@ -474,18 +475,12 @@ const GestionTicket = ({ ticket, user }) => {
                                 Télécharger
                               </a>
                             </div>
+                            <div className="ml-4 flex-shrink-0">
+                              <button onClick={()=>{setOpen(true); setUrlStl(r.attributes.url)}}>
+                                Voir le fichier STL
+                              </button>
+                            </div>
                           </li>
-                          <STLViewer
-	width={300}
-	height={200}
-	modelColor='#B92C2C'
-	backgroundColor='#FFFFFF'
-	rotate={true}
-	orbitControls={true}
-  model={"https://api.myfab.eliasto.me" + r.attributes.url}
-  lightColor= '#ffffff'
-  lights={[1,1,1]}
-/>
                           </div>)
                         })}
                       </ul>
@@ -537,26 +532,20 @@ const GestionTicket = ({ ticket, user }) => {
             >
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
-                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                    <CheckIcon
-                      className="h-6 w-6 text-green-600"
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
-                    >
-                      Fichier STL validé
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Vous pouvez désormais lancer l'impression de la pièce
-                        dès qu'une imprimante sera disponible.
-                      </p>
-                    </div>
-                  </div>
+                  <p className="text-center font-medium">Apperçu du fichier STL:</p>
+                <center>
+                <STLViewer
+	width={300}
+	height={200}
+	modelColor='#B92C2C'
+	backgroundColor='#FFFFFF'
+	rotate={true}
+	orbitControls={true}
+  model={"https://api.myfab.eliasto.me" + urlStl}
+  lightColor= '#ffffff'
+  lights={[1,1,1]}
+/>
+                </center>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
