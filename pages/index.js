@@ -4,20 +4,10 @@ import Layout from "../components/layout";
 import Seo from "../components/seo";
 import { fetchAPI, fetchAPIAuth, parseCookies } from "../lib/api";
 
-const Home = ({ homepage, user }) => {
-  const router = useRouter();
-  useEffect(function () {
-    if(user.flags == null || user.flags.filter(r=> r.name == "Superviseur").length < 1){
-
-    //router.push('/wip')
-    }
-}, []);
-  /*if(user.flags == null || user.flags.filter(r=> r.name == "Superviseur").length < 1){
-  return('')
-  }else{*/
+const Home = ({user}) => {
     return (
       <Layout user={user}>
-        <Seo seo={homepage.seo} />
+        {/*<Seo seo={homepage.seo} />*/}
         <div className="container xl:max-w-7xl mx-auto px-4 mt-16 lg:px-8">
           <div className="text-center">
             <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
@@ -45,16 +35,16 @@ const Home = ({ homepage, user }) => {
         </div>
       </Layout>
     );
-  //}
 };
 
 export async function getServerSideProps({req}) {
   const cookies = parseCookies(req);
-  var user = await fetchAPIAuth("/api/users/me/?populate=*", cookies.jwt);
-  const [homepage] = await Promise.all([fetchAPI("/homepage")]);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
 
-  return {
-    props: { user, homepage }, // will be passed to the page component as props
+    return {
+      props: {
+        user: user
+      }
   }
 }
 

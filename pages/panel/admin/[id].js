@@ -1,400 +1,260 @@
-import { fetchAPI, fetchAPIAuth, parseCookies } from "../../../lib/api";
-import { Menu, Transition } from "@headlessui/react";
-import { Fragment, useContext, useState } from "react";
-import { Dialog } from "@headlessui/react";
-
+import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 import LayoutPanel from "../../../components/layoutPanel";
-import NavbarAdmin from "../../../components/navbarAdmin";
 import {
   CursorClickIcon,
-  ExclamationCircleIcon,
   CheckIcon,
   ThumbUpIcon,
   CubeIcon,
+  BeakerIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../../components/steps";
-import { ChevronDownIcon, InformationCircleIcon } from "@heroicons/react/solid";
-import { setCookies, getCookie, removeCookies } from 'cookies-next';
-import axios from "axios";
-import router from "next/router";
+import { Fragment, useContext, useEffect, useState } from "react";
 import Moment from "react-moment";
-import STLViewer from "stl-viewer";
-import { comment } from "postcss";
+import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/solid";
+import STLViewer from 'stl-viewer'
+import { Dialog, Transition } from "@headlessui/react";
+import { getCookie } from "cookies-next";
+import axios from "axios";
+import { useRouter } from "next/router";
+import NavbarAdmin from "../../../components/navbarAdmin";
 
-const items = [
-  {}
-];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const GestionTicket = ({ ticket, user }) => {
+const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [open, setOpen] = useState(false);
-  const [status, setStatus] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [alertTitle, setAlertTitle] = useState('');
-  const [alertDescription, setAlertDescription] = useState('');
   const [urlStl, setUrlStl] = useState('');
+  const [comment, setComment] = useState('');
+  const[response, setResponse] = useState(null);
+  const [responseError, setResponseError] = useState(false);
 
+  const [fileValidate, setFileValidate] = useState(false);
+  const [idFile, setIdFile] = useState(null);
 
-  const timelines = ticket.data.attributes.timeline;
-  const comments = ticket.data.attributes.comments;
-  const timeline = ticket.data.attributes.timeline.slice(0).reverse();
+  const router = useRouter();
+
   const steps = [
-    { id: "Etape 1", name: "Validation du fichier STL", status: ticket.data.attributes.step == 0 ? "current" : "complete" },
-    { id: "Etape 2", name: "Lancement de l'impression", status: ticket.data.attributes.step == 1 ? "current" : ticket.data.attributes.step < 1 ? "notstarted" : "complete" },
-    { id: "Etape 3", name: "Pièce mise à disposition", status: ticket.data.attributes.step == 2 ? "current" : ticket.data.attributes.step < 2 ? "notstarted" : "complete" },
+    { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
+    { id: "Etape 2", name: "Lancement de l'impression", status: ticket.step == 1 ? "current" : ticket.step < 1 ? "notstarted" : "complete" },
+    { id: "Etape 3", name: "Pièce mise à disposition", status: ticket.step == 2 ? "current" : ticket.step < 2 ? "notstarted" : "complete" },
   ];
 
-  const buttonStep = [
-    { name: "Valider le fichier STL" },
-    { name: "Lancer l'impression" },
-    { name: "Pièce mise à disposition" }
-  ]
-  const closeTicket = async (e) => {
-    e.preventDefault();
-    timelines.push({
-      name: "Ticket fermé",
-      icon: "ThumbUpIcon",
-      color: "bg-red-500",
-      date: Date.now()
-    });
-    const data = new FormData();
-    const datas = {
-      isDone: true,
-      step: 3,
-      timeline: timelines
-    }
-    data.append('data', JSON.stringify(datas));
-
-    const jwt = getCookie('jwt');
-    const close = await axios({
-      method: 'PUT',
-      url: 'https://api.myfab.eliasto.me/api/tickets/' + ticket.data.id,
-      data,
+  async function download(id, name) {
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'GET',
+      responseType: 'blob',
+      url: 'http://localhost:5000/api/file/' + id,
       headers: {
-        'Authorization': `Bearer ${jwt}`
+        'dvflCookie': cookie
       },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', name); //or any other extension
+      document.body.appendChild(link);
+      link.click();
     });
-    setStatus(close);
-    setAlertTitle('Succès !');
-    setAlertDescription("Le ticket a bien été fermé. Merci de vous en être occupé !")
-    document.getElementById('status').scrollIntoView();
-    router.push('/panel/admin/' + ticket.data.id)
   }
 
-  const validateCurrentStep = async (e) => {
+  async function sendComment(e) {
     e.preventDefault();
-    switch (ticket.data.attributes.step) {
-      case 0:
-        timelines.push({
-          name: "Fichier STL validé",
-          icon: "CubeIcon",
-          color: "bg-blue-500",
-          date: Date.now()
-        });
-        break;
-      case 1:
-        timelines.push({
-          name: "Impression initiée",
-          icon: "CursorClickIcon",
-          color: "bg-yellow-500",
-          date: Date.now()
-        });
-        break;
-      case 2:
-        timelines.push({
-          name: "Pièce disponible",
-          icon: "CheckIcon",
-          color: "bg-green-500",
-          date: Date.now()
-        });
-        break;
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'PUT',
+      url: 'http://localhost:5000/api/ticket/' + params.id+'/setWaitingAnswer/1',
+      headers: {
+        'dvflCookie': cookie
+      },
+    });
+
+    await axios({
+      method: 'POST',
+      url: 'http://localhost:5000/api/ticket/' + params.id+'/message',
+      data: {
+        content: comment
+      },
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      setResponse(response);
+      setResponseError(false);
+    }).catch((e)=>{
+      setResponse(e);
+      setResponseError(true);
+    })
+    document.getElementById('status').scrollIntoView();
+    router.replace(router.asPath);
+  }
+
+  async function getUrlSTL(id, name) {
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'GET',
+      responseType: 'blob',
+      url: 'http://localhost:5000/api/file/' + id,
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      setUrlStl(url);
+    });
+  }
+
+  async function FileValidate(id, state, comment) {
+    const cookie = getCookie("jwt");
+    if(state == false){
+      await axios({
+        method: 'PUT',
+        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/0',
+        headers: {
+          'dvflCookie': cookie
+        },
+      });
     }
-    const data = new FormData();
-    var datas = {
-      step: ticket.data.attributes.step + 1 > 2 ? 3 : ticket.data.attributes.step + 1,
-      timeline: timelines
-    }
-    if (ticket.data.attributes.step == 2) {
-      datas = {
-        ...datas,
-        isDone: true
+    await axios({
+      method: 'PUT',
+      url: 'http://localhost:5000/api/file/' + id,
+      data: {
+        comment: comment,
+        isValid: state
+      },
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then(async ()=>{
+      file.find(r=>r.id == id).isValid = state;
+      router.replace(router.asPath).then(async ()=>await verifyStep());
+      
+    });
+  }
+
+  async function verifyStep(){
+    const cookie = getCookie("jwt");
+    var isAllFilesValidated = true;
+    file.map(r=>{
+      if(r.isValid != true){
+        isAllFilesValidated = false;
       }
+    })
+    if(ticket.step == 0 && isAllFilesValidated == true){
+      await axios({
+        method: 'PUT',
+        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/1',
+        headers: {
+          'dvflCookie': cookie
+        },
+      }).then(()=>{
+        router.replace(router.asPath);
+      })
     }
-    data.append('data', JSON.stringify(datas));
-
-    const jwt = getCookie('jwt');
-    const send = await axios({
-      method: 'PUT',
-      url: 'https://api.myfab.eliasto.me/api/tickets/' + ticket.data.id,
-      data,
-      headers: {
-        'Authorization': `Bearer ${jwt}`
-      },
-    });
-    setStatus(send);
-    setAlertTitle('Succès !');
-    setAlertDescription('Votre étape a bien été validé et enregistré.')
-    document.getElementById('status').scrollIntoView();
-    router.push('/panel/admin/' + ticket.data.id)
   }
 
-  const sendComment = async (e) => {
-    e.preventDefault();
-    timelines.push({
-      name: "Nouveau commentaire",
-      icon: "CursorClickIcon",
-      color: "bg-blue-500",
-      date: Date.now()
-    });
-    comments.push({
-      description: description,
-      operator: user.name,
-      date: Date.now()
-    });
-    const data = new FormData();
-    const datas = {
-      comments,
-      timeline: timelines
-    }
-    data.append('data', JSON.stringify(datas));
-
-    const jwt = getCookie('jwt');
-    const close = await axios({
-      method: 'PUT',
-      url: 'https://api.myfab.eliasto.me/api/tickets/' + ticket.data.id,
-      data,
-      headers: {
-        'Authorization': `Bearer ${jwt}`
-      },
-    });
-    setStatus(close);
-    setAlertTitle('Succès !');
-    setAlertDescription('Votre commentaire a été correctement envoyé.')
-    document.getElementById('status').scrollIntoView();
-    router.push('/panel/admin/' + ticket.data.id)
+  async function addStep(step){
+    const cookie = getCookie("jwt");
+    
+      await axios({
+        method: 'PUT',
+        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/'+(step),
+        headers: {
+          'dvflCookie': cookie
+        },
+      }).then(()=>{
+        router.replace(router.asPath);
+      })
   }
+
   return (
-    <LayoutPanel user={user}>
-      <div id="status"></div>
-      <NavbarAdmin />
+    <LayoutPanel user={user} role={role}>
       {/* Dernières activités */}
-      <div className="px-12 py-8">
+      <NavbarAdmin />
+      {ticket.step == 0?<div className="md:py-8 md:px-6">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
+            <h2 className="text-xl font-bold text-white">Les fichiers doivent être validés.</h2>
+            <h3 className="text-md font-medium text-white">Pour valider un fichier, vous devez cliquer sur "voir le fichier STL" puis sur valider ou refuser.</h3>
+          </div>
+        </div>:''}
+        {ticket.step == 1?<div className="md:py-8 md:px-6">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-green-500 to-green-300">
+            <h2 className="text-xl font-bold text-white">L'impression n'est pas encore lancée.</h2>
+            <h3 className="text-md font-medium text-white">Vous pouvez désormais lancer l'impression du ticket. Pour cela il vous suffit de cliquer sur le bouton ci-dessous.</h3>
+          </div>
+        </div>:''}
+        {ticket.step == 2?<div className="md:py-8 md:px-6">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-yellow-300 to-red-500">
+            <h2 className="text-xl font-bold text-white">La pièce n'a pas été déposé dans un casier.</h2>
+            <h3 className="text-md font-medium text-white">Pour assigner un numéro de casier au ticket, cliquez sur le bouton ci-dessous. Si la pièce a déjà été récupéré, vous pouvez fermer le ticket.</h3>
+          </div>
+        </div>:''}
+        {ticket.step >= 3?<div className="md:py-8 md:px-6">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-red-300 to-red-500">
+            <h2 className="text-xl font-bold text-white">Le ticket est maintenant fermé.</h2>
+            <h3 className="text-md font-medium text-white">Oups, c'était une erreur ? <a className="cursor-pointer hover:text-gray-100" onClick={()=>addStep(2)}>Cliquez-ici</a> pour revenir à l'étape précédente.</h3>
+          </div>
+        </div>:''}
+      <div id="status" className="px-12 py-8">
         <Steps steps={steps} />
       </div>
-      <div className="px-12">
-        {/* Success Alert */}
-        {status != null ? <div className="p-4 md:p-5 rounded text-green-700 bg-green-100 mb-5">
-          <div className="flex items-center mb-2">
-            <svg className="hi-solid hi-check-circle inline-block w-5 h-5 mr-3 flex-none text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-            <h3 className="font-semibold">{alertTitle}</h3>
-          </div>
-          <p className="ml-8">
-            {alertDescription}
-          </p>
-        </div> : ''}
-        {/* END Success Alert */}
-      </div>
       <div className="py-6 px-3">
-        <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="col-span-3 mt-5 text-center">
-            <div className=" ">
-              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate mb-5">
-                Activités du ticket
-              </h1>
+        <div className="mx-auto sm:px-6 lg:px-8 lg:gap-8">
 
-              <nav
-                aria-label="Sidebar"
-                className="sticky top-6 divide-y divide-gray-300"
-              >
-                <div className="flow-root">
-                  <ul role="list" className="-mb-8">
-                    {timeline.map((event, eventIdx) => (
-                      <li key={event.id}>
-                        <div className="relative pb-8">
-                          {eventIdx !== timeline.length - 1 ? (
-                            <span
-                              className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                              aria-hidden="true"
-                            />
-                          ) : null}
-                          <div className="relative flex space-x-3 place-items-center text-left">
-
-                            <div>
-                              <span
-                                className={classNames(
-                                  event.color,
-                                  "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
-                                )}
-                              >
-                                {(event.icon == "ThumbUpIcon") ? <ThumbUpIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                /> : (event.icon == "CursorClickIcon") ? <CursorClickIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                /> : (event.icon == "CheckIcon") ? <CheckIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                /> : (event.icon == "CubeIcon") ? <CubeIcon
-                                  className="h-5 w-5 text-white"
-                                  aria-hidden="true"
-                                /> : ''}
-                              </span>
-                            </div>
-                            <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4 place-items-center">
-                              <div>
-                                <p className="text-sm text-gray-500">
-                                  {event.name}{" "}
-                                </p>
-                              </div>
-                              <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                                <Moment format="Do MMM HH:mm" locale="fr">
-                                  {event.date}
-                                </Moment>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </nav>
-            </div>
-            <div className="space-x-2">
-              {(ticket.data.attributes.step < 3 || ticket.data.attributes.isDone == false) ? <span className="mt-5 relative z-0 inline-flex shadow-sm rounded-md">
-                <button
-                  onClick={(e) => validateCurrentStep(e)}
-                  type="button"
-                  className="relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  {buttonStep[ticket.data.attributes.step].name}
-                </button>
-                <Menu as="span" className="-ml-px relative block">
-                  <Menu.Button className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-                    <span className="sr-only">Open options</span>
-                    <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-                  </Menu.Button>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-100"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="origin-top-right absolute right-0 mt-2 -mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <div className="py-1">
-                        {items.map((item) => (
-                          <Menu.Item key={item.name}>
-                            {({ active }) => (
-                              <a
-                                href={item.href}
-                                className={classNames(
-                                  active
-                                    ? "bg-gray-100 text-gray-900"
-                                    : "text-gray-700",
-                                  "block px-4 py-2 text-sm"
-                                )}
-                              >
-                                {item.name}
-                              </a>
-                            )}
-                          </Menu.Item>
-                        ))}
-                      </div>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
-              </span> : ''}
-
-              <div className="text-left mt-5">
-                <label
-                  htmlFor="comments"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Soumettre un commentaire
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    onChange={(e) => setDescription(e.target.value)}
-                    type="text"
-                    name="comments"
-                    id="comments"
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                    placeholder="Bonjour, ton fichier n'est pas valide."
-                  />
-                </div>
-              </div>
-              <div className="inline-flex space-x-2">
-                <button
-                  onClick={(e) => sendComment(e)}
-                  type="button"
-                  className="mt-5 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                >
-                  Envoyer le commentaire
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <hr className="mb-5 mt-5 block lg:hidden" />
           <main className="col-span-9">
-            <div className="px-4 mb-5">
-             
-      {comments.length >0?<div className="p-4 md:p-5 rounded text-blue-700 bg-blue-100">
+
+             {/* Success Alert */}
+      {response != null?<div className={`p-4 mb-5 md:p-5 rounded ${responseError?'text-red-700':'text-green-700'} ${responseError?'bg-red-100':'bg-green-100'}`}>
         <div className="flex items-center mb-2">
-          <InformationCircleIcon className="inline-block w-5 h-5 mr-3 flex-none text-blue-500" />
-          <h3 className="font-semibold">Commentaire(s) sur le ticket: </h3>
+{responseError?          <ExclamationCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-red-500`}/>:
+          <CheckCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-green-500`}/>
+}
+          <h3 className="font-semibold">{responseError?'Une erreur est survenue.':'Votre commentaire a été envoyé !'}</h3>
         </div>
-         <div className="space-y-5">
-           {/* Card */}
-           {comments.slice(0).reverse().map(r=>{
-                  return(<div className="flex flex-col rounded bg-blue-50 p-3 overflow-hidden">
-                  <div className="py-2 flex-grow w-full">
-                    <div className="flex space-x-4">
-                      <div className="flex-grow text-sm">
-                        <p className="mb-1">
-                          <span href="" className="font-semibold text-indigo-600 hover:text-indigo-400">{r.operator} - FabLab </span>
-                          {r.description}
-                        </p>
-                        <p class="space-x-2">
-                          <p class="text-gray-500 hover:text-gray-400">
-                          <Moment format="Do MMM YYYY HH:MM" locale="fr">
-              {r.date}
-            </Moment>
-                          </p>
-  
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>)
-                })}
-              
-              {/* END Card */}
-         </div>
+        <p className="ml-8">
+        {responseError?"Votre commentaire n'a pas pu être envoyé. Si le problème persiste, merci de contacter directement le FabLab.":"Vous recevrez une réponse dès que notre équipe aura traité votre demande."}
+        </p>
       </div>:''}
-            </div>
+      {/* END Success Alert */}
+
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
 
-              <div className="px-4 py-5 sm:px-6 sm:flex sm:items-center sm:justify-between">
+
+
+
+            <div className="px-4 py-5 sm:px-6 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
                     Détails de la demande d'impression
                   </h3>
                   <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                    Ticket n° {ticket.data.id}
+                    Ticket n° {ticket.id}
                   </p>
                 </div>
                 <div className="text-center sm:text-left">
-                  {ticket.data.attributes.isDone == false ? <button
+                  {(ticket.step < 3) ? <div className="space-x-3">
+                  {ticket.step >0?<button
                     type="button"
-                    onClick={(e) => closeTicket(e)}
+                    onClick={(e) => {
+                      if(ticket.step < 2){
+                        addStep(ticket.step+1)
+                      } else {
+
+                      }
+                    }}
+                    className="text-right mt-5 inline-flex items-center px-3 py-2 border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-black border-gray-500 border-2 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  >
+                    <BeakerIcon
+                      className="-ml-0.5 mr-2 h-4 w-4"
+                      aria-hidden="true"
+                    />
+                    Valider l'étape {ticket.step+1}
+                  </button>:''}
+                    <button
+                    type="button"
+                    onClick={(e) => addStep(4)}
                     className="text-right mt-5 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                   >
                     <ExclamationCircleIcon
@@ -402,7 +262,8 @@ const GestionTicket = ({ ticket, user }) => {
                       aria-hidden="true"
                     />
                     Fermer le ticket
-                  </button> : ''}
+                  </button>
+                  </div> : ''}
                 </div>
               </div>
               <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
@@ -412,7 +273,7 @@ const GestionTicket = ({ ticket, user }) => {
                       Nom et prénom
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.data.attributes.user.data.attributes.name + " " + (ticket.data.attributes.user.data.attributes.surname).toString().toUpperCase()}
+                      {user.firstName + " " + (user.lastName).toString().toUpperCase()}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -426,7 +287,7 @@ const GestionTicket = ({ ticket, user }) => {
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">Type</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.data.attributes.type}
+                      {ticket.projectType}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -434,15 +295,7 @@ const GestionTicket = ({ ticket, user }) => {
                       Adresse e-mail
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.data.attributes.user.data.attributes.email}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Commentaires
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.data.attributes.description}
+                      {user.email}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -454,44 +307,97 @@ const GestionTicket = ({ ticket, user }) => {
                         role="list"
                         className="border border-gray-200 rounded-md divide-y divide-gray-200"
                       >
-                        {ticket.data.attributes.stl.data.map(r => {
+                        {file.map(r => {
                           return (<div>
                             <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                            <div className="w-0 flex-1 flex items-center">
-                              <CubeIcon
-                                className="flex-shrink-0 h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                              />
-                              <span className="ml-2 flex-1 w-0 truncate">
-                                {r.attributes.name}
-                              </span>
-                            </div>
-                            <div className="ml-4 flex-shrink-0">
-                              <a
-                                href={"https://api.myfab.eliasto.me" + r.attributes.url}
-                                download={r.attributes.name}
-                                className="font-medium text-indigo-600 hover:text-indigo-500"
-                              >
-                                Télécharger
-                              </a>
-                            </div>
-                            <div className="ml-4 flex-shrink-0">
-                              <button onClick={()=>{setOpen(true); setUrlStl(r.attributes.url)}}>
-                                Voir le fichier STL
-                              </button>
-                            </div>
-                          </li>
-                          </div>)
+                              <div className="w-0 flex-1 flex items-center">
+                                <CubeIcon
+                                  className="flex-shrink-0 h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                                <span className="ml-2 flex-1 w-0 truncate">
+                                  {r.filename}
+                                </span>
+                              </div>
+                              <div className="ml-4 flex-shrink-0">
+                                <button
+                                  onClick={() => download(r.id, r.filename)}
+                                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                                >
+                                  Télécharger
+                                </button>
+
+                              </div>
+                              <div className="ml-4 flex-shrink-0">
+                                <button onClick={() => { setOpen(true); setIdFile(r.id); getUrlSTL(r.id) }}>
+                                  Voir le fichier STL
+                                </button>
+                              </div>
+                            </li>
+                            {r.comment.length >2?<div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                              <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
+                            </div>:''}
+                          </div>
+                          )
                         })}
                       </ul>
                     </dd>
                   </div>
+                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Commentaires
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <ul role="list" className="divide-y divide-gray-200">
+                        {message.map((r) => (
+                          <li
+                            key={r.id}
+                            className="relative bg-white py-5 px-4 hover:bg-gray-50"
+                          >
+                            <div className="flex justify-between space-x-3">
+                              <div className="min-w-0 flex-1">
+                                <a href="#" className="block focus:outline-none">
+                                  <span className="absolute inset-0" aria-hidden="true" />
+                                  <p className="text-sm font-medium text-gray-900 truncate">{r.userName}</p>
+                                  <p className="text-sm text-gray-500 truncate">{r.subject}</p>
+                                </a>
+                              </div>
+                              <Moment format="Do MMM YYYY à HH:mm" locale="fr">
+                                {r.creationDate}
+                              </Moment>
+                            </div>
+                            <div className="mt-1">
+                              <p className="line-clamp-2 text-sm text-gray-600">{r.content}</p>
+                            </div>
+                          </li>
+                        ))}
+                        <div>
+                        <textarea
+                  id="comment"
+                  name="comment"
+                  rows={3}
+                  onChange={(e)=>setComment(e.target.value)}
+                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                  defaultValue={''}
+                />
+                <button
+                onClick={(e)=>{document.getElementById("comment").value = ''; sendComment(e)}}
+                className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
+                >
+                  Envoyer mon commentaire
+                </button>
+                <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
+
+                        </div>
+                      </ul>
+                    </dd>
+                  </div>
+
                 </dl>
               </div>
 
             </div>
           </main>
-
         </div>
       </div>
 
@@ -532,20 +438,42 @@ const GestionTicket = ({ ticket, user }) => {
             >
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
-                  <p className="text-center font-medium">Apperçu du fichier STL:</p>
-                <center>
-                <STLViewer
-	width={300}
-	height={200}
-	modelColor='#B92C2C'
-	backgroundColor='#FFFFFF'
-	rotate={true}
-	orbitControls={true}
-  model={"https://api.myfab.eliasto.me" + urlStl}
-  lightColor= '#ffffff'
-  lights={[1,1,1]}
-/>
-                </center>
+                  <p className="text-center font-medium">Aperçu du fichier STL:</p>
+                  {idFile != null?file.find(r =>r.id == idFile).isValid == null?<p className="text-center text-md">Le fichier n'a pas été vérifié.</p>:file.find(r =>r.id == idFile).isValid == false?<p className="text-center text-md">Le fichier a été refusé.</p>:file.find(r =>r.id == idFile).isValid == true?<p className="text-center text-md">Le fichier a été accepté.</p>:'':''}
+                  <center>
+                    <STLViewer
+                      width={300}
+                      height={200}
+                      modelColor='#4930b8'
+                      backgroundColor='#FFFFFF'
+                      rotate={true}
+                      orbitControls={true}
+                      model={urlStl}
+                      lightColor='#ffffff'
+                      lights={[1, 1, 1]}
+                    />
+                    <textarea
+                  id="comment"
+                  name="comment"
+                  rows={3}
+                  onChange={(e)=>setComment(e.target.value)}
+                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                  defaultValue={''}
+                />
+
+                <div className="inline-flex mt-5">
+        <button 
+        onClick={()=> FileValidate(idFile, true, comment)}
+        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-l active:z-1 focus:z-1 -mr-px border-green-700 bg-green-700 text-white hover:text-white hover:bg-green-800 hover:border-green-800 focus:ring focus:ring-green-500 focus:ring-opacity-50 active:bg-green-700 active:border-green-700">
+          Valider le fichier
+        </button>
+        <button 
+                onClick={()=> FileValidate(idFile, false, comment)}
+        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-r active:z-1 focus:z-1 border-red-700 bg-red-500 text-white hover:text-white hover:bg-red-800 hover:border-red-800 focus:ring focus:ring-red-500 focus:ring-opacity-50 active:bg-red-700 active:border-red-700">
+          Refuser le fichier
+        </button>
+      </div>
+                  </center>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
@@ -561,25 +489,22 @@ const GestionTicket = ({ ticket, user }) => {
           </div>
         </Dialog>
       </Transition.Root>
+
     </LayoutPanel>
   );
 };
 
-
-
-export async function getServerSideProps({ params, req }) {
+export async function getServerSideProps({ req, params }) {
   const cookies = parseCookies(req);
-  const tickets = await fetchAPIAuth(`/api/tickets/${params.id}/?populate=*`, cookies.jwt);
-  const user = await fetchAPIAuth("/api/users/me/?populate=*", cookies.jwt);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const ticket = await fetchAPIAuth("/ticket/" + params.id, cookies.jwt);
+  const file = await fetchAPIAuth("/ticket/" + params.id + "/file", cookies.jwt);
+  const message = await fetchAPIAuth("/ticket/" + params.id + "/message", cookies.jwt);
 
-  if (tickets.error != undefined) {
-    return {
-      notFound: true,
-    };
-  }
   return {
-    props: { ticket: tickets, user },
-  };
+    props: { user, params, role, ticket, file, message }, // will be passed to the page component as props
+  }
 }
 
 export default GestionTicket;

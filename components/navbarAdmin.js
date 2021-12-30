@@ -10,8 +10,7 @@ import { withRouter } from 'next/router';
     const tabs = [
       { name: 'Impressions à traiter', href: '/panel/admin/', current: pn.split('/')[3] === undefined},
       { name: 'Historique des impressions', href: '/panel/admin/history', current: pn.split('/')[3] == 'history' },
-      { name: 'Actualités', href: '/panel/admin/news', current: pn.split('/')[3] == "news" },
-      { name: 'Paramètres', href: 'https://api.myfab.eliasto.me', current: false },
+      { name: 'Paramètres', href: '/panel/admin/settings', current: pn.split('/')[3] == 'settings' },
     ]
 
     return (

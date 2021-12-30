@@ -11,27 +11,27 @@ import { removeCookies } from "cookies-next";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-export default function LayoutPanel({ children, user }) {
+export default function LayoutPanel({ children, user, role }) {
   const router = useRouter();
   const pn = router.pathname;  
   const navigation = [
     { name: "Panel", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show:true },
-    { name: "Zone d'administration", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: user.flags.filter(r=> r.name == "Superviseur").length>0 },
+    { name: "Zone d'administration", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length>0 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
   useEffect(function () {
-    if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[2] == "admin"){
+    if( role.length == 0 && pn.split('/')[2] == "admin"){
       router.push('/404');
     }
 }, []);
-if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[2] == "admin"){
+if( role.length == 0 && pn.split('/')[2] == "admin"){
   return('');}
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const name =  user.name;
-  const surname =  user.surname;
+  const name =  user.firstName;
+  const surname =  user.lastName;
 
   return (
     <div className="relative h-screen flex overflow-hidden bg-white">
@@ -150,7 +150,7 @@ if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[
                   <span className="flex w-full justify-between items-center">
                     <span className="flex min-w-0 items-center justify-between space-x-3">
 
-                      <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
       {name[0].toString().toUpperCase()+" "+surname[0].toString().toUpperCase()}
     </div>
                       <span className="flex-1 flex flex-col min-w-0">
@@ -168,9 +168,9 @@ if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[
                     />
                   </span>
                   <div className="mt-3 space-x-1 space-y-1 text-center">
-                  { user.flags.map(r=>{
+                  { role.map(r=>{
                     return(
-                      <span className={classNames(r.class,"inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ")}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white`} style={{backgroundColor: '#'+r.color}}>
         {r.name}
       </span>
                     )
@@ -221,7 +221,7 @@ if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[
                   if(item.show == true){
                     return(<Link href={item.href}>
                       <a
-                        key={item.name}
+                        key={`1-${item.name}`}
                         className={classNames(
                           item.current
                             ? "bg-gray-200 text-gray-900"
@@ -267,7 +267,7 @@ if( user.flags.filter(r=> r.name == "Superviseur").length == 0 && pn.split('/')[
                 <div>
                   <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
                     <span className="sr-only">Open user menu</span>
-                    <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
+                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
       {name[0].toString().toUpperCase()+" "+surname[0].toString().toUpperCase()}
     </div>
                   </Menu.Button>

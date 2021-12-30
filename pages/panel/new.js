@@ -10,7 +10,7 @@ import { fetchAPIAuth, parseCookies } from "../../lib/api";
 
 const percents = (value,total) => Math.round(value/total)*100
 
-export default function NewPanel({user}) {
+export default function NewPanel({user, role}) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
   const [name, setName] = useState(null);
@@ -22,6 +22,7 @@ export default function NewPanel({user}) {
   const [group, setGroup] = useState(null);
   const [percent, setPercent] = useState(0);
   const [statusUpload, setStatusUpload] = useState(null);
+  const [id, setId] = useState(0);
 
   const onDragEnter = (event) => {
     setStatus(true);
@@ -50,35 +51,46 @@ export default function NewPanel({user}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const projectType = {
+      "PIX 1":{
+        id: 1
+      },
+      "PIX 2":{
+        id:2
+      },
+      "PING":{
+        id:3
+      },
+      "PI²":{id:4},
+      "Associatif":{id:5},
+      "Autre":{id:6}
+    }
+
     const data = new FormData();
     const jwt = getCookie('jwt');
-    const datas = {
-      description,
-      group,
-      type
-    };
-
 
     for (let i = 0; i < file.length; i++) {
-      data.append(`files.stl`, file[i][0]);
+      data.append(`filedata`, file[i][0]);
     }
-    data.append('data', JSON.stringify(datas));
+    data.append('comment', description);
+    data.append('groupNumber', group);
+    data.append('projectType', projectType[type].id);
     const upload_res = await axios({
       method: 'POST',
-      url: 'https://api.myfab.eliasto.me/api/tickets',
+      url: 'http://localhost:5000/api/ticket',
       data,
       headers: {
-        'Authorization': `Bearer ${jwt}`
+        'dvflCookie': jwt
       },
       onUploadProgress: (progress) => setPercent(percents(progress.loaded,progress.total))
     });
     setStatusUpload(upload_res);
+    setId(upload_res.data.id);
     document.getElementById('status').scrollIntoView();
     setFile([]);
     setDescription('Aucune déscription fournie.')
     setType('PIX 1');
     setGroup(null);
-      
   }
 
 
@@ -88,7 +100,7 @@ export default function NewPanel({user}) {
   }
 
   return (
-    <LayoutPanel user={user}>
+    <LayoutPanel user={user} role={role}>
       <div className="px-10 py-10" id="status">
         {/* Success Alert */}
       {(statusUpload != null && statusUpload.status == 200)?<div className="p-4 md:p-5 rounded text-green-700 bg-green-100 mb-5">
@@ -97,7 +109,7 @@ export default function NewPanel({user}) {
           <h3 className="font-semibold">Votre ticket a été envoyé avec succès !</h3>
         </div>
         <p className="ml-8">
-          Votre ticket porte le numéro <strong>#{setZero(statusUpload.data.data.id)}</strong>. Vous pouvez y accéder en cliquant <Link href={"/panel/"+statusUpload.data.data.id}><a className="underline text-green-600 hover:text-green-400" >ici</a></Link>.
+          Votre ticket porte le numéro <strong>#{setZero(id)}</strong>. Vous pouvez y accéder en cliquant <Link href={"/panel/"+id}><a className="underline text-green-600 hover:text-green-400" >ici</a></Link>.
         </p>
       </div>:''}
       {/* END Success Alert */}
@@ -157,6 +169,9 @@ export default function NewPanel({user}) {
                         <option>PIX 1</option>
                         <option>PIX 2</option>
                         <option>PING</option>
+                        <option>PI²</option>
+                        <option>Associatif</option>
+                        <option>Autre</option>
                       </select>
                     </div>
 
@@ -395,9 +410,10 @@ export default function NewPanel({user}) {
 
 export async function getServerSideProps({req}) {
   const cookies = parseCookies(req);
-  const user = await fetchAPIAuth("/api/users/me/?populate=*", cookies.jwt);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const role = await fetchAPIAuth("/user/role", cookies.jwt);
 
   return {
-    props: { user }, // will be passed to the page component as props
+    props: { user, role }, // will be passed to the page component as props
   }
 }
