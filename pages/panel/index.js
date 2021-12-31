@@ -197,8 +197,14 @@ export default function NewPanel({ data, user, ticket, role }) {
                             <div className="flex items-center space-x-3 lg:pl-2">
 
                               {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
+                                )}></span>
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "relative inline-flex rounded-full h-3 w-3"
+                                )}></span>
                               </span> : <div
                                 className={classNames(
                                   getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500':'',
