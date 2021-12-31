@@ -4,9 +4,9 @@ import Layout from "../components/layout";
 import Seo from "../components/seo";
 import { fetchAPI, fetchAPIAuth, parseCookies } from "../lib/api";
 
-const Home = ({user}) => {
+const Home = ({user, role}) => {
     return (
-      <Layout user={user}>
+      <Layout user={user} role={role}>
         {/*<Seo seo={homepage.seo} />*/}
         <div className="container xl:max-w-7xl mx-auto px-4 mt-16 lg:px-8">
           <div className="text-center">
@@ -40,10 +40,12 @@ const Home = ({user}) => {
 export async function getServerSideProps({req}) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const role = await fetchAPIAuth("/user/role", cookies.jwt);
 
     return {
       props: {
-        user: user
+        user: user,
+        role
       }
   }
 }

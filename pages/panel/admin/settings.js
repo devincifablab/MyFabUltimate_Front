@@ -1,5 +1,6 @@
 import { Disclosure } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/outline'
+import router from 'next/router'
 import { useEffect, useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
 import NavbarAdmin from '../../../components/navbarAdmin'
@@ -10,7 +11,7 @@ import { fetchAPIAuth, parseCookies } from '../../../lib/api'
 export default function Settings({ user, role, me }) {
 
     useEffect(function () {
-        if (role.filter(r => r.id > 1).length < 0) {
+        if (role.filter(r => r.id == 1 || r.id == 2).length < 1) {
             router.push('/404');
         }
     }, []);
@@ -22,7 +23,7 @@ export default function Settings({ user, role, me }) {
         if (search.length > 1 && search[0] == '#') {
             setResult(user.filter(r => r.id == search.split('#')[1]));
         } else if (search.length > 1) {
-            setResult(user.filter(r => r.firstName == search || r.lastName == search));
+            setResult(user.filter(r => r.firstName.includes(search) || r.lastName.includes(search)));
         }
         if (search.length < 1) {
             setResult(originalUser);
@@ -33,7 +34,7 @@ export default function Settings({ user, role, me }) {
 
     return (
         <LayoutPanel user={me} role={role}>
-            <NavbarAdmin />
+            <NavbarAdmin role={role} />
 
             <section className="">
                 <div className="container px-4 mx-auto">

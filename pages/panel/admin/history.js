@@ -14,7 +14,7 @@ export default function OverviewAdmin({ tickets, user, role }) {
     if(search.length>1 && search[0] == '#'){
       setTicketResult(tickets.filter(r=>r.id == search.split('#')[1]));
     } else if(search.length >2){
-      setTicketResult(tickets.filter(r=>r.userName == search));
+      setTicketResult(tickets.filter(r=>r.userName.includes(search)));
     }
     if(search.length <2){
       setTicketResult(originalTicket);
@@ -23,7 +23,7 @@ export default function OverviewAdmin({ tickets, user, role }) {
 
   return (
     <LayoutPanel user={user} role={role}>
-      <NavbarAdmin />
+      <NavbarAdmin role={role} />
 
       <section className="">
         <div className="container px-4 mx-auto">

@@ -19,7 +19,7 @@ export default function Admin({ tickets, user, role }) {
   if (user.error == undefined && role.length != 0) {
     return (
       <LayoutPanel user={user} role={role}>
-        <NavbarAdmin />
+        <NavbarAdmin role={role} />
         <div className="md:py-8 md:px-6">
           <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
             <h2 className="text-2xl font-bold text-white">Bonjour, {user.firstName} 👋{" "}</h2>

@@ -21,7 +21,7 @@ const todo = [
 export default function NewsAdmin() {
   return (
     <LayoutPanel>
-      <NavbarAdmin />
+      <NavbarAdmin role={role} />
       <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white md:px-8">
       <div>
         {/* Page Heading with Actions */}

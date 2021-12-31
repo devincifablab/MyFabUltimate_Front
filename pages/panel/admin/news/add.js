@@ -122,7 +122,7 @@ export default function AddNewsAdmin() {
 
   return (
     <LayoutPanel>
-      <NavbarAdmin />
+      <NavbarAdmin role={role} />
       <div className="max-w-3xl mx-auto mt-5 mb-5 px-3">
         <form className="space-y-8 divide-y divide-gray-200">
           <div className="space-y-8 divide-y divide-gray-200">

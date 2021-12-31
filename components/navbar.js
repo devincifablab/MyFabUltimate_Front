@@ -12,7 +12,7 @@ function classNames(...classes) {
 }
 
 
-function Navbar({router, user}) {
+function Navbar({router, user, role}) {
     const pn = router.pathname;
     const navigations = [
         {name: "Accueil", href: "/", current: pn =="/"},
@@ -73,7 +73,7 @@ function Navbar({router, user}) {
                  * Ici on vérifie si l'utilisateur est connecté.
                  */}
                 
-                {isLogged?<Link href="/panel"> 
+                {isLogged?<Link href={role.length>0?"/panel/admin":"/panel"}> 
                 <button
                   type="button"
                   className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

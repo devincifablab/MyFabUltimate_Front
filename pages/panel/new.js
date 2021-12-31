@@ -68,6 +68,7 @@ export default function NewPanel({user, role}) {
 
     const data = new FormData();
     const jwt = getCookie('jwt');
+    console.log(process.env.API);
 
     for (let i = 0; i < file.length; i++) {
       data.append(`filedata`, file[i][0]);
@@ -77,7 +78,7 @@ export default function NewPanel({user, role}) {
     data.append('projectType', projectType[type].id);
     const upload_res = await axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/ticket',
+      url: process.env.API+'/api/ticket',
       data,
       headers: {
         'dvflCookie': jwt

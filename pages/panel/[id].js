@@ -41,7 +41,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: 'http://localhost:5000/api/file/' + id,
+      url: process.env.API+'/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -60,14 +60,14 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     const cookie = getCookie("jwt");
     await axios({
       method: 'PUT',
-      url: 'http://localhost:5000/api/ticket/' + params.id+'/setWaitingAnswer/0',
+      url: process.env.API+'/api/ticket/' + params.id+'/setWaitingAnswer/0',
       headers: {
         'dvflCookie': cookie
       },
     });
     await axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/ticket/' + params.id+'/message',
+      url: process.env.API+'/api/ticket/' + params.id+'/message',
       data: {
         content: comment
       },
@@ -90,7 +90,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: 'http://localhost:5000/api/file/' + id,
+      url: process.env.API+'/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },

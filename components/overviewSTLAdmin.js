@@ -18,7 +18,7 @@ export default function OverviewSTLAdmin({ tickets }) {
     const cookie = getCookie("jwt");
     const response = await axios({
       method: 'GET',
-      url: 'http://localhost:5000/api/ticket/' + id + '/file',
+      url: process.env.API+'/api/ticket/' + id + '/file',
       headers: {
         'dvflCookie': cookie
       },

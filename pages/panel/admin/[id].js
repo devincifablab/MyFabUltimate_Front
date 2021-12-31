@@ -6,13 +6,16 @@ import {
   ThumbUpIcon,
   CubeIcon,
   BeakerIcon,
+  ChevronDownIcon,
+  XIcon,
+  ExclamationIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../../components/steps";
 import { Fragment, useContext, useEffect, useState } from "react";
 import Moment from "react-moment";
 import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/solid";
 import STLViewer from 'stl-viewer'
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
 import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -32,8 +35,18 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
   const [fileValidate, setFileValidate] = useState(false);
   const [idFile, setIdFile] = useState(null);
+  const [openChange, setOpenChange] = useState(false);
+  const [typeChange, setTypeChange] = useState('');
+  const [typeChangeValue,setTypeChangeValue] = useState('');
+
 
   const router = useRouter();
+
+  const colors = {
+    "2274e0": "text-gray-700 bg-gray-200",
+    "e9d41d": "text-yellow-700 bg-yellow-200",
+    "f30b0b": "text-white bg-gradient-to-r from-yellow-400 to-red-500",
+  };
 
   const steps = [
     { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
@@ -41,12 +54,18 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     { id: "Etape 3", name: "Pièce mise à disposition", status: ticket.step == 2 ? "current" : ticket.step < 2 ? "notstarted" : "complete" },
   ];
 
+  const items = [
+    { name: "Changer d'étape", function: "step" },
+    { name: "Changer la priorité du ticket", function: "priority" },
+    { name: "Changer le type de ticket", function: "type" },    
+  ]
+
   async function download(id, name) {
     const cookie = getCookie("jwt");
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: 'http://localhost:5000/api/file/' + id,
+      url: process.env.API+'/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -65,7 +84,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     const cookie = getCookie("jwt");
     await axios({
       method: 'PUT',
-      url: 'http://localhost:5000/api/ticket/' + params.id+'/setWaitingAnswer/1',
+      url: process.env.API+'/api/ticket/' + params.id+'/setWaitingAnswer/1',
       headers: {
         'dvflCookie': cookie
       },
@@ -73,7 +92,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
     await axios({
       method: 'POST',
-      url: 'http://localhost:5000/api/ticket/' + params.id+'/message',
+      url: process.env.API+'/api/ticket/' + params.id+'/message',
       data: {
         content: comment
       },
@@ -96,7 +115,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: 'http://localhost:5000/api/file/' + id,
+      url: process.env.API+'/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -111,7 +130,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     if(state == false){
       await axios({
         method: 'PUT',
-        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/0',
+        url: process.env.API+'/api/ticket/' + params.id+'/setStep/0',
         headers: {
           'dvflCookie': cookie
         },
@@ -119,7 +138,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     }
     await axios({
       method: 'PUT',
-      url: 'http://localhost:5000/api/file/' + id,
+      url: process.env.API+'/api/file/' + id,
       data: {
         comment: comment,
         isValid: state
@@ -145,7 +164,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     if(ticket.step == 0 && isAllFilesValidated == true){
       await axios({
         method: 'PUT',
-        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/1',
+        url: process.env.API+'/api/ticket/' + params.id+'/setStep/1',
         headers: {
           'dvflCookie': cookie
         },
@@ -160,7 +179,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     
       await axios({
         method: 'PUT',
-        url: 'http://localhost:5000/api/ticket/' + params.id+'/setStep/'+(step),
+        url: process.env.API+'/api/ticket/' + params.id+'/setStep/'+(step),
         headers: {
           'dvflCookie': cookie
         },
@@ -169,10 +188,97 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
       })
   }
 
+  async function change(){
+    const projectType = {
+      "PIX 1":{
+        id: 1
+      },
+      "PIX 2":{
+        id:2
+      },
+      "PING":{
+        id:3
+      },
+      "PI²":{id:4},
+      "Associatif":{id:5},
+      "Autre":{id:6}
+    }
+
+    const priority = {
+      "Faible":{
+        id: 1
+      },
+      "Normal":{
+        id:2
+      },
+      "Urgent":{
+        id:3
+      }
+    }
+
+    const stepType = {
+      "Etape 0":{
+        id: 0
+      },
+      "Etape 1":{
+        id:1
+      },
+      "Etape 2":{
+        id:2
+      },
+      "Etape 3":{
+        id:3
+      }
+    }
+    const cookie = getCookie("jwt");
+
+    switch (typeChange){
+      case "step":
+        await axios({
+          method: 'PUT',
+          url: process.env.API+'/api/ticket/' + params.id+'/setStep/'+stepType[typeChangeValue].id,
+          headers: {
+            'dvflCookie': cookie
+          },
+        }).then(()=>{
+          router.replace(router.asPath);
+        })
+        break;
+      case "priority":
+        await axios({
+          method: 'PUT',
+          url: process.env.API+'/api/ticket/' + params.id+'/setPriority/',
+          data:{
+            priority: priority[typeChangeValue].id
+          },
+          headers: {
+            'dvflCookie': cookie
+          },
+        }).then(()=>{
+          router.replace(router.asPath);
+        })
+        break;
+      case "type":
+        await axios({
+          method: 'PUT',
+          url: process.env.API+'/api/ticket/' + params.id+'/setProjecttype/',
+          data:{
+            projecttype: projectType[typeChangeValue].id
+          },
+          headers: {
+            'dvflCookie': cookie
+          },
+        }).then(()=>{
+          router.replace(router.asPath);
+        })
+        break;
+    }
+  }
+
   return (
     <LayoutPanel user={user} role={role}>
       {/* Dernières activités */}
-      <NavbarAdmin />
+      <NavbarAdmin role={role} />
       {ticket.step == 0?<div className="md:py-8 md:px-6">
           <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
             <h2 className="text-xl font-bold text-white">Les fichiers doivent être validés.</h2>
@@ -235,23 +341,63 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                 </div>
                 <div className="text-center sm:text-left">
                   {(ticket.step < 3) ? <div className="space-x-3">
+                  <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   {ticket.step >0?<button
-                    type="button"
-                    onClick={(e) => {
-                      if(ticket.step < 2){
-                        addStep(ticket.step+1)
-                      } else {
+      onClick={(e) => {
+        if(ticket.step < 2){
+          addStep(ticket.step+1)
+        } else {
 
-                      }
-                    }}
-                    className="text-right mt-5 inline-flex items-center px-3 py-2 border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-black border-gray-500 border-2 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                  >
-                    <BeakerIcon
+        }
+      }}
+        type="button"
+        className="relative inline-flex items-center px-4 py-2 rounded-l-md border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 border-2 focus:ring-indigo-500 focus:border-indigo-500"
+      >
+         <BeakerIcon
                       className="-ml-0.5 mr-2 h-4 w-4"
                       aria-hidden="true"
                     />
-                    Valider l'étape {ticket.step+1}
-                  </button>:''}
+        Valider l'étape {ticket.step+1}
+        
+      </button>:''}
+      
+      <Menu as="span" className="-ml-px relative block">
+        <Menu.Button className="relative inline-flex items-center px-2 py-2 rounded-r-md border-2 border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+          <span className="sr-only">Open options</span>
+          <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+        </Menu.Button>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
+        >
+          <Menu.Items className="origin-top-right absolute right-0 mt-2 -mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="py-1">
+              {items.map((item) => (
+                <Menu.Item key={item.name}>
+                  {({ active }) => (
+                    <a
+                      onClick={()=>{setOpenChange(true);
+                        setTypeChange(item.function);}}
+                      className={classNames(
+                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                        'block px-4 py-2 text-sm'
+                      )}
+                    >
+                      {item.name}
+                    </a>
+                  )}
+                </Menu.Item>
+              ))}
+            </div>
+          </Menu.Items>
+        </Transition>
+      </Menu>
+    </span>
                     <button
                     type="button"
                     onClick={(e) => addStep(4)}
@@ -296,6 +442,14 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                       {user.email}
+                    </dd>
+                  </div>
+                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Priorité
+                    </dt>
+                    <dd className={`mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2`}>
+                      {ticket.priorityName}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -489,6 +643,99 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
           </div>
         </Dialog>
       </Transition.Root>
+
+      <Transition.Root show={openChange} as={Fragment}>
+      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpenChange}>
+        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          {/* This element is to trick the browser into centering the modal contents. */}
+          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+            &#8203;
+          </span>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+                <button
+                  type="button"
+                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={() => setOpenChange(false)}
+                >
+                  <span className="sr-only">Close</span>
+                  <XIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                </div>
+                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                    {typeChange == 'step'?"Changer les étapes du ticket":typeChange == 'priority'?"Changer la priorité du ticket":typeChange == 'type'?"Changer le type de ticket":''} 
+                  </Dialog.Title>
+                  <div className="mt-2">
+                      <select
+                        onChange={(e) => setTypeChangeValue(e.target.value)}
+                        id="type"
+                        name="type"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                      >
+                        {typeChange == "type"?<><option>PIX 1</option>
+                        <option>PIX 2</option>
+                        <option>PING</option>
+                        <option>PI²</option>
+                        <option>Associatif</option>
+                        <option>Autre</option></>:typeChange == "step"?<><option>Etape 0</option>
+                        <option>Etape 1</option>
+                        <option>Etape 2</option>
+                        <option>Etape 3</option>
+                        </>:typeChange == "priority"?<><option>Faible</option>
+                        <option>Normal</option>
+                        <option>Urgent</option>
+                        </>:''}
+                      </select>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={() => {setOpenChange(false); change()}}
+                >
+                  Confirmer
+                </button>
+                <button
+                  type="button"
+                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                  onClick={() => setOpenChange(false)}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition.Root>
 
     </LayoutPanel>
   );
