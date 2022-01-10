@@ -1,131 +1,186 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { getCookie, setCookies } from "cookies-next";
-import { postAPI } from "../../lib/api";
 import axios from "axios";
+import { setCookies } from "cookies-next";
+import { useState } from "react"
+import { ExclamationIcon } from '@heroicons/react/solid'
 import router from "next/router";
+import { toast } from "react-toastify";
+import Link from 'next/link';
 
 export default function Auth() {
-    var jwt;
-    var isLogged;
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [error, setError] = useState(false);
+  const [checked, setChecked] = useState(false);
 
-    const [password, setPassword] = useState(null);
-    const [email, setEmail] = useState(null);
-    const [error, setError] = useState(null);
-
-   {/* useEffect(function () {
-        jwt = getCookie('jwt');
-        isLogged = (jwt != null && jwt.length > 1) ? true : false
-        if (isLogged) {
-            window.location.href = "/";
-        }
-    }, []);*/}
-
-    const login = async (e) => {
-        e.preventDefault();
-
-        await axios({
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            url: process.env.API+'/api/user/login',
-            data: {
-                email,
-                password
-            },
-          }).then((response)=>{
-            if(response.status == 200){
-                setCookies('jwt', response.data.dvflCookie);
-                router.push('/');
+  async function login(){
+    await axios({
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        url: process.env.API+'/api/user/login',
+        data: {
+            email,
+            password
+        },
+      }).then((response)=>{
+        if(response.status == 200){
+            if(checked){
+              setCookies('jwt', response.data.dvflCookie, {expires: new Date(Date.now()+2592000)});
+            } else {
+              setCookies('jwt', response.data.dvflCookie);
             }
-          })
-          .catch((error) => {
-            console.log(error);
-            setError("Impossible de vous connecter. Vérifiez votre mot de passe ou email.");
-          })
-          
-      }
-
+            router.push('/');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+        setTimeout(()=>setError(false), 5000);
+        toast.error("Impossible de vous connecter. Vérifiez votre mot de passe ou votre e-mail.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          });
+      })
+  }
+  
+  
 
     return (
-        <div>
-            {/* Page Container */}
-            <div id="page-container" className="flex flex-col mx-auto w-full min-h-screen bg-gray-100">
-                {/* Page Content */}
-                <main id="page-content" className="flex flex-auto flex-col max-w-full">
-                    <div className="min-h-screen flex items-center justify-center relative overflow-hidden max-w-10xl mx-auto p-4 lg:p-8 w-full">
-                        {/* Patterns Background */}
-                        <div className="pattern-dots-md text-gray-300 absolute top-0 right-0 w-32 h-32 lg:w-48 lg:h-48 transform translate-x-16 translate-y-16" />
-                        <div className="pattern-dots-md text-gray-300 absolute bottom-0 left-0 w-32 h-32 lg:w-48 lg:h-48 transform -translate-x-16 -translate-y-16" />
-                        {/* END Patterns Background */}
-                        
-                        {/* Sign In Section */}
-                        <div className="py-6 lg:py-0 w-full md:w-8/12 lg:w-6/12 xl:w-4/12 relative">
-                            {/* Header */}
-                            <div className="mb-8 text-center">
-                                <h1 className="text-4xl font-bold inline-flex items-center mb-1 space-x-3">
-                                    <img src="/logo.png" />
-                                </h1>
-                                <p className="text-gray-500">
-                                    Pour vous connecter veuillez utiliser votre adresse e-mail devinci.
-                                </p>
-                            </div>
-                            {/* END Header */}
-                            
-      {error != null?<div className="p-4 md:p-5 rounded text-red-700 bg-red-100 mb-5">
-        <div className="flex items-center mb-3">
-          <svg className="hi-solid hi-x-circle inline-block w-5 h-5 mr-3 flex-none text-red-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
-          <h3 className="font-semibold">
-            {error}
-          </h3>
-        </div>
-      </div>:''}
-                            {/* Sign In Form */}
-                            <div className="flex flex-col rounded shadow-sm bg-white overflow-hidden">
-                                <div className="p-5 lg:p-6 flex-grow w-full">
-                                    <div className="sm:p-5 lg:px-10 lg:py-8">
-                                        <div className="space-y-6">
-                                            <div className="space-y-1">
-                                                <label  className="font-medium">E-mail</label>
-                                                <input onChange={(e) => setEmail(e.target.value)} className="block border border-gray-200 rounded px-5 py-3 leading-6 w-full focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50" type="email" placeholder="Entrer votre e-mail devinci" />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label  className="font-medium">Mot de passe</label>
-                                                <input onChange={(e) => setPassword(e.target.value)} className="block border border-gray-200 rounded px-5 py-3 leading-6 w-full focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50" type="password" placeholder="Mot de passe" />
-                                            </div>
-                                            <div className="space-y-3">
-                                                <button 
-                                                onClick={(e)=>login(e)}
-                                                type="submit" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none w-full px-4 py-3 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700">
-                                                    Se connecter
-                                                </button>
-                                                <button 
-                                                onClick={(e)=>router.push('/auth/register')}
-                                                type="submit" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none w-full px-4 py-3 leading-3 rounded border-indigo-700 bg-white-700 text-indigo-700 hover:text-indigo-500 hover:bg-gray-50 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700">
-                                                    S'inscrire
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                                <div class="py-4 px-5 lg:px-6 w-full text-sm text-center bg-gray-50">
-                                    <Link href="/"><a class="font-medium text-indigo-600 hover:text-indigo-400" >Revenir sur le site</a></Link>
-                                </div>
-                            </div>
-                            {/* END Sign In Form */}
-                        </div>
-                        {/* END Sign In Section */}
-                    </div>
-                </main>
-                {/* END Page Content */}
+      <div className="min-h-screen bg-white flex">
+        <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+          <div className="mx-auto w-full max-w-sm lg:w-96">
+            <div>
+              <img
+                className="h-12 w-auto"
+                src="/logo.png"
+                alt="Workflow"
+              />
+              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Connectez-vous à MyFab</h2>
             </div>
-            {/* END Page Container */}
+  
+            <div className="mt-8">
+              <div>
+                <div>
+                  <p className="text-sm font-medium text-gray-700">Se connecter avec</p>
+  
+                  <div className="mt-1">
+                    <div className="">
+                      <a
+                        href="#"
+                        className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                      >
+                        <span className="sr-only">Mon compte LéoID</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" className="h-5 w-5" />
+                        <p className="ml-2">Mon compte LéoID</p>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+  
+                <div className="mt-6 relative">
+                  <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">Ou continuer avec</span>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <div className="space-y-6">
+                  <div className="">
+                    <label htmlFor="email" className={`block text-sm font-medium ${error?'text-red-500':'text-gray-700'}`}>
+                      Adresse e-mail
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        onChange={(e)=>setEmail(e.target.value)}
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        className={`appearance-none block w-full px-3 py-2 border ${error?'border-red-300 ':'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      />
+                    </div>
+                  </div>
+  
+                  <div className="space-y-1">
+                    <label htmlFor="password" className={`block text-sm font-medium ${error?'text-red-500':'text-gray-700'}`}>
+                      Mot de passe
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        onChange={(e)=>setPassword(e.target.value)}
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="current-password"
+                        required
+                        className={`appearance-none block w-full px-3 py-2 border ${error?'border-red-300':'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} 
+                      />
+                    </div>
+                  </div>
+  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <input
+                        id="remember-me"
+                        name="remember-me"
+                        type="checkbox"
+                        onChange={()=>setChecked(!checked)}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                        Se souvenir de moi
+                      </label>
+                    </div>
+  
+                    <div className="text-sm">
+                      <Link href="/auth/forget"><a className="font-medium text-indigo-600 hover:text-indigo-500">
+                        Mot de passe oublié ?
+                      </a></Link>
+                      
+                    </div>
+                  </div>
+  
+                  <div>
+                    <button
+                      onClick={()=>login()}
+                      onSubmit={()=>login()}
+                      type="submit"
+                      className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Se connecter
+                    </button>
+                    {/*<p className="text-sm text-center text-gray-500 p-1">La connexion par adresse e-mail est réservé aux anciens comptes MyFab.</p>*/}
+                    <Link href="/auth/register">
+                    <p className="text-sm text-center text-gray-500 p-1 hover:cursor-pointer">S'inscrire</p>
+                    </Link>
+                    <Link href="/">
+                    <p className="text-sm text-center font-medium text-indigo-600 hover:text-indigo-500 mt-5 hover:cursor-pointer">Retourner sur MyFab</p>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    );
-
-
-}
+        <div className="hidden lg:block relative w-0 flex-1">
+          <img
+            className="absolute inset-0 h-full w-full object-cover"
+            src="https://media.lesechos.com/api/v1/images/view/5d9c7a8c3e45463dde1e2ad6/1280x720/0602009053500-web-tete.jpg"
+            alt=""
+          />
+        </div>
+      </div>
+    )
+  }
+  

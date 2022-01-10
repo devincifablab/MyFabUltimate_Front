@@ -16,7 +16,6 @@ function Navbar({router, user, role}) {
     const pn = router.pathname;
     const navigations = [
         {name: "Accueil", href: "/", current: pn =="/"},
-        {name: "Le FabLab", href: "/fablab", current: pn == "/fablab"},
         {name: "Blog", href: "/blog", current:pn.split('/')[1]=="blog"},
     ]
 

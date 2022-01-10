@@ -251,7 +251,7 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
         </div>
       </div>
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
+        <div className="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
           <button
             type="button"
             className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"

@@ -20,6 +20,7 @@ import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
 import NavbarAdmin from "../../../components/navbarAdmin";
+import { toast } from "react-toastify";
 
 
 function classNames(...classes) {
@@ -30,8 +31,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [open, setOpen] = useState(false);
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
-  const[response, setResponse] = useState(null);
-  const [responseError, setResponseError] = useState(false);
 
   const [fileValidate, setFileValidate] = useState(false);
   const [idFile, setIdFile] = useState(null);
@@ -100,11 +99,25 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         'dvflCookie': cookie
       },
     }).then((response) => {
-      setResponse(response);
-      setResponseError(false);
+      toast.success("Votre commentaire a été envoyé !", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }).catch((e)=>{
-      setResponse(e);
-      setResponseError(true);
+      toast.error("Une erreur est survenue, veuillez réessayer.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     })
     document.getElementById('status').scrollIntoView();
     router.replace(router.asPath);
@@ -231,6 +244,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
       }
     }
     const cookie = getCookie("jwt");
+    console.log(typeChangeValue);
 
     switch (typeChange){
       case "step":
@@ -311,19 +325,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
           <main className="col-span-9">
 
-             {/* Success Alert */}
-      {response != null?<div className={`p-4 mb-5 md:p-5 rounded ${responseError?'text-red-700':'text-green-700'} ${responseError?'bg-red-100':'bg-green-100'}`}>
-        <div className="flex items-center mb-2">
-{responseError?          <ExclamationCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-red-500`}/>:
-          <CheckCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-green-500`}/>
-}
-          <h3 className="font-semibold">{responseError?'Une erreur est survenue.':'Votre commentaire a été envoyé !'}</h3>
-        </div>
-        <p className="ml-8">
-        {responseError?"Votre commentaire n'a pas pu être envoyé. Si le problème persiste, merci de contacter directement le FabLab.":"Vous recevrez une réponse dès que notre équipe aura traité votre demande."}
-        </p>
-      </div>:''}
-      {/* END Success Alert */}
+             
 
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
 
@@ -382,6 +384,15 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                   {({ active }) => (
                     <a
                       onClick={()=>{setOpenChange(true);
+                        if(item.function == "type"){
+                          setTypeChangeValue("PIX 1");
+                        }
+                        if(item.function == "step"){
+                          setTypeChangeValue("Etape 0");
+                        }
+                        if(item.function == "priority"){
+                          setTypeChangeValue("Faible");
+                        }
                         setTypeChange(item.function);}}
                       className={classNames(
                         active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

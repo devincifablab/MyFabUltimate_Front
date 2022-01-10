@@ -9,13 +9,16 @@ import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
 import 'react-markdown-editor-lite/lib/index.css';
 import 'moment/locale/fr'
+import '../styles/global.css'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
-// Store Strapi Global object in context
 export const GlobalContext = createContext({});
 
 const MyApp = ({ Component, pageProps }) => {
@@ -26,7 +29,9 @@ const MyApp = ({ Component, pageProps }) => {
         <link rel="shortcut icon" href="" />
       </Head>
       <GlobalContext.Provider value={global}>
-        <Component {...pageProps} />
+        <Component {...pageProps}>
+        </Component>
+        <ToastContainer />
       </GlobalContext.Provider>
     </>
   );

@@ -7,6 +7,13 @@ import { getCookie } from "cookies-next";
 import Link from 'next/link'
 import { setZero } from "../../lib/function";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
+import { Fragment } from 'react'
+import { Transition } from '@headlessui/react'
+import { CheckCircleIcon } from '@heroicons/react/outline'
+import { XIcon } from '@heroicons/react/solid'
+import { toast } from 'react-toastify';
+import router from "next/router";
+
 
 const percents = (value,total) => Math.round(value/total)*100
 
@@ -23,6 +30,7 @@ export default function NewPanel({user, role}) {
   const [percent, setPercent] = useState(0);
   const [statusUpload, setStatusUpload] = useState(null);
   const [id, setId] = useState(0);
+  const [notification, setNotification] = useState('');
 
   const onDragEnter = (event) => {
     setStatus(true);
@@ -84,7 +92,17 @@ export default function NewPanel({user, role}) {
         'dvflCookie': jwt
       },
       onUploadProgress: (progress) => setPercent(percents(progress.loaded,progress.total))
-    });
+    }).catch(e=>{
+      toast.error("Une erreur est survenue, veuillez vérifier le formulaire ou actualiser la page.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    })
     setStatusUpload(upload_res);
     setId(upload_res.data.id);
     document.getElementById('status').scrollIntoView();
@@ -92,6 +110,16 @@ export default function NewPanel({user, role}) {
     setDescription('Aucune déscription fournie.')
     setType('PIX 1');
     setGroup(null);
+    toast.success('Le ticket #'+setZero(upload_res.data.id)+" a été créé !", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      });
+      router.push('/panel/'+upload_res.data.id)
   }
 
 
@@ -103,17 +131,6 @@ export default function NewPanel({user, role}) {
   return (
     <LayoutPanel user={user} role={role}>
       <div className="px-10 py-10" id="status">
-        {/* Success Alert */}
-      {(statusUpload != null && statusUpload.status == 200)?<div className="p-4 md:p-5 rounded text-green-700 bg-green-100 mb-5">
-        <div className="flex items-center mb-2">
-          <svg className="hi-solid hi-check-circle inline-block w-5 h-5 mr-3 flex-none text-green-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-          <h3 className="font-semibold">Votre ticket a été envoyé avec succès !</h3>
-        </div>
-        <p className="ml-8">
-          Votre ticket porte le numéro <strong>#{setZero(id)}</strong>. Vous pouvez y accéder en cliquant <Link href={"/panel/"+id}><a className="underline text-green-600 hover:text-green-400" >ici</a></Link>.
-        </p>
-      </div>:''}
-      {/* END Success Alert */}
         <div>
           <div className="md:grid md:grid-cols-3 md:gap-6">
             <div className="md:col-span-1">
@@ -226,6 +243,7 @@ export default function NewPanel({user, role}) {
                                   id="file-upload"
                                   name="file-upload"
                                   type="file"
+                                  accept=".stl" 
                                   className="sr-only"
                                 />
                               </label>
