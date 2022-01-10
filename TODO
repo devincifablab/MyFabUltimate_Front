@@ -1,8 +1,33 @@
-- récupération de mot de passe
-- Faire des alerts un peu partout pour confirmer les trucs, etc..
-- Finir la page settings
 - Corriger les problèmes de fetch d'api trop nombreux --> centraliser tout
-- Faire un fichier de config
-- Vérif quand cookie expiré
-- Set la priorité d'un ticket
+- Idem pour les layout et tout
 - Finir la partie locker
+- Terminer la page settings
+- Cacher l'ancienne page de connexion
+- Une super route pour avoir tous les blob des tickets pas traités genre:
+{
+  {
+    id: 2,
+    files:{
+      [url: ...],
+      [url: ...]
+    },
+    step: 3
+  },
+  {
+    id: 3,
+    files:{
+      [url: ...]
+    },
+    step: 1
+  },
+  ........
+}
+
+- et quand on a terminé la TODO list, on upgrade tailwind vers la v3 --> https://tailwindcss.com/docs/upgrade-guide
+
+Au niveau de l'API:
+- Il me manque le système de rester password -> la page est là mais jsp si ça marche
+- Pareil système pour valider le compte -> il n'y a pas de page pour valider pour l'instant
+- Changer la priorité du ticket
+- Changer le rôle 
+- Une route pour supprimer le ticket

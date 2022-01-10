@@ -15,6 +15,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 
 function classNames(...classes) {
@@ -25,8 +26,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [open, setOpen] = useState(false);
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
-  const[response, setResponse] = useState(null);
-  const [responseError, setResponseError] = useState(false);
 
   const router = useRouter();
 
@@ -75,11 +74,25 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         'dvflCookie': cookie
       },
     }).then((response) => {
-      setResponse(response);
-      setResponseError(false);
+      toast.success("Votre commentaire a été envoyé !", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     }).catch((e)=>{
-      setResponse(e);
-      setResponseError(true);
+      toast.error("Une erreur est survenue, veuillez réessayer.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
     })
     document.getElementById('status').scrollIntoView();
     router.replace(router.asPath);
@@ -112,21 +125,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         <div className="mx-auto sm:px-6 lg:px-8 lg:gap-8">
 
           <main className="col-span-9">
-
-             {/* Success Alert */}
-      {response != null?<div className={`p-4 mb-5 md:p-5 rounded ${responseError?'text-red-700':'text-green-700'} ${responseError?'bg-red-100':'bg-green-100'}`}>
-        <div className="flex items-center mb-2">
-{responseError?          <ExclamationCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-red-500`}/>:
-          <CheckCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-green-500`}/>
-}
-          <h3 className="font-semibold">{responseError?'Une erreur est survenue.':'Votre commentaire a été envoyé !'}</h3>
-        </div>
-        <p className="ml-8">
-        {responseError?"Votre commentaire n'a pas pu être envoyé. Si le problème persiste, merci de contacter directement le FabLab.":"Vous recevrez une réponse dès que notre équipe aura traité votre demande."}
-        </p>
-      </div>:''}
-      {/* END Success Alert */}
-
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
 
 

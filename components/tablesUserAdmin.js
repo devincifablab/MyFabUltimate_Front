@@ -8,7 +8,7 @@ const colors = {
   "f30b0b": "text-white bg-gradient-to-r from-yellow-400 to-red-500",
 };
 
-export default function UserTablesAdmin({user}) {
+export default function UserTablesAdmin({user, id}) {
 
   return (
     <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white">
@@ -58,6 +58,7 @@ export default function UserTablesAdmin({user}) {
                 </td>
                 <td className="p-3 text-center space-x-2">
                   <button
+                    onClick={()=>{id(r.id)}}
                     type="button"
                     className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-2 py-1 leading-5 text-sm rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none"
                   >

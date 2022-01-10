@@ -1,21 +1,14 @@
 import Link from "next/link";
-import { Fragment, useContext, useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   ChevronRightIcon,
   DotsVerticalIcon,
-  TrashIcon,
-  PlusIcon,
-  CursorClickIcon,
-  ExclamationCircleIcon,
-  CheckIcon,
-  ThumbUpIcon,
-  CubeIcon
-} from "@heroicons/react/solid";
+  TrashIcon} from "@heroicons/react/solid";
 import 'moment/locale/fr'
 
 import LayoutPanel from "../../components/layoutPanel";
-import { fetchAPIAuth, getTimeline, parseCookies } from "../../lib/api";
+import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import { useRouter } from 'next/router'
 import Moment from "react-moment";
 import { getColor, getState, setZero } from "../../lib/function";
@@ -65,13 +58,13 @@ export default function NewPanel({ data, user, ticket, role }) {
   const deleteTicket = async (id) => {
     await axios({
       method: 'DELETE',
-      url: 'https://api.myfab.eliasto.me/api/tickets/' + id,
+      url: process.env.API+'/api/tickets/' + id,
       data,
       headers: {
-        'Authorization': `Bearer ${getCookie('jwt')}`
+        'dvflCookie': `${getCookie('jwt')}`
       },
     });
-    router.push('/panel')
+    router.replace(router.asPath)
   }
 
 
@@ -145,13 +138,22 @@ export default function NewPanel({ data, user, ticket, role }) {
                             className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
                           >
                             <span className="flex items-center truncate space-x-3">
-                              <span
+                            {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
+                                )}></span>
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "relative inline-flex rounded-full h-3 w-3"
+                                )}></span>
+                              </span> : <div
                                 className={classNames(
-                                  'bg-gray-500',
-                                  "w-2.5 h-2.5 flex-shrink-0 rounded-full"
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500':'',
+                                  "flex-shrink-0 w-2.5 h-2.5 rounded-full"
                                 )}
                                 aria-hidden="true"
-                              />
+                              />}
                               <span className="font-medium truncate text-sm leading-6">
                                 <Link href={`/panel/${project.id}`}>
                                   {"#" + setZero(project.id)}
@@ -323,9 +325,6 @@ export default function NewPanel({ data, user, ticket, role }) {
   } else {
     return ('');
   }
-
-
-
 }
 
 export async function getServerSideProps({ req }) {

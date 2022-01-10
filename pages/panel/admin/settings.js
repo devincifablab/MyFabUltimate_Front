@@ -1,5 +1,5 @@
 import { Disclosure } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
+import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
@@ -7,8 +7,18 @@ import NavbarAdmin from '../../../components/navbarAdmin'
 import TablesAdmin from '../../../components/tablesAdmin'
 import UserTablesAdmin from '../../../components/tablesUserAdmin'
 import { fetchAPIAuth, parseCookies } from '../../../lib/api'
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { CheckIcon } from '@heroicons/react/outline'
+import axios from 'axios'
+import { getCookie } from 'cookies-next'
+import { setZero } from '../../../lib/function'
 
 export default function Settings({ user, role, me }) {
+    const [open, setOpen] = useState(false);
+    const [data, setData] = useState('');
+    const [roleData, setRoleData] = useState(null);
+    const [password, setPassword] = useState(null);
 
     useEffect(function () {
         if (role.filter(r => r.id == 1 || r.id == 2).length < 1) {
@@ -31,38 +41,181 @@ export default function Settings({ user, role, me }) {
         console.log(result);
     }
 
+    async function getUser(id) {
+        await axios({
+            method: 'GET',
+            url: process.env.API + '/api/user/' + id,
+            headers: {
+                'dvflCookie': getCookie('jwt')
+            },
+        }).then((response) => {
+            setData(response.data);
+            setOpen(true);
+        });
+    }
+
+
 
     return (
-        <LayoutPanel user={me} role={role}>
-            <NavbarAdmin role={role} />
+        <>
+            <LayoutPanel user={me} role={role}>
+                <NavbarAdmin role={role} />
+                <section className="">
+                    <div className="container px-4 mx-auto">
+                        <div className="flex flex-wrap -mx-4">
 
-            <section className="">
-                <div className="container px-4 mx-auto">
-                    <div className="flex flex-wrap -mx-4">
-
-                        {/* Tickets à traiter */}
-                        <div className="w-full md:px-6 mt-5 mb-8 lg:mb-0">
-                            <div className="flex flex-col rounded shadow-sm bg-white overflow-hidden">
-                                <div className="mb-3 grow">
-                                    <div className="space-x-2">
-                                        <div className="relative grow">
-                                            <div className="absolute inset-y-0 left-0 w-10 my-px ml-px flex items-center justify-center pointer-events-none rounded-l text-gray-500">
-                                                <svg className="hi-solid hi-search inline-block w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+                            {/* Tickets à traiter */}
+                            <div className="w-full md:px-6 mt-5 mb-8 lg:mb-0">
+                                <div className="flex flex-col rounded shadow-sm bg-white overflow-hidden">
+                                    <div className="mb-3 grow">
+                                        <div className="space-x-2">
+                                            <div className="relative grow">
+                                                <div className="absolute inset-y-0 left-0 w-10 my-px ml-px flex items-center justify-center pointer-events-none rounded-l text-gray-500">
+                                                    <svg className="hi-solid hi-search inline-block w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+                                                </div>
+                                                <input
+                                                    onChange={(e) => update(e.target.value)}
+                                                    className="block border placeholder-gray-400 pr-3 py-2 leading-6 w-full rounded border-gray-200 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 pl-10" type="text" placeholder="Rechercher un étudiant" />
                                             </div>
-                                            <input
-                                                onChange={(e) => update(e.target.value)}
-                                                className="block border placeholder-gray-400 pr-3 py-2 leading-6 w-full rounded border-gray-200 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 pl-10" type="text" placeholder="Rechercher un étudiant" />
                                         </div>
                                     </div>
                                 </div>
+                                <UserTablesAdmin user={result} id={getUser} />
                             </div>
-                            <UserTablesAdmin user={result} />
-                        </div>
 
+                        </div>
                     </div>
-                </div>
-            </section>
-        </LayoutPanel>
+                </section>
+                <Transition.Root show={open} as={Fragment}>
+                    <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
+                        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                            </Transition.Child>
+
+                            {/* This element is to trick the browser into centering the modal contents. */}
+                            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+                                &#8203;
+                            </span>
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            >
+                                <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full sm:p-6">
+                                    <div>
+                                        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                                            <InformationCircleIcon className="h-6 w-6 text-blue-600" aria-hidden="true" />
+                                        </div>
+                                        <div className="mt-3 text-center sm:mt-5">
+                                            <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                                                <p>Utilisateur <strong>#{setZero(data.id)}</strong>: {data.firstName} {data.lastName}</p>
+                                            </Dialog.Title>
+                                            <div className="mt-2">
+                                                <form className="space-y-8 divide-y divide-gray-200">
+                                                    <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+
+
+                                                        <div className="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+
+                                                            <div className="space-y-6 sm:space-y-5">
+                                                                <div className="sm:grid sm:grid-cols-3  sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                    <label className="block text-sm font-medium text-gray-700 sm:pt-1">
+                                                                        Prénom
+                                                                    </label>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                                                        <p className="text-left self-end justify-end">{data.firstName}</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="sm:grid sm:grid-cols-3  sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                    <label className="block text-sm font-medium text-gray-700 sm:pt-1">
+                                                                        Nom
+                                                                    </label>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                                                        <p className="text-left self-end justify-end">{data.lastName}</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="sm:grid sm:grid-cols-3  sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                    <label className="block text-sm font-medium text-gray-700 sm:pt-1">
+                                                                        E-mail
+                                                                    </label>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                                                        <p className="text-left self-end justify-end">{data.email}</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                    <label htmlFor="role" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                                                                        Rôle
+                                                                    </label>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                                                        <select
+                                                                            id="role"
+                                                                            name="role"
+                                                                            className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                                                        >
+                                                                            <option>Aucun rôle</option>
+                                                                            <option>Agent</option>
+                                                                            <option>Modérateur</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                    <label htmlFor="zip" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                                                                        Mot de passe
+                                                                    </label>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                                                                        <input
+                                                                            type="text"
+                                                                            name="zip"
+                                                                            id="zip"
+                                                                            autoComplete="postal-code"
+                                                                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-5 sm:mt-6">
+                                        <button
+                                            type="button"
+                                            className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                                            onClick={() => {
+                                                setOpen(false);
+                                            }}
+                                        >
+                                            Valider les changements
+                                        </button>
+                                    </div>
+                                </div>
+                            </Transition.Child>
+                        </div>
+                    </Dialog>
+                </Transition.Root>
+            </LayoutPanel>
+        </>
 
     )
 }
