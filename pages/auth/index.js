@@ -32,7 +32,17 @@ export default function Auth() {
               setCookies('jwt', response.data.dvflCookie);
             }
             router.push('/');
-        }
+        }if(response.status == 204){
+          toast.warning("Votre adresse e-mail n'est pas validée. Veuillez vérifier vos mails.", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            });
+      }
       })
       .catch((error) => {
         console.log(error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { getCookie, setCookies } from "cookies-next";
-import { postAPI } from "../../lib/api";
+import { postAPI } from "../../../lib/api";
 import axios from "axios";
 import router from "next/router";
 import { toast } from "react-toastify";
