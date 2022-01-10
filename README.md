@@ -3,6 +3,7 @@ Bonjour ! Vous vous trouvez actuellement sur le respository de MyFab. Le site es
 ### Installation:
  1. Cloner le repo
  2. Avoir npm et node d'installer sur votre ordinateur --> google
- 3. Exécutez dans le dossier du répertoire `npm install`
- 4. Et voilà c'est prêt ! Il vous suffit d'exécuter ensuite `npm run dev` pour lancer le site.
+ 3. Renommer le fichier "renameme.env.local" en ".env.local". Vous pourrez par la suite configurer l'adresse de l'API.
+ 4. Exécutez dans le dossier du répertoire `npm install`
+ 5. Et voilà c'est prêt ! Il vous suffit d'exécuter ensuite `npm run dev` pour lancer le site.
  

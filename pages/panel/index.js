@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Fragment, useContext, useEffect } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   ChevronRightIcon,
   DotsVerticalIcon,
@@ -12,20 +12,22 @@ import {
   ThumbUpIcon,
   CubeIcon
 } from "@heroicons/react/solid";
+import 'moment/locale/fr'
 
 import LayoutPanel from "../../components/layoutPanel";
 import { fetchAPIAuth, getTimeline, parseCookies } from "../../lib/api";
 import { useRouter } from 'next/router'
 import Moment from "react-moment";
-import { setZero } from "../../lib/function";
+import { getColor, getState, setZero } from "../../lib/function";
 import { getCookie } from "cookies-next";
 import axios from "axios";
+import { ChevronDownIcon } from "@heroicons/react/outline";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NewPanel({ data, user }) {
+export default function NewPanel({ data, user, ticket, role }) {
   const labels = [
     { name: "En attente de validation du fichier STL", color: "bg-gray-400" },
     { name: "Impression initiée", color: "bg-yellow-400" },
@@ -33,142 +35,130 @@ export default function NewPanel({ data, user }) {
     { name: "Nouveau commentaire", color: "bg-blue-500" },
     { name: "Ticket fermé", color: "bg-red-500" },
   ];
- 
+
+  const faqs = [
+    {
+      question: "Le fichier STL ne s'ouvre pas.",
+      answer:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+    },
+    {
+      question: "La demande n'est pas claire, que dois-je faire ?",
+      answer:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+    },
+    {
+      question: "J'ai validé une impression alors que j'aurais dû la refuser.",
+      answer:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+    },
+    // More questions...
+  ]
+
   const router = useRouter();
   useEffect(function () {
-    if(user.error != undefined){
+    if (user.error != undefined) {
       router.push('/404');
     }
-}, []);
+  }, []);
 
-const deleteTicket = async (id) =>{
-  await axios({
-    method: 'DELETE',
-    url: 'https://api.myfab.eliasto.me/api/tickets/'+id,
-    data,
-    headers: {
-      'Authorization': `Bearer ${getCookie('jwt')}`
-    },
-  });
-  router.push('/panel')
-}
+  const deleteTicket = async (id) => {
+    await axios({
+      method: 'DELETE',
+      url: 'https://api.myfab.eliasto.me/api/tickets/' + id,
+      data,
+      headers: {
+        'Authorization': `Bearer ${getCookie('jwt')}`
+      },
+    });
+    router.push('/panel')
+  }
 
 
-    if(user.error == undefined){
+  if (user.error == undefined) {
 
-      const timeline = getTimeline(user.tickets);
-      return (
-        <LayoutPanel user={user}>
-          {/* Dernières activités */}
-          <div className="py-6 px-3">
-            <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
-              <div className="col-span-3">
-                <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate mb-5">
-                  Vos dernières activités
-                </h1>
-                <nav
-                  aria-label="Sidebar"
-                  className="sticky top-6 divide-y divide-gray-300"
-                >
-                  <div className="flow-root">
-                    <ul role="list" className="-mb-8">
-                      {timeline.length >0?timeline.slice(0).reverse().map((event, eventIdx) => (
-                        <li key={event.id}>
-                          <div className="relative pb-8">
-                            {eventIdx !== timeline.length - 1 ? (
-                              <span
-                                className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                                aria-hidden="true"
-                              />
-                            ) : null}
-                            <div className="relative flex space-x-3 place-items-center text-left">
-
-                              <div>
-                              <span
-                              className={classNames(
-                                event.color,
-                                "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
-                              )}
-                            >
-                              {(event.icon == "ThumbUpIcon") ? <ThumbUpIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CursorClickIcon") ? <CursorClickIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CheckIcon") ? <CheckIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CubeIcon") ? <CubeIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : ''}
-                            </span>
-                              </div>
-                              <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4 place-items-center">
-                                <div>
-                                  <p className="text-sm text-gray-500">
-                                    {event.name}{" "}
-                                    <Link
-                                      href={`/panel/${event.ticket}`}
-                                    >
-                                      <a className="font-medium text-gray-900">
-                                        #{setZero(event.ticket)}
-                                      </a>
-                                    </Link>
-                                  </p>
-                                </div>
-                                <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                                <Moment format="Do MMM" locale="fr">
-                                {event.date}
-                              </Moment>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                      )):"Il n'y a aucune activité."}
-                    </ul>
-                  </div>
-                </nav>
-              </div>
-              <hr className="mb-5 mt-5 block lg:hidden" />
-              <main className="col-span-9">
-                <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-                  Vos demandes d'impressions 3D
-                </h1>
-                <div className="block mt-5">
-                  <div className="sm:hidden">
-                    <div className="px-4 sm:px-6">
-                      <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
-                        Ticket
-                      </h2>
+    return (
+      <LayoutPanel user={user} role={role}>
+        {/* Dernières activités */}
+        <div className="py-6 px-3">
+          <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
+            <div className="col-span-3">
+              <nav
+                aria-label="Sidebar"
+                className="sticky top-6 divide-y divide-gray-300"
+              >
+                {/* FAQ */}
+                <div className="w-full">
+                  <div className="relative pb-6 bg-white rounded">
+                    <div className="">
+                      <h3 className="text-xl font-bold" data-config-id="header2">FAQ</h3>
+                      <p className="text-sm text-gray-500" data-config-id="desc02">Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.</p>
                     </div>
-                    <ul
-                      role="list"
-                      className="mt-3 border-t border-gray-200 divide-y divide-gray-100"
-                    >
-                      {user.tickets.slice(0).reverse().map((project) => (
-                        <li key={project.id}>
-                          <Link href={"/panel/"+project.id}>
+                    <dl className="divide-y divide-gray-200">
+                      {faqs.map((faq) => (
+                        <Disclosure as="div" key={faq.question} className="pt-6">
+                          {({ open }) => (
+                            <>
+                              <dt className="text-sm">
+                                <Disclosure.Button className="text-left w-full flex justify-between items-start text-gray-400">
+                                  <span className="font-medium text-gray-900">{faq.question}</span>
+                                  <span className="ml-6 h-7 flex items-center">
+                                    <ChevronDownIcon
+                                      className={classNames(open ? '-rotate-180' : 'rotate-0', 'h-6 w-6 transform')}
+                                      aria-hidden="true"
+                                    />
+                                  </span>
+                                </Disclosure.Button>
+                              </dt>
+                              <Disclosure.Panel as="dd" className="mt-2 pr-12">
+                                <p className="text-sm text-gray-500">{faq.answer}</p>
+                              </Disclosure.Panel>
+                            </>
+                          )}
+                        </Disclosure>
+                      ))}
+                    </dl>
+                  </div>
+                </div>
+              </nav>
+            </div>
+            <hr className="mb-5 mt-5 block lg:hidden" />
+            <main className="col-span-9">
+              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
+                Vos demandes d'impressions 3D
+              </h1>
+              <div className="block mt-5">
+                <div className="sm:hidden">
+                  <div className="px-4 sm:px-6">
+                    <h2 className="text-gray-500 text-xs font-medium uppercase tracking-wide">
+                      Ticket
+                    </h2>
+                  </div>
+                  <ul
+                    role="list"
+                    className="mt-3 border-t border-gray-200 divide-y divide-gray-100"
+                  >
+                    {ticket.map((project) => (
+                      <li key={project.id}>
+                        <Link href={"/panel/" + project.id}>
                           <a
                             className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
                           >
                             <span className="flex items-center truncate space-x-3">
                               <span
                                 className={classNames(
-                                  project.timeline[project.timeline.length-1] != null ?project.timeline[project.timeline.length-1].color:'bg-gray-500',
+                                  'bg-gray-500',
                                   "w-2.5 h-2.5 flex-shrink-0 rounded-full"
                                 )}
                                 aria-hidden="true"
                               />
                               <span className="font-medium truncate text-sm leading-6">
-                              <Link href={`/panel/${project.id}`}>
-                                    {"#"+setZero(project.id)}
-                                    </Link>{" "}
+                                <Link href={`/panel/${project.id}`}>
+                                  {"#" + setZero(project.id)}
+                                </Link>{" "}
                                 <span className="truncate font-normal text-gray-500">
                                   {" "}
-                                  {project.type}
+                                  {project.projectType}
                                 </span>
                               </span>
                             </span>
@@ -177,97 +167,110 @@ const deleteTicket = async (id) =>{
                               aria-hidden="true"
                             />
                           </a>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-    
-                  {/* big projects */}
-                  <div className="align-middle inline-block min-w-full border-b border-gray-200 hidden sm:block">
-                    <table className="min-w-full">
-                      <thead>
-                        <tr className="border-t border-gray-200">
-                          <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <span className="lg:pl-2">Ticket</span>
-                          </th>
-                          <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            <span className="lg:pl-2">Dernier état</span>
-                          </th>
-                          <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Dernière mise à jour
-                          </th>
-                          <th className="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" />
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-100">
-                        {user.tickets.slice(0).reverse().map((project) => (
-                          <tr key={project.id}>
-                            <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
-                              <div className="flex items-center space-x-3 lg:pl-2">
-                                <div
-                                  className={classNames(
-                                    project.timeline[project.timeline.length-1] != null ?project.timeline[project.timeline.length-1].color:'bg-gray-500',
-                                    "flex-shrink-0 w-2.5 h-2.5 rounded-full"
-                                  )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* big projects */}
+                <div className="align-middle inline-block min-w-full border-b border-gray-200 hidden sm:block">
+                  <table className="min-w-full">
+                    <thead>
+                      <tr className="border-t border-gray-200">
+                        <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <span className="lg:pl-2">Ticket</span>
+                        </th>
+                        <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <span className="lg:pl-2">Dernier état</span>
+                        </th>
+                        <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Dernière mise à jour
+                        </th>
+                        <th className="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" />
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {ticket.map((project) => (
+                        <tr key={project.id} onClick={() => router.push('/panel/' + project.id)} className="hover:bg-gray-50">
+                          <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
+                            <div className="flex items-center space-x-3 lg:pl-2">
+
+                              {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
+                                )}></span>
+                                <span className={classNames(
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  "relative inline-flex rounded-full h-3 w-3"
+                                )}></span>
+                              </span> : <div
+                                className={classNames(
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500':'',
+                                  "flex-shrink-0 w-2.5 h-2.5 rounded-full"
+                                )}
+                                aria-hidden="true"
+                              />}
+
+                              <a className="truncate hover:text-gray-600">
+                                <span>
+                                  <Link href={`/panel/${project.id}`}>
+                                    {"#" + setZero(project.id)}
+                                  </Link>
+                                  {" "}
+                                  <span className="text-gray-500 font-normal">
+                                    {" "}
+                                    {project.projectType}
+                                  </span>
+                                </span>
+                              </a>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <div className="flex items-center space-x-3 lg:pl-2">
+                              <a className="truncate hover:text-gray-600">
+                                <span>
+
+                                  {getState(project.step, project.waitingAnswer)}
+                                </span>
+
+                              </a>
+                            </div>
+                          </td>
+                          <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
+                            <Moment format="Do MMM YYYY à HH:mm" locale="fr">
+                              {project.modificationDate}
+                            </Moment>
+                          </td>
+                          <td className="pr-6">
+                            <Menu
+                              as="div"
+                              className="relative flex justify-end items-center"
+                            >
+                              <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                                <span className="sr-only">Open options</span>
+                                <DotsVerticalIcon
+                                  className="w-5 h-5"
                                   aria-hidden="true"
                                 />
-                                <a className="truncate hover:text-gray-600">
-                                  <span>
-                                    <Link href={`/panel/${project.id}`}>
-                                    {"#"+setZero(project.id)}
-                                    </Link>
-                                    {" "}
-                                    <span className="text-gray-500 font-normal">
-                                      {" "}
-                                      {project.type}
-                                    </span>
-                                  </span>
-                                </a>
-                              </div>
-                            </td>
-                            <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                              <div className="flex items-center space-x-3 lg:pl-2">
-                                <a className="truncate hover:text-gray-600">
-                                  <span>
-                                    {project.timeline[project.timeline.length-1] == null?'En attente de la validation du fichier STL':project.timeline[project.timeline.length-1].name}
-                                  </span>
-                                </a>
-                              </div>
-                            </td>
-                            <td className="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">
-                            <Moment format="Do MMM YYYY HH:MM" locale="fr">
-                            {project.updatedAt}
-            </Moment>
-                            </td>
-                            <td className="pr-6">
-                              <Menu
-                                as="div"
-                                className="relative flex justify-end items-center"
+                              </Menu.Button>
+                              <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
                               >
-                                <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
-                                  <span className="sr-only">Open options</span>
-                                  <DotsVerticalIcon
-                                    className="w-5 h-5"
-                                    aria-hidden="true"
-                                  />
-                                </Menu.Button>
-                                <Transition
-                                  as={Fragment}
-                                  enter="transition ease-out duration-100"
-                                  enterFrom="transform opacity-0 scale-95"
-                                  enterTo="transform opacity-100 scale-100"
-                                  leave="transition ease-in duration-75"
-                                  leaveFrom="transform opacity-100 scale-100"
-                                  leaveTo="transform opacity-0 scale-95"
-                                >
-                                  <Menu.Items className="mx-3 origin-top-right absolute right-7 top-0 w-48 mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
-                                    <div className="py-1">
-                                      <Menu.Item>
-                                        {({ active }) => (
-                                          <button
-                                          onClick={()=>deleteTicket(project.id)}
-                                          >
+                                <Menu.Items className="mx-3 origin-top-right absolute right-7 top-0 w-48 mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                                  <div className="py-1">
+                                    <Menu.Item>
+                                      {({ active }) => (
+                                        <button
+                                          onClick={() => deleteTicket(project.id)}
+                                        >
                                           <a
                                             href="#"
                                             className={classNames(
@@ -283,21 +286,21 @@ const deleteTicket = async (id) =>{
                                             />
                                             Supprimer
                                           </a>
-                                          </button>
-                                        )}
-                                      </Menu.Item>
-                                    </div>
-                                  </Menu.Items>
-                                </Transition>
-                              </Menu>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                                        </button>
+                                      )}
+                                    </Menu.Item>
+                                  </div>
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <h2 className="text-sm font-medium leading-6 text-gray-900 sm:truncate">
+              </div>
+              {/*<h2 className="text-sm font-medium leading-6 text-gray-900 sm:truncate">
                   Légende:
                 </h2>
                 {labels.map((label) => (
@@ -311,25 +314,28 @@ const deleteTicket = async (id) =>{
                     />
                     <span className="text-gray-500 font-normal">{label.name} </span>
                   </div>
-                ))}
-              </main>
-            </div>
+                ))}*/}
+            </main>
           </div>
-        </LayoutPanel>
-      )
-    } else {
-      return('');
-    }
+        </div>
+      </LayoutPanel>
+    )
+  } else {
+    return ('');
+  }
 
 
-  
+
 }
 
-export async function getServerSideProps({req}) {
+export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
-  var user = await fetchAPIAuth("/api/users/me/?populate=*", cookies.jwt);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const ticket = await fetchAPIAuth("/ticket/me", cookies.jwt);
+  const role = await fetchAPIAuth("/user/role", cookies.jwt);
+
 
   return {
-    props: { user }, // will be passed to the page component as props
+    props: { user, ticket, role }, // will be passed to the page component as props
   }
 }

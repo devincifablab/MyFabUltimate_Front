@@ -12,8 +12,7 @@ function classNames(...classes) {
 }
 
 
-function Navbar({router, user}) {
-  
+function Navbar({router, user, role}) {
     const pn = router.pathname;
     const navigations = [
         {name: "Accueil", href: "/", current: pn =="/"},
@@ -48,7 +47,7 @@ function Navbar({router, user}) {
                 />
                 <img
                   className="hidden lg:block h-8 w-auto"
-                  src="https://www.devinci.fr/wordpress/wp-content/uploads/2014/10/devincifablab2.jpg"
+                  src="/logo.png"
                   alt="Fablab"
                 />
               </div>
@@ -74,7 +73,7 @@ function Navbar({router, user}) {
                  * Ici on vérifie si l'utilisateur est connecté.
                  */}
                 
-                {isLogged?<Link href="/panel"> 
+                {isLogged?<Link href={role.length>0?"/panel/admin":"/panel"}> 
                 <button
                   type="button"
                   className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -100,8 +99,8 @@ function Navbar({router, user}) {
   <div>
     <Menu.Button className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
       <span className="sr-only">Open user menu</span>
-       <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
-      {user == null?"ET":user.name[0].toString().toUpperCase()+" "+user.surname[0].toString().toUpperCase()}
+       <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 text-lg">
+      {user == null?"ET":user.firstName.toString().toUpperCase()[0]+""+user.lastName.toString().toUpperCase()[0]}
     </div>
     </Menu.Button>
   </div>
@@ -161,12 +160,12 @@ function Navbar({router, user}) {
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
-                  src={user == null?"https://eu.ui-avatars.com/api/?name=John Doe":"https://eu.ui-avatars.com/api/?name="+user.name+" "+user.surname}
+                  src={user == null?"https://eu.ui-avatars.com/api/?name=John Doe":"https://eu.ui-avatars.com/api/?name="+user.firstName+" "+user.lastName}
                   alt=""
                 />
               </div>
               <div className="ml-3">
-                <div className="text-base font-medium text-gray-800">{user!=null?user.name+" "+user.surname:''}</div>
+                <div className="text-base font-medium text-gray-800">{user!=null?user.firstName+" "+user.lastName:''}</div>
                 <div className="text-sm font-medium text-gray-500">{user!=null?user.email:''}</div>
               </div>
             </div>

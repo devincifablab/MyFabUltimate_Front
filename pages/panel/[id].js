@@ -9,150 +9,131 @@ import {
 import Steps from "../../components/steps";
 import { Fragment, useContext, useEffect, useState } from "react";
 import Moment from "react-moment";
-import { InformationCircleIcon } from "@heroicons/react/solid";
+import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/solid";
 import STLViewer from 'stl-viewer'
 import { Dialog, Transition } from "@headlessui/react";
+import { getCookie } from "cookies-next";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const GestionTicket = ({ params, user }) => {
+const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [open, setOpen] = useState(false);
   const [urlStl, setUrlStl] = useState('');
+  const [comment, setComment] = useState('');
+  const[response, setResponse] = useState(null);
+  const [responseError, setResponseError] = useState(false);
 
-  const ticket = user.tickets.find(r => r.id == params.id);
+  const router = useRouter();
+
   const steps = [
     { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
     { id: "Etape 2", name: "Lancement de l'impression", status: ticket.step == 1 ? "current" : ticket.step < 1 ? "notstarted" : "complete" },
     { id: "Etape 3", name: "Pièce mise à disposition", status: ticket.step == 2 ? "current" : ticket.step < 2 ? "notstarted" : "complete" },
   ];
 
-  var timeline = ticket.timeline.slice(0).reverse();
-  if(timeline.length>5){
-    timeline = timeline.slice(0,5);
+  async function download(id, name) {
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'GET',
+      responseType: 'blob',
+      url: process.env.API+'/api/file/' + id,
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', name); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
   }
 
+  async function sendComment(e) {
+    e.preventDefault();
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'PUT',
+      url: process.env.API+'/api/ticket/' + params.id+'/setWaitingAnswer/0',
+      headers: {
+        'dvflCookie': cookie
+      },
+    });
+    await axios({
+      method: 'POST',
+      url: process.env.API+'/api/ticket/' + params.id+'/message',
+      data: {
+        content: comment
+      },
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      setResponse(response);
+      setResponseError(false);
+    }).catch((e)=>{
+      setResponse(e);
+      setResponseError(true);
+    })
+    document.getElementById('status').scrollIntoView();
+    router.replace(router.asPath);
+  }
+
+  async function getUrlSTL(id, name) {
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'GET',
+      responseType: 'blob',
+      url: process.env.API+'/api/file/' + id,
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      setUrlStl(url);
+    });
+  }
+
+  var timeline = [];
+
   return (
-    <LayoutPanel user={user}>
+    <LayoutPanel user={user} role={role}>
       {/* Dernières activités */}
-      <div className="px-12 py-8">
+      <div id="status" className="px-12 py-8">
         <Steps steps={steps} />
       </div>
       <div className="py-6 px-3">
-        <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="col-span-3 mt-5 text-center">
-            <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate mb-5">
-              Activités du ticket
-            </h1>
+        <div className="mx-auto sm:px-6 lg:px-8 lg:gap-8">
 
-            <nav
-              aria-label="Sidebar"
-              className="sticky top-6 divide-y divide-gray-300"
-            >
-              <div className="flow-root">
-                <ul role="list" className="-mb-8">
-                  {timeline.map((event, eventIdx) => (
-                    <li key={event.id}>
-                      <div className="relative pb-8">
-                        {eventIdx !== timeline.length - 1 ? (
-                          <span
-                            className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                        <div className="relative flex space-x-3 place-items-center text-left">
-                          <div>
-                            <span
-                              className={classNames(
-                                event.color,
-                                "h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white"
-                              )}
-                            >
-                              {(event.icon == "ThumbUpIcon") ? <ThumbUpIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CursorClickIcon") ? <CursorClickIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CheckIcon") ? <CheckIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : (event.icon == "CubeIcon") ? <CubeIcon
-                                className="h-5 w-5 text-white"
-                                aria-hidden="true"
-                              /> : ''}
-                            </span>
-                          </div>
-                          <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4 place-items-center">
-                            <div>
-                              <p className="text-sm text-gray-500">
-                                {event.name}{" "}
-                              </p>
-                            </div>
-                            <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                              <Moment format="Do MMM HH:mm" locale="fr">
-                                {event.date}
-                              </Moment>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </nav>
-          </div>
-
-          <hr className="mb-5 mt-5 block lg:hidden" />
           <main className="col-span-9">
 
-          {ticket.comments.length >0?<div className="mb-5">
-             
-             <div className="p-4 md:p-5 rounded text-blue-700 bg-blue-100">
-               <div className="flex items-center mb-2">
-                 <InformationCircleIcon className="inline-block w-5 h-5 mr-3 flex-none text-blue-500" />
-                 <h3 className="font-semibold">Commentaire(s) sur votre ticket: </h3>
-               </div>
-                <div className="space-y-5">
-                  {/* Card */}
-                {ticket.comments.slice(0).reverse().map(r=>{
-                  return(<div className="flex flex-col rounded bg-blue-50 p-3 overflow-hidden">
-                  <div className="py-2 flex-grow w-full">
-                    <div className="flex space-x-4">
-                      <div className="flex-grow text-sm">
-                        <p className="mb-1">
-                          <span href="" className="font-semibold text-indigo-600 hover:text-indigo-400">{r.operator} - FabLab </span>
-                          {r.description}
-                        </p>
-                        <p class="space-x-2">
-                          <p class="text-gray-500 hover:text-gray-400">
-                          <Moment format="Do MMM YYYY HH:MM" locale="fr">
-              {r.date}
-            </Moment>
-                          </p>
-  
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>)
-                })}
-                     
-                     {/* END Card */}
-                </div>
-             </div>
-          </div>:''}
+             {/* Success Alert */}
+      {response != null?<div className={`p-4 mb-5 md:p-5 rounded ${responseError?'text-red-700':'text-green-700'} ${responseError?'bg-red-100':'bg-green-100'}`}>
+        <div className="flex items-center mb-2">
+{responseError?          <ExclamationCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-red-500`}/>:
+          <CheckCircleIcon className={`inline-block w-5 h-5 mr-3 flex-none text-green-500`}/>
+}
+          <h3 className="font-semibold">{responseError?'Une erreur est survenue.':'Votre commentaire a été envoyé !'}</h3>
+        </div>
+        <p className="ml-8">
+        {responseError?"Votre commentaire n'a pas pu être envoyé. Si le problème persiste, merci de contacter directement le FabLab.":"Vous recevrez une réponse dès que notre équipe aura traité votre demande."}
+        </p>
+      </div>:''}
+      {/* END Success Alert */}
 
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-              
 
-            
+
+
 
               <div className="px-4 py-5 sm:px-6">
-                
+
                 <h3 className="text-lg leading-6 font-medium text-gray-900">
                   Détails de la demande d'impression
                 </h3>
@@ -167,7 +148,7 @@ const GestionTicket = ({ params, user }) => {
                       Nom et prénom
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.name + " " + (user.surname).toString().toUpperCase()}
+                      {user.firstName + " " + (user.lastName).toString().toUpperCase()}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -181,7 +162,7 @@ const GestionTicket = ({ params, user }) => {
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">Type</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.type}
+                      {ticket.projectType}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -194,14 +175,6 @@ const GestionTicket = ({ params, user }) => {
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">
-                      Commentaires
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.description}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
                       Fichier(s) stl
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
@@ -209,44 +182,95 @@ const GestionTicket = ({ params, user }) => {
                         role="list"
                         className="border border-gray-200 rounded-md divide-y divide-gray-200"
                       >
-                        {ticket.stl.map(r => {
+                        {file.map(r => {
                           return (<div>
                             <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                            <div className="w-0 flex-1 flex items-center">
-                              <CubeIcon
-                                className="flex-shrink-0 h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                              />
-                              <span className="ml-2 flex-1 w-0 truncate">
-                                {r.name}
-                              </span>
-                            </div>
-                            <div className="ml-4 flex-shrink-0">
-                              <a
-                                href={"https://api.myfab.eliasto.me" + r.url}
-                                download={r.name}
-                                className="font-medium text-indigo-600 hover:text-indigo-500"
-                              >
-                                Télécharger
-                              </a>
-                              
-                            </div>
-                            <div className="ml-4 flex-shrink-0">
-                              <button onClick={()=>{setOpen(true); setUrlStl(r.url)}}>
-                                Voir le fichier STL
-                              </button>
-                            </div>
-                          </li>
+                              <div className="w-0 flex-1 flex items-center">
+                                <CubeIcon
+                                  className="flex-shrink-0 h-5 w-5 text-gray-400"
+                                  aria-hidden="true"
+                                />
+                                <span className="ml-2 flex-1 w-0 truncate">
+                                  {r.filename}
+                                </span>
+                              </div>
+                              <div className="ml-4 flex-shrink-0">
+                                <button
+                                  onClick={() => download(r.id, r.filename)}
+                                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                                >
+                                  Télécharger
+                                </button>
+
+                              </div>
+                              <div className="ml-4 flex-shrink-0">
+                                <button onClick={() => { setOpen(true); getUrlSTL(r.id) }}>
+                                  Voir le fichier STL
+                                </button>
+                              </div>
+                            </li>
+                            {r.comment.length >2?<div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                              <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
+                            </div>:''}
                           </div>
                           )
                         })}
                       </ul>
                     </dd>
                   </div>
-                
+                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500">
+                      Commentaires
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      <ul role="list" className="divide-y divide-gray-200">
+                        {message.map((r) => (
+                          <li
+                            key={r.id}
+                            className="relative bg-white py-5 px-4 hover:bg-gray-50"
+                          >
+                            <div className="flex justify-between space-x-3">
+                              <div className="min-w-0 flex-1">
+                                <a href="#" className="block focus:outline-none">
+                                  <span className="absolute inset-0" aria-hidden="true" />
+                                  <p className="text-sm font-medium text-gray-900 truncate">{r.userName}</p>
+                                  <p className="text-sm text-gray-500 truncate">{r.subject}</p>
+                                </a>
+                              </div>
+                              <Moment format="Do MMM YYYY à HH:mm" locale="fr">
+                                {r.creationDate}
+                              </Moment>
+                            </div>
+                            <div className="mt-1">
+                              <p className="line-clamp-2 text-sm text-gray-600">{r.content}</p>
+                            </div>
+                          </li>
+                        ))}
+                        <div>
+                        <textarea
+                  id="comment"
+                  name="comment"
+                  rows={3}
+                  onChange={(e)=>setComment(e.target.value)}
+                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                  defaultValue={''}
+                />
+                <button
+                onClick={(e)=>{document.getElementById("comment").value = ''; sendComment(e)}}
+                className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
+                >
+                  Envoyer mon commentaire
+                </button>
+                <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
+
+                        </div>
+                      </ul>
+                    </dd>
+                  </div>
+
                 </dl>
               </div>
-              
+
             </div>
           </main>
         </div>
@@ -289,20 +313,20 @@ const GestionTicket = ({ params, user }) => {
             >
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
-                  <p className="text-center font-medium">Apperçu du fichier STL:</p>
-                <center>
-                <STLViewer
-	width={300}
-	height={200}
-	modelColor='#B92C2C'
-	backgroundColor='#FFFFFF'
-	rotate={true}
-	orbitControls={true}
-  model={"https://api.myfab.eliasto.me" + urlStl}
-  lightColor= '#ffffff'
-  lights={[1,1,1]}
-/>
-                </center>
+                  <p className="text-center font-medium">Aperçu du fichier STL:</p>
+                  <center>
+                    <STLViewer
+                      width={300}
+                      height={200}
+                      modelColor='#4930b8'
+                      backgroundColor='#FFFFFF'
+                      rotate={true}
+                      orbitControls={true}
+                      model={urlStl}
+                      lightColor='#ffffff'
+                      lights={[1, 1, 1]}
+                    />
+                  </center>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
@@ -318,17 +342,21 @@ const GestionTicket = ({ params, user }) => {
           </div>
         </Dialog>
       </Transition.Root>
-      
+
     </LayoutPanel>
   );
 };
 
-export async function getServerSideProps({req, params}) {
+export async function getServerSideProps({ req, params }) {
   const cookies = parseCookies(req);
-  const user = await fetchAPIAuth("/api/users/me/?populate=*", cookies.jwt);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const ticket = await fetchAPIAuth("/ticket/" + params.id, cookies.jwt);
+  const file = await fetchAPIAuth("/ticket/" + params.id + "/file", cookies.jwt);
+  const message = await fetchAPIAuth("/ticket/" + params.id + "/message", cookies.jwt);
 
   return {
-    props: { user, params }, // will be passed to the page component as props
+    props: { user, params, role, ticket, file, message }, // will be passed to the page component as props
   }
 }
 

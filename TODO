@@ -1,0 +1,8 @@
+- récupération de mot de passe
+- Faire des alerts un peu partout pour confirmer les trucs, etc..
+- Finir la page settings
+- Corriger les problèmes de fetch d'api trop nombreux --> centraliser tout
+- Faire un fichier de config
+- Vérif quand cookie expiré
+- Set la priorité d'un ticket
+- Finir la partie locker

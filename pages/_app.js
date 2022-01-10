@@ -8,6 +8,7 @@ import Router from "next/router";
 import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
 import 'react-markdown-editor-lite/lib/index.css';
+import 'moment/locale/fr'
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -22,7 +23,7 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <link rel="shortcut icon" href={getStrapiMedia(global.favicon)} />
+        <link rel="shortcut icon" href="" />
       </Head>
       <GlobalContext.Provider value={global}>
         <Component {...pageProps} />
@@ -39,9 +40,7 @@ MyApp.getInitialProps = async (ctx) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(ctx);
   // Fetch global site settings from Strapi
-  var global = await fetchAPI("/api/global/?populate=favicon,defaultSeo.shareImage");
-  global = global.data.attributes;
-  // Pass the data to our page via props
+  const global = [];
   return { ...appProps, pageProps: { global } };
 };
 
