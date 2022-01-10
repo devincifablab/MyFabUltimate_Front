@@ -26,8 +26,11 @@
 - et quand on a terminé la TODO list, on upgrade tailwind vers la v3 --> https://tailwindcss.com/docs/upgrade-guide
 
 Au niveau de l'API:
-- Il me manque le système de rester password -> la page est là mais jsp si ça marche
-- Pareil système pour valider le compte -> il n'y a pas de page pour valider pour l'instant
-- Changer la priorité du ticket
-- Changer le rôle 
-- Une route pour supprimer le ticket
+- Il me manque le système de rester password -> la page est là mais jsp si ça marche (L'endpoint 'api/user/resetPassword/{tocken}' est un PUT pas un POST)
+- Pareil système pour valider le compte -> il n'y a pas de page pour valider pour l'instant (Pour ca c'est un PUT 'api/user/resetPassword/{tocken}')
+- Changer la priorité du ticket (les priorités ne sont pas modifiable par l'utilisateur, elles sont automatiquement modifié en back selon depuis quand le ticket est créé. Il faut seulement faire apparaître sur les différentes pages la priorité, avec des couleurs qui attirent si c'est urgent)
+- Changer le rôle (nouvelle route pour voir tous les rôles /api/role/)
+- Une route pour supprimer le ticket (C'est fait)
+
+- sur la page 'register' mettre une confirmation de mot de passe (comme pour la page 'auth/password/{tocken}' ca marche nickel comme ca).
+- /auth gérer le code 204 (user valide mais le mail n'est pas confirmé, je viens de le rajouter)
