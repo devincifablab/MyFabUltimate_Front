@@ -1,9 +1,8 @@
-- Corriger les problèmes de fetch d'api trop nombreux --> centraliser tout
-- Idem pour les layout et tout
-- Finir la partie locker
-- Terminer la page settings
-- Cacher l'ancienne page de connexion
-- Une super route pour avoir tous les blob des tickets pas traités genre:
+- Corriger les problèmes de fetch d'api trop nombreux --> centraliser tout          [BAS]
+- Idem pour les layout et tout                                                      [BAS]
+- Finir la partie locker                                                            [BAS-MOYEN]
+- Cacher l'ancienne page de connexion                                               [HAUT]
+- Une super route pour avoir tous les blob des tickets pas traités genre:           [BAS]
 {
   {
     id: 2,
@@ -23,14 +22,13 @@
   ........
 }
 
-- et quand on a terminé la TODO list, on upgrade tailwind vers la v3 --> https://tailwindcss.com/docs/upgrade-guide
-- Regardeer du côté de Ghost pour faire le blog (ce serait bien lol)
-- SEO lol
+- et quand on a terminé la TODO list, on upgrade tailwind vers la v3 --> https://tailwindcss.com/docs/upgrade-guide [BAS]
+- Regardeer du côté de Ghost pour faire le blog (ce serait bien lol)                                                [BAS-MOYEN]
+- SEO lol                                                                                                           [BAS]
+- Vérifier que les routes pour la page admin/settings fonctionnent                                                  [HAUT]
 
 Au niveau de l'API:
-- ça bug pour changer le mdp d'un compte lol (internal server error) avec la route /user/password/:id
-- Il me manque le système de rester password -> la page est là mais jsp si ça marche (L'endpoint 'api/user/resetPassword/{tocken}' est un PUT pas un POST)
-- Pareil système pour valider le compte -> il n'y a pas de page pour valider pour l'instant (Pour ca c'est un PUT 'api/user/resetPassword/{tocken}')
-- Une route pour supprimer le ticket (C'est fait)
-
-- sur la page 'register' mettre une confirmation de mot de passe (comme pour la page 'auth/password/{tocken}' ca marche nickel comme ca).
+- ça bug pour changer le mdp d'un compte lol (internal server error) avec la route /user/password/:id              [HAUT]
+- Il me manque le système de rester password -> la page est là mais jsp si ça marche (L'endpoint 'api/user/resetPassword/{tocken}' est un PUT pas un POST) [Vérifier si ça marche j'ai fais les modifs]
+- Pareil système pour valider le compte -> il n'y a pas de page pour valider pour l'instant (Pour ca c'est un PUT 'api/user/resetPassword/{tocken}') [Pas compris, vérifier le endpoint]
+- Une route pour supprimer le ticket (C'est fait) [je trouve pas la route, y'a pas de delete sur swagger]

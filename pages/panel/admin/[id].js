@@ -346,10 +346,10 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                   <span className="relative z-0 inline-flex shadow-sm rounded-md">
                   {ticket.step >0?<button
       onClick={(e) => {
-        if(ticket.step < 2){
+        if(ticket.step < 3){ {/*On met a 2 pour empêcher de valider l'étape 3*/}
           addStep(ticket.step+1)
         } else {
-
+{/* La partie sur les lockers va ici */}
         }
       }}
         type="button"

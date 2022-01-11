@@ -194,6 +194,26 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
               >
                 <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                   <div className="py-1">
+                  <Menu.Item>
+                        {({ active }) => (
+                         
+                          <a
+                          onClick={()=>router.push('/panel/settings')}
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}
+                        >
+                           
+                          <button
+                        >Mes paramètres</button>
+                                           </a>
+
+                          
+                        )}
+                      </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a
@@ -281,23 +301,43 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
+                  <Menu.Items className="origin-top-right z-50 absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                     <div className="py-1">
                       <Menu.Item>
                         {({ active }) => (
+                         
                           <a
-                            href="#"
-                            className={classNames(
-                              active
-                                ? "bg-gray-100 text-gray-900"
-                                : "text-gray-700",
-                              "block px-4 py-2 text-sm"
-                            )}
-                          >
-                            <button
-                          onClick={()=>{removeCookies('jwt'); router.push('/')}}
-                          >Se déconnecter</button>
-                        </a>
+                          onClick={()=>router.push('/panel/settings')}
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}
+                        >
+                          <button
+                        >Mes paramètres</button>
+                                    </a>
+
+                          
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          
+                          <a
+                          href="#"
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}
+                        >
+                          <button
+                        onClick={()=>{removeCookies('jwt'); router.push('/')}}
+                        >Se déconnecter</button>
+                      </a>
                           
                         )}
                       </Menu.Item>

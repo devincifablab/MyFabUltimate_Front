@@ -17,7 +17,7 @@ export default function Reset({params}) {
         e.preventDefault();
         console.log(token);
         await axios({
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',

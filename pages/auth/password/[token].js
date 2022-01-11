@@ -12,7 +12,7 @@ export default function Forget({params}) {
           console.log(token);
           if(password1 == password){
             await axios({
-              method: 'POST',
+              method: 'PUT',
               headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json',

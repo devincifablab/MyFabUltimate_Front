@@ -8,13 +8,25 @@ import { toast } from "react-toastify";
 export default function Register() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
   const [error, setError] = useState(false);
   const [name, setName] = useState(null);
   const [firstName, setFirstName] = useState(null);
   const [checked, setChecked] = useState(false);
 
   async function register(){
-    await axios({
+    if(confirmPassword == null || password == null || password != confirmPassword){
+      toast.warn("Vos mots de passes ne correspondent pas.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+    } else {
+      await axios({
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -53,6 +65,7 @@ export default function Register() {
             progress: undefined,
             });
       })
+    }
   }
   
   
@@ -129,6 +142,22 @@ export default function Register() {
                         onChange={(e)=>setPassword(e.target.value)}
                         id="password"
                         name="password"
+                        type={`${checked?'text':'password'}`}
+                        autoComplete="current-password"
+                        required
+                        className={`appearance-none block w-full px-3 py-2 border ${error?'border-red-300':'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`} 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <label htmlFor="confirmPassword" className={`block text-sm font-medium ${error?'text-red-500':'text-gray-700'}`}>
+                      Confirmer mon mot de passe
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        onChange={(e)=>setConfirmPassword(e.target.value)}
+                        id="confirmPassword"
+                        name="confirmPassword"
                         type={`${checked?'text':'password'}`}
                         autoComplete="current-password"
                         required
