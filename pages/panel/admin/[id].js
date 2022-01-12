@@ -1,9 +1,6 @@
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 import LayoutPanel from "../../../components/layoutPanel";
 import {
-  CursorClickIcon,
-  CheckIcon,
-  ThumbUpIcon,
   CubeIcon,
   BeakerIcon,
   ChevronDownIcon,
@@ -11,9 +8,9 @@ import {
   ExclamationIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../../components/steps";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import Moment from "react-moment";
-import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import STLViewer from 'stl-viewer'
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { getCookie } from "cookies-next";
@@ -34,20 +31,12 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
 
-  const [fileValidate, setFileValidate] = useState(false);
   const [idFile, setIdFile] = useState(null);
   const [openChange, setOpenChange] = useState(false);
   const [typeChange, setTypeChange] = useState('');
   const [typeChangeValue,setTypeChangeValue] = useState('');
 
-
   const router = useRouter();
-
-  const colors = {
-    "2274e0": "text-gray-700 bg-gray-200",
-    "e9d41d": "text-yellow-700 bg-yellow-200",
-    "f30b0b": "text-white bg-gradient-to-r from-yellow-400 to-red-500",
-  };
 
   const steps = [
     { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
@@ -125,7 +114,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     router.replace(router.asPath);
   }
 
-  async function getUrlSTL(id, name) {
+  async function getUrlSTL(id) {
     const cookie = getCookie("jwt");
     await axios({
       method: 'GET',
@@ -304,13 +293,13 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
           </div>
         </div>:''}
         {ticket.step == 1?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-green-500 to-green-300">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-emerald-500 to-emerald-300">
             <h2 className="text-xl font-bold text-white">L'impression n'est pas encore lancée.</h2>
             <h3 className="text-md font-medium text-white">Vous pouvez désormais lancer l'impression du ticket. Pour cela il vous suffit de cliquer sur le bouton ci-dessous.</h3>
           </div>
         </div>:''}
         {ticket.step == 2?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-yellow-300 to-red-500">
+          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-amber-300 to-red-500">
             <h2 className="text-xl font-bold text-white">La pièce n'a pas été déposé dans un casier.</h2>
             <h3 className="text-md font-medium text-white">Pour assigner un numéro de casier au ticket, cliquez sur le bouton ci-dessous. Si la pièce a déjà été récupéré, vous pouvez fermer le ticket.</h3>
           </div>
@@ -633,7 +622,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                 <div className="inline-flex mt-5">
         <button 
         onClick={()=> FileValidate(idFile, true, comment)}
-        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-l active:z-1 focus:z-1 -mr-px border-green-700 bg-green-700 text-white hover:text-white hover:bg-green-800 hover:border-green-800 focus:ring focus:ring-green-500 focus:ring-opacity-50 active:bg-green-700 active:border-green-700">
+        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-l active:z-1 focus:z-1 -mr-px border-emerald-700 bg-emerald-700 text-white hover:text-white hover:bg-emerald-800 hover:border-emerald-800 focus:ring focus:ring-emerald-500 focus:ring-opacity-50 active:bg-emerald-700 active:border-emerald-700">
           Valider le fichier
         </button>
         <button 

@@ -1,9 +1,7 @@
-import router, { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import Layout from "../components/layout";
-import Seo from "../components/seo";
-import { fetchAPI, fetchAPIAuth, parseCookies } from "../lib/api";
-import { ChatAlt2Icon, ExclamationCircleIcon, HeartIcon, MailIcon, PhoneIcon } from '@heroicons/react/outline'
+import { fetchAPIAuth, parseCookies } from "../lib/api";
+import { ChatAlt2Icon, HeartIcon, MailIcon, PhoneIcon } from '@heroicons/react/outline'
 
 const footer = [
   {
@@ -52,7 +50,7 @@ const Home = ({ user, role }) => {
         </div>
 
         <center><div className="relative max-w-md md:max-w-lg mt-20">
-          <div class="absolute top-0 -left-4 w-56 h-56 lg:w-80 lg:h-80 bg-yellow-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div class="absolute top-0 -left-4 w-56 h-56 lg:w-80 lg:h-80 bg-amber-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
           <div class="absolute top-0 -right-4 lg:w-80 lg:h-80 w-56 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
           <div class="absolute -bottom-8 left-20 lg:w-80 lg:h-80 w-56 h-64 bg-red-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
 

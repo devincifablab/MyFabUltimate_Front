@@ -1,16 +1,13 @@
 import "tailwindcss/tailwind.css";
 import App from "next/app";
-import Head from "next/head";
 import { createContext } from "react";
-import { fetchAPI, fetchAPIAuth, parseCookies } from "../lib/api";
-import { getStrapiMedia } from "../lib/media";
 import Router from "next/router";
 import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
 import 'react-markdown-editor-lite/lib/index.css';
 import 'moment/locale/fr'
 import '../styles/global.css'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Seo from "../components/seo";
 

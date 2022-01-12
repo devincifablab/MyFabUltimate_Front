@@ -1,6 +1,4 @@
-import { Disclosure } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/outline'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
 import NavbarAdmin from '../../../components/navbarAdmin'
 import Seo from '../../../components/seo'

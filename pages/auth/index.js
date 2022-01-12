@@ -1,7 +1,6 @@
 import axios from "axios";
 import { setCookies } from "cookies-next";
 import { useEffect, useState } from "react"
-import { ExclamationIcon } from '@heroicons/react/solid'
 import router from "next/router";
 import { toast } from "react-toastify";
 import Link from 'next/link';
@@ -9,7 +8,7 @@ import Link from 'next/link';
 export default function Auth() {
 
   useEffect(() => {
-    if(router.query.mail != null){
+    if (router.query.mail != null) {
       if (router.query.mail == 'ok') {
         toast.success("Votre e-mail a été vérifié. Vous pouvez désormais vous connecter.", {
           position: "top-right",
@@ -20,7 +19,7 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
         });
-  
+
       } else {
         toast.error("Une erreur est survenue lors de la vérification de votre e-mail.", {
           position: "top-right",
@@ -34,8 +33,8 @@ export default function Auth() {
       }
       router.replace('/auth')
     }
-    
-  
+
+
   })
 
   const [email, setEmail] = useState(null);

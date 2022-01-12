@@ -24,13 +24,6 @@ function classNames(...classes) {
 }
 
 export default function NewPanel({ data, user, ticket, role }) {
-  const labels = [
-    { name: "En attente de validation du fichier STL", color: "bg-gray-400" },
-    { name: "Impression initiée", color: "bg-yellow-400" },
-    { name: "Impression terminée", color: "bg-green-500" },
-    { name: "Nouveau commentaire", color: "bg-blue-500" },
-    { name: "Ticket fermé", color: "bg-red-500" },
-  ];
 
   const faqs = [
     {
@@ -90,12 +83,11 @@ export default function NewPanel({ data, user, ticket, role }) {
     router.replace(router.asPath)
   }
 
-
   if (user.error == undefined) {
 
     return (
       <LayoutPanel user={user} role={role}>
-        <Seo title={"Panel"}  />
+        <Seo title={"Panel"} />
 
         {/* Dernières activités */}
         <div className="py-6 px-3">
@@ -165,16 +157,16 @@ export default function NewPanel({ data, user, ticket, role }) {
                             <span className="flex items-center truncate space-x-3">
                               {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
                                 )}></span>
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "relative inline-flex rounded-full h-3 w-3"
                                 )}></span>
                               </span> : <div
                                 className={classNames(
-                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-amber-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-emerald-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-emerald-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
                                   "flex-shrink-0 w-2.5 h-2.5 rounded-full"
                                 )}
                                 aria-hidden="true"
@@ -225,16 +217,16 @@ export default function NewPanel({ data, user, ticket, role }) {
 
                               {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
                                 )}></span>
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "relative inline-flex rounded-full h-3 w-3"
                                 )}></span>
                               </span> : <div
                                 className={classNames(
-                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-amber-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-emerald-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-emerald-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
                                   "flex-shrink-0 w-2.5 h-2.5 rounded-full"
                                 )}
                                 aria-hidden="true"
@@ -275,7 +267,7 @@ export default function NewPanel({ data, user, ticket, role }) {
                               as="div"
                               className="relative flex justify-end items-center"
                             >
-                              <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                              <Menu.Button className="w-8 h-8 bg-white inline-flex items-center justify-center text-gray-400 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
                                 <span className="sr-only">Open options</span>
                                 <DotsVerticalIcon
                                   className="w-5 h-5"

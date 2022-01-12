@@ -1,15 +1,12 @@
-import { Disclosure } from '@headlessui/react'
-import { ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/outline'
+import { InformationCircleIcon } from '@heroicons/react/outline'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
 import NavbarAdmin from '../../../components/navbarAdmin'
-import TablesAdmin from '../../../components/tablesAdmin'
 import UserTablesAdmin from '../../../components/tablesUserAdmin'
 import { fetchAPIAuth, parseCookies } from '../../../lib/api'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/outline'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
 import { setZero } from '../../../lib/function'
@@ -53,17 +50,17 @@ export default function Settings({ user, role, me }) {
                 id: 2
             }
         }
-        if(roleData != roleUser){
-            if(roleData.length > 0 && roleData != "Aucun rôle"){
+        if (roleData != roleUser) {
+            if (roleData.length > 0 && roleData != "Aucun rôle") {
                 await axios({
                     method: 'POST',
-                    url: process.env.API + '/api/user/' + id+'/role/'+idRole[roleData].id,
+                    url: process.env.API + '/api/user/' + id + '/role/' + idRole[roleData].id,
                     headers: {
                         'dvflCookie': getCookie('jwt')
                     },
                 }).then((response) => {
-                    if(response.status == 200){
-                        toast.success("Le rôle "+roleData+" a été ajouté à l'utilisateur #"+setZero(id), {
+                    if (response.status == 200) {
+                        toast.success("Le rôle " + roleData + " a été ajouté à l'utilisateur #" + setZero(id), {
                             position: "top-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -71,9 +68,9 @@ export default function Settings({ user, role, me }) {
                             pauseOnHover: true,
                             draggable: true,
                             progress: undefined,
-                            });
-                    } else {}
-                }).catch(e=>{
+                        });
+                    } else { }
+                }).catch(e => {
                     toast.error("Une erreur est survenue.", {
                         position: "top-right",
                         autoClose: 5000,
@@ -82,20 +79,20 @@ export default function Settings({ user, role, me }) {
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
-                        });
+                    });
                 });
-            } else if(roleData == "Aucun rôle"){
+            } else if (roleData == "Aucun rôle") {
                 console.log(roleUser);
                 await axios({
                     method: 'DELETE',
-                    url: process.env.API + '/api/user/' + id+'/role/'+idRole[roleUser].id,
+                    url: process.env.API + '/api/user/' + id + '/role/' + idRole[roleUser].id,
                     headers: {
                         'dvflCookie': getCookie('jwt')
                     },
                 }).then((response) => {
-                    if(response.status == 200){
+                    if (response.status == 200) {
                         console.log('rôle supprimé');
-                        toast.success("Le rôle "+roleUser+" a été supprimé de l'utilisateur #"+setZero(id), {
+                        toast.success("Le rôle " + roleUser + " a été supprimé de l'utilisateur #" + setZero(id), {
                             position: "top-right",
                             autoClose: 5000,
                             hideProgressBar: false,
@@ -103,10 +100,10 @@ export default function Settings({ user, role, me }) {
                             pauseOnHover: true,
                             draggable: true,
                             progress: undefined,
-                            });
-                        
+                        });
+
                     }
-                }).catch(e=>{
+                }).catch(e => {
                     toast.error("Une erreur est survenue.", {
                         position: "top-right",
                         autoClose: 5000,
@@ -115,15 +112,15 @@ export default function Settings({ user, role, me }) {
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
-                        });
+                    });
                 })
             }
         }
 
-        if(password != null && password.length > 0){
+        if (password != null && password.length > 0) {
             await axios({
                 method: 'PUT',
-                url: process.env.API + '/api/user/password/'+id,
+                url: process.env.API + '/api/user/password/' + id,
                 data: {
                     "newPassword": password
                 },
@@ -131,8 +128,8 @@ export default function Settings({ user, role, me }) {
                     'dvflCookie': getCookie('jwt')
                 },
             }).then((response) => {
-                if(response.status == 200){
-                    toast.success("Le mot de passe de l'utilisateur #"+setZero(id)+" a été mis à jour.", {
+                if (response.status == 200) {
+                    toast.success("Le mot de passe de l'utilisateur #" + setZero(id) + " a été mis à jour.", {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: false,
@@ -140,9 +137,9 @@ export default function Settings({ user, role, me }) {
                         pauseOnHover: true,
                         draggable: true,
                         progress: undefined,
-                        });
-                } else {}
-            }).catch(e=>{
+                    });
+                } else { }
+            }).catch(e => {
                 toast.error("Une erreur est survenue. Votre mot de passe n'a pas été mis à jour.", {
                     position: "top-right",
                     autoClose: 5000,
@@ -151,7 +148,7 @@ export default function Settings({ user, role, me }) {
                     pauseOnHover: true,
                     draggable: true,
                     progress: undefined,
-                    });
+                });
             });
         }
     }
@@ -171,16 +168,16 @@ export default function Settings({ user, role, me }) {
         });
         await axios({
             method: 'GET',
-            url: process.env.API + '/api/user/' + id+'/role',
+            url: process.env.API + '/api/user/' + id + '/role',
             headers: {
                 'dvflCookie': getCookie('jwt')
             },
         }).then((response) => {
-            if(response.data.find(r=>r.name == "Modérateur")){
+            if (response.data.find(r => r.name == "Modérateur")) {
                 setRoleUser("Modérateur")
-            } else if(response.data.find(r=>r.name == "Agent MyFab")){
+            } else if (response.data.find(r => r.name == "Agent MyFab")) {
                 setRoleUser("Agent")
-            } else if(response.data.find(r=>r.name == "Administrateur")){
+            } else if (response.data.find(r => r.name == "Administrateur")) {
                 setRoleUser("Administrateur")
             } else {
                 setRoleUser("Aucun rôle")
@@ -188,12 +185,10 @@ export default function Settings({ user, role, me }) {
         });
     }
 
-
-
     return (
         <>
             <LayoutPanel user={me} role={role}>
-            <Seo title={"Paramètres administrateurs"} />
+                <Seo title={"Paramètres administrateurs"} />
                 <NavbarAdmin role={role} />
                 <section className="">
                     <div className="container px-4 mx-auto">
@@ -300,7 +295,7 @@ export default function Settings({ user, role, me }) {
                                                                     </label>
                                                                     <div className="mt-1 sm:mt-0 sm:col-span-2">
                                                                         <select
-                                                                            onChange={(e)=>setRoleData(e.target.value)}
+                                                                            onChange={(e) => setRoleData(e.target.value)}
                                                                             id="role"
                                                                             name="role"
                                                                             className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
@@ -319,7 +314,7 @@ export default function Settings({ user, role, me }) {
                                                                     </label>
                                                                     <div className="mt-1 sm:mt-0 sm:col-span-2">
                                                                         <input
-                                                                            onChange={(e)=>setPassword(e.target.value)}
+                                                                            onChange={(e) => setPassword(e.target.value)}
                                                                             type="password"
                                                                             name="password"
                                                                             id="password"

@@ -4,34 +4,23 @@ import { CubeIcon } from "@heroicons/react/solid";
 import LayoutPanel from "../../components/layoutPanel";
 import axios from 'axios';
 import { getCookie } from "cookies-next";
-import Link from 'next/link'
 import { setZero } from "../../lib/function";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
-import { Fragment } from 'react'
-import { Transition } from '@headlessui/react'
-import { CheckCircleIcon } from '@heroicons/react/outline'
-import { XIcon } from '@heroicons/react/solid'
 import { toast } from 'react-toastify';
 import router from "next/router";
 import Seo from "../../components/seo";
-
 
 const percents = (value,total) => Math.round(value/total)*100
 
 export default function NewPanel({user, role}) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
-  const [name, setName] = useState(null);
-  const [realName, setRealName] = useState(null);
 
   const [file, setFile] = useState([]);
   const [description, setDescription] = useState('Aucune déscription fournie.')
   const [type, setType] = useState('PIX 1');
   const [group, setGroup] = useState(null);
   const [percent, setPercent] = useState(0);
-  const [statusUpload, setStatusUpload] = useState(null);
-  const [id, setId] = useState(0);
-  const [notification, setNotification] = useState('');
 
   const onDragEnter = (event) => {
     setStatus(true);
@@ -104,8 +93,6 @@ export default function NewPanel({user, role}) {
         progress: undefined,
         });
     })
-    setStatusUpload(upload_res);
-    setId(upload_res.data.id);
     document.getElementById('status').scrollIntoView();
     setFile([]);
     setDescription('Aucune déscription fournie.')

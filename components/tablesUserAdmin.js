@@ -1,12 +1,5 @@
-import { MoonIcon, DownloadIcon } from "@heroicons/react/outline";
-import Link from 'next/link';
+import { MoonIcon } from "@heroicons/react/outline";
 import { setZero } from "../lib/function";
-
-const colors = {
-  "2274e0": "text-gray-700 bg-gray-200",
-  "e9d41d": "text-yellow-700 bg-yellow-200",
-  "f30b0b": "text-white bg-gradient-to-r from-yellow-400 to-red-500",
-};
 
 export default function UserTablesAdmin({ user, id }) {
 

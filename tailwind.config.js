@@ -2,18 +2,14 @@ const plugin = require('tailwindcss/plugin')
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  mode: 'jit',
-  purge: {
     content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
     safelist: [
       'bg-red-500',
       'to-blue-500',
-      'from-green-300',
+      'from-emerald-300',
       'bg-red-100',
       'text-red-800'
-    ]
-  },
-  darkMode: false, // or 'media' or 'class'
+    ],
   theme: {
     extend: {
         'animation': {
@@ -73,9 +69,6 @@ module.exports = {
       sans: ['Quicksand', 'sans-serif']
     }
 },
-  variants: {
-    extend: {},
-  },
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),

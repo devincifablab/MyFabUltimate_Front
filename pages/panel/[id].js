@@ -1,15 +1,11 @@
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import LayoutPanel from "../../components/layoutPanel";
 import {
-  CursorClickIcon,
-  CheckIcon,
-  ThumbUpIcon,
   CubeIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../components/steps";
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import Moment from "react-moment";
-import { CheckCircleIcon, ExclamationCircleIcon, InformationCircleIcon } from "@heroicons/react/solid";
 import STLViewer from 'stl-viewer'
 import { Dialog, Transition } from "@headlessui/react";
 import { getCookie } from "cookies-next";
@@ -18,11 +14,6 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { setZero } from "../../lib/function";
 import Seo from "../../components/seo";
-
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [open, setOpen] = useState(false);
@@ -42,7 +33,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: process.env.API+'/api/file/' + id,
+      url: process.env.API + '/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -61,14 +52,14 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     const cookie = getCookie("jwt");
     await axios({
       method: 'PUT',
-      url: process.env.API+'/api/ticket/' + params.id+'/setWaitingAnswer/0',
+      url: process.env.API + '/api/ticket/' + params.id + '/setWaitingAnswer/0',
       headers: {
         'dvflCookie': cookie
       },
     });
     await axios({
       method: 'POST',
-      url: process.env.API+'/api/ticket/' + params.id+'/message',
+      url: process.env.API + '/api/ticket/' + params.id + '/message',
       data: {
         content: comment
       },
@@ -84,8 +75,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-    }).catch((e)=>{
+      });
+    }).catch((e) => {
       toast.error("Une erreur est survenue, veuillez réessayer.", {
         position: "top-right",
         autoClose: 5000,
@@ -94,18 +85,18 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
     })
     document.getElementById('status').scrollIntoView();
     router.replace(router.asPath);
   }
 
-  async function getUrlSTL(id, name) {
+  async function getUrlSTL(id) {
     const cookie = getCookie("jwt");
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: process.env.API+'/api/file/' + id,
+      url: process.env.API + '/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -115,11 +106,9 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     });
   }
 
-  var timeline = [];
-
   return (
     <LayoutPanel user={user} role={role}>
-                  <Seo title={"Ticket #"+setZero(ticket.id)} />
+      <Seo title={"Ticket #" + setZero(ticket.id)} />
 
       {/* Dernières activités */}
       <div id="status" className="px-12 py-8">
@@ -211,9 +200,9 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                                 </button>
                               </div>
                             </li>
-                            {r.comment.length >2?<div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                            {r.comment.length > 2 ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
                               <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
-                            </div>:''}
+                            </div> : ''}
                           </div>
                           )
                         })}
@@ -249,21 +238,21 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                           </li>
                         ))}
                         <div>
-                        <textarea
-                  id="comment"
-                  name="comment"
-                  rows={3}
-                  onChange={(e)=>setComment(e.target.value)}
-                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={''}
-                />
-                <button
-                onClick={(e)=>{document.getElementById("comment").value = ''; sendComment(e)}}
-                className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
-                >
-                  Envoyer mon commentaire
-                </button>
-                <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
+                          <textarea
+                            id="comment"
+                            name="comment"
+                            rows={3}
+                            onChange={(e) => setComment(e.target.value)}
+                            className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                            defaultValue={''}
+                          />
+                          <button
+                            onClick={(e) => { document.getElementById("comment").value = ''; sendComment(e) }}
+                            className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
+                          >
+                            Envoyer mon commentaire
+                          </button>
+                          <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
 
                         </div>
                       </ul>

@@ -1,16 +1,13 @@
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import LayoutPanel from "../../../components/layoutPanel";
 import NavbarAdmin from "../../../components/navbarAdmin";
 import OverviewAdmin from "../../../components/overviewAdmin";
-import OverviewSTLAdmin from "../../../components/overviewSTLAdmin";
 import Seo from "../../../components/seo";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 
 export default function Admin({ tickets, user, role }) {
   const router = useRouter()
-
-  const [toggle, setToggle] = useState(true);
 
   useEffect(function () {
     if (user.error != undefined || role.length == 0) {
@@ -31,7 +28,7 @@ export default function Admin({ tickets, user, role }) {
         <div>
 
         </div>
-        {toggle ? <OverviewAdmin tickets={tickets} /> : <OverviewSTLAdmin tickets={tickets} />}
+        <OverviewAdmin tickets={tickets} />
       </LayoutPanel>
     );
   }

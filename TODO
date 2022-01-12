@@ -1,6 +1,5 @@
 Au niveau du front:
-- Regarder du côté de Ghost pour faire le blog (ce serait bien lol)                                                [BAS-MOYEN]
-- Clean le code [HAUT]
+- Regarder du côté de Ghost pour faire le blog (ce serait bien lol)/blog            [BAS-MOYEN]
 
 Au niveau de l'API:
 - Finir la partie locker                                                            [BAS-MOYEN]
@@ -26,6 +25,3 @@ Au niveau de l'API:
 
 Aucune catégorie:
 - Faire un GitBook [BAS]
-
-Et en dernier de dernier:
-- et quand on a terminé la TODO list, on upgrade tailwind vers la v3 --> https://tailwindcss.com/docs/upgrade-guide [BAS]

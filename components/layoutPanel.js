@@ -1,11 +1,10 @@
 import Link from "next/link";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon } from "@heroicons/react/outline";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
-import { fetchAPIAuth, parseCookies } from "../lib/api";
 import { removeCookies } from "cookies-next";
 
 function classNames(...classes) {
@@ -13,25 +12,26 @@ function classNames(...classes) {
 }
 export default function LayoutPanel({ children, user, role }) {
   const router = useRouter();
-  const pn = router.pathname;  
+  const pn = router.pathname;
   const navigation = [
-    { name: "Panel", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show:true },
-    { name: "Zone d'administration", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length>0 },
+    { name: "Panel", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show: true },
+    { name: "Zone d'administration", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length > 0 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
   useEffect(function () {
-    if( role.length == 0 && pn.split('/')[2] == "admin"){
+    if (role.length == 0 && pn.split('/')[2] == "admin") {
       router.push('/404');
     }
-}, []);
-if( role.length == 0 && pn.split('/')[2] == "admin"){
-  return('');}
+  }, []);
+  if (role.length == 0 && pn.split('/')[2] == "admin") {
+    return ('');
+  }
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const name =  user.firstName;
-  const surname =  user.lastName;
+  const name = user.firstName;
+  const surname = user.lastName;
 
   return (
     <div className="relative h-screen flex overflow-hidden bg-white">
@@ -93,8 +93,8 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                 <nav className="px-2">
                   <div className="space-y-1">
                     {navigation.map((item) => {
-                      if(item.show == true){
-                        return(<Link href={item.href}>
+                      if (item.show == true) {
+                        return (<Link href={item.href}>
                           <a
                             key={item.name}
                             className={classNames(
@@ -151,11 +151,11 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                     <span className="flex min-w-0 items-center justify-between space-x-3">
 
                       <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
-      {name[0].toString().toUpperCase()+" "+surname[0].toString().toUpperCase()}
-    </div>
+                        {name[0].toString().toUpperCase() + " " + surname[0].toString().toUpperCase()}
+                      </div>
                       <span className="flex-1 flex flex-col min-w-0">
                         <span className="text-gray-900 text-sm font-medium truncate">
-                          {name+" "+surname.toUpperCase()}
+                          {name + " " + surname.toUpperCase()}
                         </span>
                         <span className="text-gray-500 text-sm truncate">
                           ESILV A2
@@ -168,21 +168,21 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                     />
                   </span>
                   <div className="mt-3 space-x-1 space-y-1 text-center">
-                  { role.map(r=>{
-                    return(
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white`} style={{backgroundColor: '#'+r.color}}>
-        {r.name}
-      </span>
-                    )
-                  })}
-                   
+                    {role.map(r => {
+                      return (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white`} style={{ backgroundColor: '#' + r.color }}>
+                          {r.name}
+                        </span>
+                      )
+                    })}
+
 
                   </div>
 
                 </Menu.Button>
-                
+
               </div>
-              
+
               <Transition
                 as={Fragment}
                 enter="transition ease-out duration-100"
@@ -194,11 +194,11 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
               >
                 <Menu.Items className="z-10 mx-3 origin-top absolute right-0 left-0 mt-1 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-200 focus:outline-none">
                   <div className="py-1">
-                  <Menu.Item>
-                        {({ active }) => (
-                         
-                          <a
-                          onClick={()=>router.push('/panel/settings')}
+                    <Menu.Item>
+                      {({ active }) => (
+
+                        <a
+                          onClick={() => router.push('/panel/settings')}
                           className={classNames(
                             active
                               ? "bg-gray-100 text-gray-900"
@@ -206,14 +206,14 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                             "block px-4 py-2 text-sm"
                           )}
                         >
-                           
-                          <button
-                        >Mes paramètres</button>
-                                           </a>
 
-                          
-                        )}
-                      </Menu.Item>
+                          <button
+                          >Mes paramètres</button>
+                        </a>
+
+
+                      )}
+                    </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
                         <a
@@ -226,7 +226,7 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                           )}
                         >
                           <button
-                          onClick={()=>{removeCookies('jwt'); router.push('/')}}
+                            onClick={() => { removeCookies('jwt'); router.push('/') }}
                           >Se déconnecter</button>
                         </a>
                       )}
@@ -238,8 +238,8 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
             <nav className="px-3 mt-6">
               <div className="space-y-1">
                 {navigation.map((item) => {
-                  if(item.show == true){
-                    return(<Link href={item.href}>
+                  if (item.show == true) {
+                    return (<Link href={item.href}>
                       <a
                         key={`1-${item.name}`}
                         className={classNames(
@@ -267,14 +267,14 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
               </div>
             </nav>
           </div>
-          <span className="text-xs text-gray-400 text-center">version 0.1</span>
+          <span className="text-xs text-gray-400 text-center">version 1.0 - fablab@devinci.fr</span>
         </div>
       </div>
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         <div className="relative flex-shrink-0 flex h-16 bg-white border-b border-gray-200 lg:hidden">
           <button
             type="button"
-            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 lg:hidden"
+            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-violet-500 lg:hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <span className="sr-only">Open sidebar</span>
@@ -285,11 +285,11 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
             <div className="flex items-center">
               <Menu as="div" className="ml-3 relative">
                 <div>
-                  <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                  <Menu.Button className="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
                     <span className="sr-only">Open user menu</span>
                     <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500">
-      {name[0].toString().toUpperCase()+" "+surname[0].toString().toUpperCase()}
-    </div>
+                      {name[0].toString().toUpperCase() + " " + surname[0].toString().toUpperCase()}
+                    </div>
                   </Menu.Button>
                 </div>
                 <Transition
@@ -305,40 +305,40 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
                     <div className="py-1">
                       <Menu.Item>
                         {({ active }) => (
-                         
-                          <a
-                          onClick={()=>router.push('/panel/settings')}
-                          className={classNames(
-                            active
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
-                            "block px-4 py-2 text-sm"
-                          )}
-                        >
-                          <button
-                        >Mes paramètres</button>
-                                    </a>
 
-                          
+                          <a
+                            onClick={() => router.push('/panel/settings')}
+                            className={classNames(
+                              active
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-700",
+                              "block px-4 py-2 text-sm"
+                            )}
+                          >
+                            <button
+                            >Mes paramètres</button>
+                          </a>
+
+
                         )}
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          
+
                           <a
-                          href="#"
-                          className={classNames(
-                            active
-                              ? "bg-gray-100 text-gray-900"
-                              : "text-gray-700",
-                            "block px-4 py-2 text-sm"
-                          )}
-                        >
-                          <button
-                        onClick={()=>{removeCookies('jwt'); router.push('/')}}
-                        >Se déconnecter</button>
-                      </a>
-                          
+                            href="#"
+                            className={classNames(
+                              active
+                                ? "bg-gray-100 text-gray-900"
+                                : "text-gray-700",
+                              "block px-4 py-2 text-sm"
+                            )}
+                          >
+                            <button
+                              onClick={() => { removeCookies('jwt'); router.push('/') }}
+                            >Se déconnecter</button>
+                          </a>
+
                         )}
                       </Menu.Item>
                     </div>
@@ -359,7 +359,7 @@ if( role.length == 0 && pn.split('/')[2] == "admin"){
               <Link href="/panel/new">
                 <button
                   type="button"
-                  className={`${pn.split('/')[2] == "new"? 'hidden': 'block'} order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3`}
+                  className={`${pn.split('/')[2] == "new" ? 'hidden' : 'block'} order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 sm:order-1 sm:ml-3`}
                 >
                   <CubeIcon width="16" height="16" className="mr-1" />
                   Lancer une impression
