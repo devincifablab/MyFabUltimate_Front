@@ -5,6 +5,7 @@ import axios from 'axios';
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import { toast } from 'react-toastify';
 import { getCookie } from "cookies-next";
+import Seo from "../../components/seo";
 
 
 export default function Settings({ user, role }) {
@@ -76,6 +77,7 @@ export default function Settings({ user, role }) {
 
     return (
         <LayoutPanel user={user} role={role}>
+                      <Seo title={"Paramètres"} />
             <div className="px-10 py-10" id="status">
                 <div>
                     <div className="md:grid md:grid-cols-3 md:gap-6">

@@ -4,6 +4,7 @@ import LayoutPanel from "../../../components/layoutPanel";
 import NavbarAdmin from "../../../components/navbarAdmin";
 import OverviewAdmin from "../../../components/overviewAdmin";
 import OverviewSTLAdmin from "../../../components/overviewSTLAdmin";
+import Seo from "../../../components/seo";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 
 export default function Admin({ tickets, user, role }) {
@@ -19,6 +20,7 @@ export default function Admin({ tickets, user, role }) {
   if (user.error == undefined && role.length != 0) {
     return (
       <LayoutPanel user={user} role={role}>
+        <Seo title={"Administration"}  />
         <NavbarAdmin role={role} />
         <div className="md:py-8 md:px-6">
           <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
@@ -29,7 +31,7 @@ export default function Admin({ tickets, user, role }) {
         <div>
 
         </div>
-        {toggle?<OverviewAdmin tickets={tickets} />:<OverviewSTLAdmin tickets={tickets} />}
+        {toggle ? <OverviewAdmin tickets={tickets} /> : <OverviewSTLAdmin tickets={tickets} />}
       </LayoutPanel>
     );
   }

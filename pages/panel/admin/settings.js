@@ -14,6 +14,7 @@ import axios from 'axios'
 import { getCookie } from 'cookies-next'
 import { setZero } from '../../../lib/function'
 import { toast } from 'react-toastify'
+import Seo from '../../../components/seo'
 
 export default function Settings({ user, role, me }) {
     const [open, setOpen] = useState(false);
@@ -179,6 +180,8 @@ export default function Settings({ user, role, me }) {
                 setRoleUser("Modérateur")
             } else if(response.data.find(r=>r.name == "Agent MyFab")){
                 setRoleUser("Agent")
+            } else if(response.data.find(r=>r.name == "Administrateur")){
+                setRoleUser("Administrateur")
             } else {
                 setRoleUser("Aucun rôle")
             }
@@ -190,6 +193,7 @@ export default function Settings({ user, role, me }) {
     return (
         <>
             <LayoutPanel user={me} role={role}>
+            <Seo title={"Paramètres administrateurs"} />
                 <NavbarAdmin role={role} />
                 <section className="">
                     <div className="container px-4 mx-auto">

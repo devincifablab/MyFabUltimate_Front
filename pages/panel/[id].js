@@ -16,6 +16,8 @@ import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import { setZero } from "../../lib/function";
+import Seo from "../../components/seo";
 
 
 function classNames(...classes) {
@@ -117,6 +119,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
   return (
     <LayoutPanel user={user} role={role}>
+                  <Seo title={"Ticket #"+setZero(ticket.id)} />
+
       {/* Dernières activités */}
       <div id="status" className="px-12 py-8">
         <Steps steps={steps} />

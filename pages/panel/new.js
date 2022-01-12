@@ -13,6 +13,7 @@ import { CheckCircleIcon } from '@heroicons/react/outline'
 import { XIcon } from '@heroicons/react/solid'
 import { toast } from 'react-toastify';
 import router from "next/router";
+import Seo from "../../components/seo";
 
 
 const percents = (value,total) => Math.round(value/total)*100
@@ -130,6 +131,8 @@ export default function NewPanel({user, role}) {
 
   return (
     <LayoutPanel user={user} role={role}>
+                  <Seo title={"Créer un ticket"} />
+
       <div className="px-10 py-10" id="status">
         <div>
           <div className="md:grid md:grid-cols-3 md:gap-6">

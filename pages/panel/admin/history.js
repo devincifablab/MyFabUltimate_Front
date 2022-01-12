@@ -3,6 +3,7 @@ import { ChevronDownIcon } from '@heroicons/react/outline'
 import { useEffect, useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
 import NavbarAdmin from '../../../components/navbarAdmin'
+import Seo from '../../../components/seo'
 import TablesAdmin from '../../../components/tablesAdmin'
 import { fetchAPIAuth, parseCookies } from '../../../lib/api'
 
@@ -23,6 +24,8 @@ export default function OverviewAdmin({ tickets, user, role }) {
 
   return (
     <LayoutPanel user={user} role={role}>
+                  <Seo title={"Historique"} />
+
       <NavbarAdmin role={role} />
 
       <section className="">

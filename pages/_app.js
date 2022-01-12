@@ -12,6 +12,7 @@ import 'moment/locale/fr'
 import '../styles/global.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Seo from "../components/seo";
 
 
 //Binding events.
@@ -22,17 +23,12 @@ Router.events.on("routeChangeError", () => NProgress.done());
 export const GlobalContext = createContext({});
 
 const MyApp = ({ Component, pageProps }) => {
-  const { global } = pageProps;
   return (
     <>
-      <Head>
-        <link rel="shortcut icon" href="" />
-      </Head>
-      <GlobalContext.Provider value={global}>
+      <Seo title={"Accueil"} description={"Bienvenue sur le site du Devinci FabLab !"}/>
         <Component {...pageProps}>
         </Component>
         <ToastContainer />
-      </GlobalContext.Provider>
     </>
   );
 };
@@ -44,7 +40,6 @@ const MyApp = ({ Component, pageProps }) => {
 MyApp.getInitialProps = async (ctx) => {
   // Calls page's `getInitialProps` and fills `appProps.pageProps`
   const appProps = await App.getInitialProps(ctx);
-  // Fetch global site settings from Strapi
   const global = [];
   return { ...appProps, pageProps: { global } };
 };

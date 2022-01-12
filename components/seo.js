@@ -1,20 +1,13 @@
 import Head from "next/head"
-import { useContext } from "react"
-import { GlobalContext } from "../pages/_app"
-import { getStrapiMedia } from "../lib/media"
 
-const Seo = ({ seo }) => {
-  const { defaultSeo, siteName } = useContext(GlobalContext)
-  const seoWithDefaults = {
-    ...defaultSeo,
-    ...seo,
-  }
+const Seo = ({title, description}) => {
+  const  siteName = "MyFab";
   const fullSeo = {
-    ...seoWithDefaults,
     // Add title suffix
-    metaTitle: `${seoWithDefaults.metaTitle} | ${siteName}`,
+    metaTitle: `${title} | ${siteName}`,
     // Get full image URL
-    shareImage: getStrapiMedia(seoWithDefaults.shareImage),
+    shareImage: '/photo/seo.png',
+    metaDescription: description||'Bienvenue sur le site du Devinci FabLab !'
   }
 
   return (

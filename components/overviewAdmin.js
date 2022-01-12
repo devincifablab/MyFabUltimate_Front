@@ -52,8 +52,8 @@ export default function OverviewAdmin({tickets}) {
         <div className="w-full lg:w-1/3 px-4">
           <div className="relative px-6 pb-6 py-4 bg-white rounded">
             <div className="">
-              <h3 className="text-xl font-bold" data-config-id="header2">FAQ</h3>
-              <p className="text-sm text-gray-500" data-config-id="desc02">Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.</p>
+              <h3 className="text-xl font-bold">FAQ</h3>
+              <p className="text-sm text-gray-500">Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.</p>
             </div>
             <dl className="divide-y divide-gray-200">
             {faqs.map((faq) => (

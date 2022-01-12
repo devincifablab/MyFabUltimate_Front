@@ -4,7 +4,8 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   ChevronRightIcon,
   DotsVerticalIcon,
-  TrashIcon} from "@heroicons/react/solid";
+  TrashIcon
+} from "@heroicons/react/solid";
 import 'moment/locale/fr'
 
 import LayoutPanel from "../../components/layoutPanel";
@@ -15,6 +16,8 @@ import { getColor, getState, setZero } from "../../lib/function";
 import { getCookie } from "cookies-next";
 import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/outline";
+import { toast } from "react-toastify";
+import Seo from "../../components/seo";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -58,12 +61,32 @@ export default function NewPanel({ data, user, ticket, role }) {
   const deleteTicket = async (id) => {
     await axios({
       method: 'DELETE',
-      url: process.env.API+'/api/tickets/' + id,
+      url: process.env.API + '/api/ticket/' + id,
       data,
       headers: {
         'dvflCookie': `${getCookie('jwt')}`
       },
-    });
+    }).then(() => {
+      toast.success("Le ticket #" + setZero(id) + " a été supprimé.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch(() => {
+      toast.error("Une erreur est survenue lors de la suppression du ticket #" + setZero(id) + ".", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    })
     router.replace(router.asPath)
   }
 
@@ -72,6 +95,8 @@ export default function NewPanel({ data, user, ticket, role }) {
 
     return (
       <LayoutPanel user={user} role={role}>
+        <Seo title={"Panel"}  />
+
         {/* Dernières activités */}
         <div className="py-6 px-3">
           <div className="max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-8">
@@ -84,8 +109,8 @@ export default function NewPanel({ data, user, ticket, role }) {
                 <div className="w-full">
                   <div className="relative pb-6 bg-white rounded">
                     <div className="">
-                      <h3 className="text-xl font-bold" data-config-id="header2">FAQ</h3>
-                      <p className="text-sm text-gray-500" data-config-id="desc02">Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.</p>
+                      <h3 className="text-xl font-bold">FAQ</h3>
+                      <p className="text-sm text-gray-500">Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.</p>
                     </div>
                     <dl className="divide-y divide-gray-200">
                       {faqs.map((faq) => (
@@ -138,18 +163,18 @@ export default function NewPanel({ data, user, ticket, role }) {
                             className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
                           >
                             <span className="flex items-center truncate space-x-3">
-                            {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
+                              {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
                                 )}></span>
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "relative inline-flex rounded-full h-3 w-3"
                                 )}></span>
                               </span> : <div
                                 className={classNames(
-                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500':'',
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
                                   "flex-shrink-0 w-2.5 h-2.5 rounded-full"
                                 )}
                                 aria-hidden="true"
@@ -200,16 +225,16 @@ export default function NewPanel({ data, user, ticket, role }) {
 
                               {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
                                 )}></span>
                                 <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600':'',
+                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-yellow-300' : project.step == 2 ? 'bg-green-400' : project.step == 3 ? 'bg-green-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "relative inline-flex rounded-full h-3 w-3"
                                 )}></span>
                               </span> : <div
                                 className={classNames(
-                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500':'',
+                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-yellow-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-green-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-green-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
                                   "flex-shrink-0 w-2.5 h-2.5 rounded-full"
                                 )}
                                 aria-hidden="true"
@@ -270,25 +295,22 @@ export default function NewPanel({ data, user, ticket, role }) {
                                   <div className="py-1">
                                     <Menu.Item>
                                       {({ active }) => (
-                                        <button
+
+                                        <a
                                           onClick={() => deleteTicket(project.id)}
+                                          className={classNames(
+                                            active
+                                              ? "bg-gray-100 text-gray-900"
+                                              : "text-gray-700",
+                                            "group flex items-center px-4 py-2 text-sm"
+                                          )}
                                         >
-                                          <a
-                                            href="#"
-                                            className={classNames(
-                                              active
-                                                ? "bg-gray-100 text-gray-900"
-                                                : "text-gray-700",
-                                              "group flex items-center px-4 py-2 text-sm"
-                                            )}
-                                          >
-                                            <TrashIcon
-                                              className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                                              aria-hidden="true"
-                                            />
-                                            Supprimer
-                                          </a>
-                                        </button>
+                                          <TrashIcon
+                                            className="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500 group-hover:cursor-pointer"
+                                            aria-hidden="true"
+                                          />
+                                          Supprimer
+                                        </a>
                                       )}
                                     </Menu.Item>
                                   </div>

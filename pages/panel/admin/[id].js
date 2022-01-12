@@ -21,6 +21,8 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import NavbarAdmin from "../../../components/navbarAdmin";
 import { toast } from "react-toastify";
+import { setZero } from "../../../lib/function";
+import Seo from "../../../components/seo";
 
 
 function classNames(...classes) {
@@ -291,6 +293,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
   return (
     <LayoutPanel user={user} role={role}>
+                  <Seo title={"Ticket #"+setZero(ticket.id)}/>
+
       {/* Dernières activités */}
       <NavbarAdmin role={role} />
       {ticket.step == 0?<div className="md:py-8 md:px-6">
