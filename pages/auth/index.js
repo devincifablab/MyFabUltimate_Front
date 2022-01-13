@@ -96,7 +96,7 @@ export default function Auth() {
   }
 
   const authHandler = async (err, data) => {
-    console.log(err,data);
+    console.log(err, data);
     toast.info("Connexion en cours, veuillez patienter...", {
       position: "top-right",
       autoClose: 5000,
@@ -106,7 +106,7 @@ export default function Auth() {
       draggable: true,
       progress: undefined,
     });
-    if(data == null){
+    if (data == null) {
       toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
         position: "top-right",
         autoClose: 5000,
@@ -271,10 +271,10 @@ export default function Auth() {
                   >
                     Se connecter
                   </button>
-                  {/*<p className="text-sm text-center text-gray-500 p-1">La connexion par adresse e-mail est réservé aux anciens comptes MyFab.</p>*/}
-                  <Link href="/auth/register">
+                  <p className="text-sm text-center text-gray-500 p-1">La connexion par adresse e-mail est réservé aux anciens comptes MyFab.</p>
+                  {/*<Link href="/auth/register">
                     <p className="text-sm text-center text-gray-500 p-1 hover:cursor-pointer">S'inscrire</p>
-                  </Link>
+  </Link>*/}
                   <Link href="/">
                     <p className="text-sm text-center font-medium text-indigo-600 hover:text-indigo-500 mt-5 hover:cursor-pointer">Retourner sur MyFab</p>
                   </Link>
