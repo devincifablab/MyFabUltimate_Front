@@ -150,6 +150,7 @@ export default function Settings({ user, role }) {
                       </div>
 
                     </div>
+                    <div className={`${user.isMicrosoft == 1?'hidden':'visible space-y-5'}`}>
                     <h1 className="text-lg font-medium leading-6 text-gray-900">Changer mon mot de passe</h1>
                     <div>
                       <label
@@ -205,11 +206,12 @@ export default function Settings({ user, role }) {
                       </div>
 
                     </div>
+                    </div>
 
 
                   </div>
                 </div>
-                <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                <div className={`px-4 py-3 bg-gray-50 text-right sm:px-6 ${user.isMicrosoft == 1?'hidden':'visible'}`}>
                   <button
                     onClick={() => changePassword()}
                     type="submit"
