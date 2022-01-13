@@ -271,7 +271,7 @@ export default function Auth() {
                   >
                     Se connecter
                   </button>
-                  <p className="text-sm text-center text-gray-500 p-1">La connexion par adresse e-mail est réservé aux anciens comptes MyFab.</p>
+                  <p className="text-sm text-center text-gray-500 p-1">La connexion par adresse e-mail est réservée aux anciens comptes MyFab.</p>
                   {/*<Link href="/auth/register">
                     <p className="text-sm text-center text-gray-500 p-1 hover:cursor-pointer">S'inscrire</p>
   </Link>*/}
