@@ -22,10 +22,10 @@ export const GlobalContext = createContext({});
 const MyApp = ({ Component, pageProps }) => {
   return (
     <>
-      <Seo title={"Accueil"} description={"Bienvenue sur le site du Devinci FabLab !"}/>
-        <Component {...pageProps}>
-        </Component>
-        <ToastContainer />
+      <Seo title={"Accueil"} description={"Bienvenue sur le site du Devinci FabLab !"} />
+      <Component {...pageProps}>
+      </Component>
+      <ToastContainer />
     </>
   );
 };

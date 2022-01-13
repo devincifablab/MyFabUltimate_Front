@@ -4,8 +4,17 @@ import { useEffect, useState } from "react"
 import router from "next/router";
 import { toast } from "react-toastify";
 import Link from 'next/link';
+import MicrosoftLogin from "react-microsoft-login";
 
 export default function Auth() {
+
+
+
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [error, setError] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (router.query.mail != null) {
@@ -33,14 +42,10 @@ export default function Auth() {
       }
       router.replace('/auth')
     }
+    setDone(true);
 
 
   })
-
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [error, setError] = useState(false);
-  const [checked, setChecked] = useState(false);
 
   async function login() {
     await axios({
@@ -90,7 +95,70 @@ export default function Auth() {
       })
   }
 
-
+  const authHandler = async (err, data) => {
+    console.log(err,data);
+    toast.info("Connexion en cours, veuillez patienter...", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    if(data == null){
+      toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    await axios({
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer " + data.accessToken
+      },
+      url: process.env.API + '/api/user/login/microsoft',
+    }).then((response) => {
+      if (response.status == 200) {
+        if (checked) {
+          setCookies('jwt', response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
+        } else {
+          setCookies('jwt', response.data.dvflCookie);
+        }
+        toast.success("Vous êtes désormais connecté ! Bienvenue " + data.givenName + " !", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        router.push('/panel');
+      }
+    })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+        setTimeout(() => setError(false), 5000);
+        toast.error("Impossible de vous connecter. Veuillez contacter fablab@devinci.fr.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      })
+  };
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -112,15 +180,18 @@ export default function Auth() {
 
                 <div className="mt-1">
                   <div className="">
-                    <a
+                    {done ? <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} withUserData={true} className=""> <a
                       href="#"
                       className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                     >
                       <span className="sr-only">Mon compte LéoID</span>
                       <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" className="h-5 w-5" />
                       <p className="ml-2">Mon compte LéoID</p>
-                    </a>
+                    </a></MicrosoftLogin>
+                      : ''}
+
                   </div>
+
                 </div>
               </div>
 

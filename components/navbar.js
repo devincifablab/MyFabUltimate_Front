@@ -4,6 +4,7 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon, CubeIcon, LoginIcon } from '@heroicons/react/outline'
 import { withRouter } from 'next/router'
 import { removeCookies } from 'cookies-next';
+import { logout } from '../lib/function'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -123,7 +124,7 @@ function Navbar({ router, user, role }) {
                             )}
                           >
                             <button
-                              onClick={() => { removeCookies('jwt'); router.push('/') }}
+                              onClick={() => { logout(user) }}
                             >Se déconnecter</button>
 
                           </a>
@@ -166,21 +167,13 @@ function Navbar({ router, user, role }) {
               </div>
             </div>
             <div className="mt-3 space-y-1">
-              <button
-                onClick={() => {
-                  removeCookies('jwt');
-                  location.reload();
-                }}
-              >
+              
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
+                  onClick={()=>logout(user)}
+                  className="hover:cursor-pointer block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 sm:px-6"
                 >
-                  <button
-                    onClick={() => { removeCookies('jwt'); router.replace(router.asPath) }}
-                  >Se déconnecter</button>
+                  Se déconnecter
                 </a>
-              </button>
             </div>
           </div> : null}
         </Disclosure.Panel>

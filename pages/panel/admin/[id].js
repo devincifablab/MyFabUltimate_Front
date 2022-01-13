@@ -34,7 +34,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const [idFile, setIdFile] = useState(null);
   const [openChange, setOpenChange] = useState(false);
   const [typeChange, setTypeChange] = useState('');
-  const [typeChangeValue,setTypeChangeValue] = useState('');
+  const [typeChangeValue, setTypeChangeValue] = useState('');
 
   const router = useRouter();
 
@@ -47,7 +47,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   const items = [
     { name: "Changer d'étape", function: "step" },
     { name: "Changer la priorité du ticket", function: "priority" },
-    { name: "Changer le type de ticket", function: "type" },    
+    { name: "Changer le type de ticket", function: "type" },
   ]
 
   async function download(id, name) {
@@ -55,7 +55,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: process.env.API+'/api/file/' + id,
+      url: process.env.API + '/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -74,7 +74,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     const cookie = getCookie("jwt");
     await axios({
       method: 'PUT',
-      url: process.env.API+'/api/ticket/' + params.id+'/setWaitingAnswer/1',
+      url: process.env.API + '/api/ticket/' + params.id + '/setWaitingAnswer/1',
       headers: {
         'dvflCookie': cookie
       },
@@ -82,7 +82,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
     await axios({
       method: 'POST',
-      url: process.env.API+'/api/ticket/' + params.id+'/message',
+      url: process.env.API + '/api/ticket/' + params.id + '/message',
       data: {
         content: comment
       },
@@ -98,8 +98,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-    }).catch((e)=>{
+      });
+    }).catch((e) => {
       toast.error("Une erreur est survenue, veuillez réessayer.", {
         position: "top-right",
         autoClose: 5000,
@@ -108,7 +108,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
     })
     document.getElementById('status').scrollIntoView();
     router.replace(router.asPath);
@@ -119,7 +119,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     await axios({
       method: 'GET',
       responseType: 'blob',
-      url: process.env.API+'/api/file/' + id,
+      url: process.env.API + '/api/file/' + id,
       headers: {
         'dvflCookie': cookie
       },
@@ -131,10 +131,10 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
   async function FileValidate(id, state, comment) {
     const cookie = getCookie("jwt");
-    if(state == false){
+    if (state == false) {
       await axios({
         method: 'PUT',
-        url: process.env.API+'/api/ticket/' + params.id+'/setStep/0',
+        url: process.env.API + '/api/ticket/' + params.id + '/setStep/0',
         headers: {
           'dvflCookie': cookie
         },
@@ -142,7 +142,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
     }
     await axios({
       method: 'PUT',
-      url: process.env.API+'/api/file/' + id,
+      url: process.env.API + '/api/file/' + id,
       data: {
         comment: comment,
         isValid: state
@@ -150,130 +150,130 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
       headers: {
         'dvflCookie': cookie
       },
-    }).then(async ()=>{
-      file.find(r=>r.id == id).isValid = state;
-      router.replace(router.asPath).then(async ()=>await verifyStep());
-      
+    }).then(async () => {
+      file.find(r => r.id == id).isValid = state;
+      router.replace(router.asPath).then(async () => await verifyStep());
+
     });
   }
 
-  async function verifyStep(){
+  async function verifyStep() {
     const cookie = getCookie("jwt");
     var isAllFilesValidated = true;
-    file.map(r=>{
-      if(r.isValid != true){
+    file.map(r => {
+      if (r.isValid != true) {
         isAllFilesValidated = false;
       }
     })
-    if(ticket.step == 0 && isAllFilesValidated == true){
+    if (ticket.step == 0 && isAllFilesValidated == true) {
       await axios({
         method: 'PUT',
-        url: process.env.API+'/api/ticket/' + params.id+'/setStep/1',
+        url: process.env.API + '/api/ticket/' + params.id + '/setStep/1',
         headers: {
           'dvflCookie': cookie
         },
-      }).then(()=>{
+      }).then(() => {
         router.replace(router.asPath);
       })
     }
   }
 
-  async function addStep(step){
+  async function addStep(step) {
     const cookie = getCookie("jwt");
-    
-      await axios({
-        method: 'PUT',
-        url: process.env.API+'/api/ticket/' + params.id+'/setStep/'+(step),
-        headers: {
-          'dvflCookie': cookie
-        },
-      }).then(()=>{
-        router.replace(router.asPath);
-      })
+
+    await axios({
+      method: 'PUT',
+      url: process.env.API + '/api/ticket/' + params.id + '/setStep/' + (step),
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then(() => {
+      router.replace(router.asPath);
+    })
   }
 
-  async function change(){
+  async function change() {
     const projectType = {
-      "PIX 1":{
+      "PIX 1": {
         id: 1
       },
-      "PIX 2":{
-        id:2
+      "PIX 2": {
+        id: 2
       },
-      "PING":{
-        id:3
+      "PING": {
+        id: 3
       },
-      "PI²":{id:4},
-      "Associatif":{id:5},
-      "Autre":{id:6}
+      "PI²": { id: 4 },
+      "Associatif": { id: 5 },
+      "Autre": { id: 6 }
     }
 
     const priority = {
-      "Faible":{
+      "Faible": {
         id: 1
       },
-      "Normal":{
-        id:2
+      "Normal": {
+        id: 2
       },
-      "Urgent":{
-        id:3
+      "Urgent": {
+        id: 3
       }
     }
 
     const stepType = {
-      "Etape 0":{
+      "Etape 0": {
         id: 0
       },
-      "Etape 1":{
-        id:1
+      "Etape 1": {
+        id: 1
       },
-      "Etape 2":{
-        id:2
+      "Etape 2": {
+        id: 2
       },
-      "Etape 3":{
-        id:3
+      "Etape 3": {
+        id: 3
       }
     }
     const cookie = getCookie("jwt");
     console.log(typeChangeValue);
 
-    switch (typeChange){
+    switch (typeChange) {
       case "step":
         await axios({
           method: 'PUT',
-          url: process.env.API+'/api/ticket/' + params.id+'/setStep/'+stepType[typeChangeValue].id,
+          url: process.env.API + '/api/ticket/' + params.id + '/setStep/' + stepType[typeChangeValue].id,
           headers: {
             'dvflCookie': cookie
           },
-        }).then(()=>{
+        }).then(() => {
           router.replace(router.asPath);
         })
         break;
       case "priority":
         await axios({
           method: 'PUT',
-          url: process.env.API+'/api/ticket/' + params.id+'/setPriority/',
-          data:{
+          url: process.env.API + '/api/ticket/' + params.id + '/setPriority/',
+          data: {
             priority: priority[typeChangeValue].id
           },
           headers: {
             'dvflCookie': cookie
           },
-        }).then(()=>{
+        }).then(() => {
           router.replace(router.asPath);
         })
         break;
       case "type":
         await axios({
           method: 'PUT',
-          url: process.env.API+'/api/ticket/' + params.id+'/setProjecttype/',
-          data:{
+          url: process.env.API + '/api/ticket/' + params.id + '/setProjecttype/',
+          data: {
             projecttype: projectType[typeChangeValue].id
           },
           headers: {
             'dvflCookie': cookie
           },
-        }).then(()=>{
+        }).then(() => {
           router.replace(router.asPath);
         })
         break;
@@ -282,34 +282,34 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
   return (
     <LayoutPanel user={user} role={role}>
-                  <Seo title={"Ticket #"+setZero(ticket.id)}/>
+      <Seo title={"Ticket #" + setZero(ticket.id)} />
 
       {/* Dernières activités */}
       <NavbarAdmin role={role} />
-      {ticket.step == 0?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
-            <h2 className="text-xl font-bold text-white">Les fichiers doivent être validés.</h2>
-            <h3 className="text-md font-medium text-white">Pour valider un fichier, vous devez cliquer sur "voir le fichier STL" puis sur valider ou refuser.</h3>
-          </div>
-        </div>:''}
-        {ticket.step == 1?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-emerald-500 to-emerald-300">
-            <h2 className="text-xl font-bold text-white">L'impression n'est pas encore lancée.</h2>
-            <h3 className="text-md font-medium text-white">Vous pouvez désormais lancer l'impression du ticket. Pour cela il vous suffit de cliquer sur le bouton ci-dessous.</h3>
-          </div>
-        </div>:''}
-        {ticket.step == 2?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-amber-300 to-red-500">
-            <h2 className="text-xl font-bold text-white">La pièce n'a pas été déposé dans un casier.</h2>
-            <h3 className="text-md font-medium text-white">Pour assigner un numéro de casier au ticket, cliquez sur le bouton ci-dessous. Si la pièce a déjà été récupéré, vous pouvez fermer le ticket.</h3>
-          </div>
-        </div>:''}
-        {ticket.step >= 3?<div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-red-300 to-red-500">
-            <h2 className="text-xl font-bold text-white">Le ticket est maintenant fermé.</h2>
-            <h3 className="text-md font-medium text-white">Oups, c'était une erreur ? <a className="cursor-pointer hover:text-gray-100" onClick={()=>addStep(2)}>Cliquez-ici</a> pour revenir à l'étape précédente.</h3>
-          </div>
-        </div>:''}
+      {ticket.step == 0 ? <div className="md:py-8 md:px-6">
+        <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
+          <h2 className="text-xl font-bold text-white">Les fichiers doivent être validés.</h2>
+          <h3 className="text-md font-medium text-white">Pour valider un fichier, vous devez cliquer sur "voir le fichier STL" puis sur valider ou refuser.</h3>
+        </div>
+      </div> : ''}
+      {ticket.step == 1 ? <div className="md:py-8 md:px-6">
+        <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-emerald-500 to-emerald-300">
+          <h2 className="text-xl font-bold text-white">L'impression n'est pas encore lancée.</h2>
+          <h3 className="text-md font-medium text-white">Vous pouvez désormais lancer l'impression du ticket. Pour cela il vous suffit de cliquer sur le bouton ci-dessous.</h3>
+        </div>
+      </div> : ''}
+      {ticket.step == 2 ? <div className="md:py-8 md:px-6">
+        <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-amber-300 to-red-500">
+          <h2 className="text-xl font-bold text-white">La pièce n'a pas été déposé dans un casier.</h2>
+          <h3 className="text-md font-medium text-white">Pour assigner un numéro de casier au ticket, cliquez sur le bouton ci-dessous. Si la pièce a déjà été récupéré, vous pouvez fermer le ticket.</h3>
+        </div>
+      </div> : ''}
+      {ticket.step >= 3 ? <div className="md:py-8 md:px-6">
+        <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-red-300 to-red-500">
+          <h2 className="text-xl font-bold text-white">Le ticket est maintenant fermé.</h2>
+          <h3 className="text-md font-medium text-white">Oups, c'était une erreur ? <a className="cursor-pointer hover:text-gray-100" onClick={() => addStep(2)}>Cliquez-ici</a> pour revenir à l'étape précédente.</h3>
+        </div>
+      </div> : ''}
       <div id="status" className="px-12 py-8">
         <Steps steps={steps} />
       </div>
@@ -318,14 +318,14 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
 
           <main className="col-span-9">
 
-             
+
 
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
 
 
 
 
-            <div className="px-4 py-5 sm:px-6 sm:flex sm:items-center sm:justify-between">
+              <div className="px-4 py-5 sm:px-6 sm:flex sm:items-center sm:justify-between">
                 <div>
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
                     Détails de la demande d'impression
@@ -336,83 +336,86 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                 </div>
                 <div className="text-center sm:text-left">
                   {(ticket.step < 3) ? <div className="space-x-3">
-                  <span className="relative z-0 inline-flex shadow-sm rounded-md">
-                  {ticket.step >0?<button
-      onClick={(e) => {
-        if(ticket.step < 3){ {/*On met a 2 pour empêcher de valider l'étape 3*/}
-          addStep(ticket.step+1)
-        } else {
-{/* La partie sur les lockers va ici */}
-        }
-      }}
-        type="button"
-        className="relative inline-flex items-center px-4 py-2 rounded-l-md border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 border-2 focus:ring-indigo-500 focus:border-indigo-500"
-      >
-         <BeakerIcon
-                      className="-ml-0.5 mr-2 h-4 w-4"
-                      aria-hidden="true"
-                    />
-        Valider l'étape {ticket.step+1}
-        
-      </button>:''}
-      
-      <Menu as="span" className="-ml-px relative block">
-        <Menu.Button className="relative inline-flex items-center px-2 py-2 rounded-r-md border-2 border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
-          <span className="sr-only">Open options</span>
-          <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
-        </Menu.Button>
-        <Transition
-          as={Fragment}
-          enter="transition ease-out duration-100"
-          enterFrom="transform opacity-0 scale-95"
-          enterTo="transform opacity-100 scale-100"
-          leave="transition ease-in duration-75"
-          leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95"
-        >
-          <Menu.Items className="origin-top-right absolute right-0 mt-2 -mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="py-1">
-              {items.map((item) => (
-                <Menu.Item key={item.name}>
-                  {({ active }) => (
-                    <a
-                      onClick={()=>{setOpenChange(true);
-                        if(item.function == "type"){
-                          setTypeChangeValue("PIX 1");
-                        }
-                        if(item.function == "step"){
-                          setTypeChangeValue("Etape 0");
-                        }
-                        if(item.function == "priority"){
-                          setTypeChangeValue("Faible");
-                        }
-                        setTypeChange(item.function);}}
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block px-4 py-2 text-sm'
-                      )}
-                    >
-                      {item.name}
-                    </a>
-                  )}
-                </Menu.Item>
-              ))}
-            </div>
-          </Menu.Items>
-        </Transition>
-      </Menu>
-    </span>
+                    <span className="relative z-0 inline-flex shadow-sm rounded-md">
+                      {ticket.step > 0 ? <button
+                        onClick={(e) => {
+                          if (ticket.step < 3) {
+                            {/*On met a 2 pour empêcher de valider l'étape 3*/ }
+                            addStep(ticket.step + 1)
+                          } else {
+                            {/* La partie sur les lockers va ici */ }
+                          }
+                        }}
+                        type="button"
+                        className="relative inline-flex items-center px-4 py-2 rounded-l-md border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 border-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      >
+                        <BeakerIcon
+                          className="-ml-0.5 mr-2 h-4 w-4"
+                          aria-hidden="true"
+                        />
+                        Valider l'étape {ticket.step + 1}
+
+                      </button> : ''}
+
+                      <Menu as="span" className="-ml-px relative block">
+                        <Menu.Button className="relative inline-flex items-center px-2 py-2 rounded-r-md border-2 border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                          <span className="sr-only">Open options</span>
+                          <ChevronDownIcon className="h-5 w-5" aria-hidden="true" />
+                        </Menu.Button>
+                        <Transition
+                          as={Fragment}
+                          enter="transition ease-out duration-100"
+                          enterFrom="transform opacity-0 scale-95"
+                          enterTo="transform opacity-100 scale-100"
+                          leave="transition ease-in duration-75"
+                          leaveFrom="transform opacity-100 scale-100"
+                          leaveTo="transform opacity-0 scale-95"
+                        >
+                          <Menu.Items className="origin-top-right absolute right-0 mt-2 -mr-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div className="py-1">
+                              {items.map((item) => (
+                                <Menu.Item key={item.name}>
+                                  {({ active }) => (
+                                    <a
+                                      onClick={() => {
+                                        setOpenChange(true);
+                                        if (item.function == "type") {
+                                          setTypeChangeValue("PIX 1");
+                                        }
+                                        if (item.function == "step") {
+                                          setTypeChangeValue("Etape 0");
+                                        }
+                                        if (item.function == "priority") {
+                                          setTypeChangeValue("Faible");
+                                        }
+                                        setTypeChange(item.function);
+                                      }}
+                                      className={classNames(
+                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                        'block px-4 py-2 text-sm'
+                                      )}
+                                    >
+                                      {item.name}
+                                    </a>
+                                  )}
+                                </Menu.Item>
+                              ))}
+                            </div>
+                          </Menu.Items>
+                        </Transition>
+                      </Menu>
+                    </span>
                     <button
-                    type="button"
-                    onClick={(e) => addStep(4)}
-                    className="text-right mt-5 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                  >
-                    <ExclamationCircleIcon
-                      className="-ml-0.5 mr-2 h-4 w-4"
-                      aria-hidden="true"
-                    />
-                    Fermer le ticket
-                  </button>
+                      type="button"
+                      onClick={(e) => addStep(4)}
+                      className="text-right mt-5 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                      <ExclamationCircleIcon
+                        className="-ml-0.5 mr-2 h-4 w-4"
+                        aria-hidden="true"
+                      />
+                      Fermer le ticket
+                    </button>
                   </div> : ''}
                 </div>
               </div>
@@ -423,7 +426,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                       Nom et prénom
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.firstName + " " + (user.lastName).toString().toUpperCase()}
+                      {ticket.userName}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -431,7 +434,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                       Ecole et année
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      ESILV A2
+                      {ticket.title || "Ancien compte"}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -445,7 +448,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                       Adresse e-mail
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.email}
+                      {ticket.email}
                     </dd>
                   </div>
                   <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -492,9 +495,9 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                                 </button>
                               </div>
                             </li>
-                            {r.comment.length >2?<div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                            {r.comment.length > 2 ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
                               <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
-                            </div>:''}
+                            </div> : ''}
                           </div>
                           )
                         })}
@@ -530,21 +533,21 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                           </li>
                         ))}
                         <div>
-                        <textarea
-                  id="comment"
-                  name="comment"
-                  rows={3}
-                  onChange={(e)=>setComment(e.target.value)}
-                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={''}
-                />
-                <button
-                onClick={(e)=>{document.getElementById("comment").value = ''; sendComment(e)}}
-                className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
-                >
-                  Envoyer mon commentaire
-                </button>
-                <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
+                          <textarea
+                            id="comment"
+                            name="comment"
+                            rows={3}
+                            onChange={(e) => setComment(e.target.value)}
+                            className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                            defaultValue={''}
+                          />
+                          <button
+                            onClick={(e) => { document.getElementById("comment").value = ''; sendComment(e) }}
+                            className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
+                          >
+                            Envoyer mon commentaire
+                          </button>
+                          <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
 
                         </div>
                       </ul>
@@ -597,7 +600,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
                 <div>
                   <p className="text-center font-medium">Aperçu du fichier STL:</p>
-                  {idFile != null?file.find(r =>r.id == idFile).isValid == null?<p className="text-center text-md">Le fichier n'a pas été vérifié.</p>:file.find(r =>r.id == idFile).isValid == false?<p className="text-center text-md">Le fichier a été refusé.</p>:file.find(r =>r.id == idFile).isValid == true?<p className="text-center text-md">Le fichier a été accepté.</p>:'':''}
+                  {idFile != null ? file.find(r => r.id == idFile).isValid == null ? <p className="text-center text-md">Le fichier n'a pas été vérifié.</p> : file.find(r => r.id == idFile).isValid == false ? <p className="text-center text-md">Le fichier a été refusé.</p> : file.find(r => r.id == idFile).isValid == true ? <p className="text-center text-md">Le fichier a été accepté.</p> : '' : ''}
                   <center>
                     <STLViewer
                       width={300}
@@ -611,26 +614,26 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
                       lights={[1, 1, 1]}
                     />
                     <textarea
-                  id="comment"
-                  name="comment"
-                  rows={3}
-                  onChange={(e)=>setComment(e.target.value)}
-                  className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                  defaultValue={''}
-                />
+                      id="comment"
+                      name="comment"
+                      rows={3}
+                      onChange={(e) => setComment(e.target.value)}
+                      className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                      defaultValue={''}
+                    />
 
-                <div className="inline-flex mt-5">
-        <button 
-        onClick={()=> FileValidate(idFile, true, comment)}
-        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-l active:z-1 focus:z-1 -mr-px border-emerald-700 bg-emerald-700 text-white hover:text-white hover:bg-emerald-800 hover:border-emerald-800 focus:ring focus:ring-emerald-500 focus:ring-opacity-50 active:bg-emerald-700 active:border-emerald-700">
-          Valider le fichier
-        </button>
-        <button 
-                onClick={()=> FileValidate(idFile, false, comment)}
-        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-r active:z-1 focus:z-1 border-red-700 bg-red-500 text-white hover:text-white hover:bg-red-800 hover:border-red-800 focus:ring focus:ring-red-500 focus:ring-opacity-50 active:bg-red-700 active:border-red-700">
-          Refuser le fichier
-        </button>
-      </div>
+                    <div className="inline-flex mt-5">
+                      <button
+                        onClick={() => FileValidate(idFile, true, comment)}
+                        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-l active:z-1 focus:z-1 -mr-px border-emerald-700 bg-emerald-700 text-white hover:text-white hover:bg-emerald-800 hover:border-emerald-800 focus:ring focus:ring-emerald-500 focus:ring-opacity-50 active:bg-emerald-700 active:border-emerald-700">
+                        Valider le fichier
+                      </button>
+                      <button
+                        onClick={() => FileValidate(idFile, false, comment)}
+                        type="button" className="inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded-r active:z-1 focus:z-1 border-red-700 bg-red-500 text-white hover:text-white hover:bg-red-800 hover:border-red-800 focus:ring focus:ring-red-500 focus:ring-opacity-50 active:bg-red-700 active:border-red-700">
+                        Refuser le fichier
+                      </button>
+                    </div>
                   </center>
                 </div>
                 <div className="mt-5 sm:mt-6">
@@ -649,97 +652,97 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
       </Transition.Root>
 
       <Transition.Root show={openChange} as={Fragment}>
-      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpenChange}>
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
+        <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpenChange}>
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
 
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
-            &#8203;
-          </span>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-                <button
-                  type="button"
-                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={() => setOpenChange(false)}
-                >
-                  <span className="sr-only">Close</span>
-                  <XIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <div className="sm:flex sm:items-start">
-                <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                  <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+            {/* This element is to trick the browser into centering the modal contents. */}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+                  <button
+                    type="button"
+                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    onClick={() => setOpenChange(false)}
+                  >
+                    <span className="sr-only">Close</span>
+                    <XIcon className="h-6 w-6" aria-hidden="true" />
+                  </button>
                 </div>
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
-                    {typeChange == 'step'?"Changer les étapes du ticket":typeChange == 'priority'?"Changer la priorité du ticket":typeChange == 'type'?"Changer le type de ticket":''} 
-                  </Dialog.Title>
-                  <div className="mt-2">
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                      {typeChange == 'step' ? "Changer les étapes du ticket" : typeChange == 'priority' ? "Changer la priorité du ticket" : typeChange == 'type' ? "Changer le type de ticket" : ''}
+                    </Dialog.Title>
+                    <div className="mt-2">
                       <select
                         onChange={(e) => setTypeChangeValue(e.target.value)}
                         id="type"
                         name="type"
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                       >
-                        {typeChange == "type"?<><option>PIX 1</option>
-                        <option>PIX 2</option>
-                        <option>PING</option>
-                        <option>PI²</option>
-                        <option>Associatif</option>
-                        <option>Autre</option></>:typeChange == "step"?<><option>Etape 0</option>
-                        <option>Etape 1</option>
-                        <option>Etape 2</option>
-                        <option>Etape 3</option>
-                        </>:typeChange == "priority"?<><option>Faible</option>
-                        <option>Normal</option>
-                        <option>Urgent</option>
-                        </>:''}
+                        {typeChange == "type" ? <><option>PIX 1</option>
+                          <option>PIX 2</option>
+                          <option>PING</option>
+                          <option>PI²</option>
+                          <option>Associatif</option>
+                          <option>Autre</option></> : typeChange == "step" ? <><option>Etape 0</option>
+                            <option>Etape 1</option>
+                            <option>Etape 2</option>
+                            <option>Etape 3</option>
+                          </> : typeChange == "priority" ? <><option>Faible</option>
+                            <option>Normal</option>
+                            <option>Urgent</option>
+                          </> : ''}
                       </select>
+                    </div>
                   </div>
                 </div>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => { setOpenChange(false); change() }}
+                  >
+                    Confirmer
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                    onClick={() => setOpenChange(false)}
+                  >
+                    Annuler
+                  </button>
+                </div>
               </div>
-              <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                <button
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => {setOpenChange(false); change()}}
-                >
-                  Confirmer
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-                  onClick={() => setOpenChange(false)}
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition.Root>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
 
     </LayoutPanel>
   );

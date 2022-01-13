@@ -1,13 +1,13 @@
 import Head from "next/head"
 
-const Seo = ({title, description}) => {
-  const  siteName = "MyFab";
+const Seo = ({ title, description }) => {
+  const siteName = "MyFab";
   const fullSeo = {
     // Add title suffix
     metaTitle: `${title} | ${siteName}`,
     // Get full image URL
     shareImage: '/photo/seo.png',
-    metaDescription: description||'Bienvenue sur le site du Devinci FabLab !'
+    metaDescription: description || 'Bienvenue sur le site du Devinci FabLab !'
   }
 
   return (

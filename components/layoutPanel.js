@@ -6,6 +6,7 @@ import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon } from "@heroicons/
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import { removeCookies } from "cookies-next";
+import { logout } from "../lib/function";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -158,7 +159,7 @@ export default function LayoutPanel({ children, user, role }) {
                           {name + " " + surname.toUpperCase()}
                         </span>
                         <span className="text-gray-500 text-sm truncate">
-                          ESILV A2
+                          {user.title || "Ancien compte"}
                         </span>
                       </span>
                     </span>
@@ -226,7 +227,7 @@ export default function LayoutPanel({ children, user, role }) {
                           )}
                         >
                           <button
-                            onClick={() => { removeCookies('jwt'); router.push('/') }}
+                            onClick={() => { logout(user) }}
                           >Se déconnecter</button>
                         </a>
                       )}
@@ -335,7 +336,7 @@ export default function LayoutPanel({ children, user, role }) {
                             )}
                           >
                             <button
-                              onClick={() => { removeCookies('jwt'); router.push('/') }}
+                              onClick={() => { logout(user) }}
                             >Se déconnecter</button>
                           </a>
 

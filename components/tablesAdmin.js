@@ -1,4 +1,4 @@
-import { MoonIcon, DownloadIcon } from "@heroicons/react/outline";
+import { MoonIcon } from "@heroicons/react/outline";
 import Link from 'next/link';
 import { setZero } from "../lib/function";
 
@@ -8,10 +8,10 @@ const colors = {
   "f30b0b": "text-white bg-gradient-to-r from-amber-400 to-red-500",
 };
 
-export default function TablesAdmin({tickets, isDone}) {
+export default function TablesAdmin({ tickets, isDone }) {
 
   var ticket;
-  if(isDone){
+  if (isDone) {
     ticket = tickets.filter(r => r.step < 3);
   } else {
     ticket = tickets;
@@ -30,9 +30,9 @@ export default function TablesAdmin({tickets, isDone}) {
             {/*<th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">
               Email
   </th>*/}
-  <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">
+            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">
               Priorité
-  </th>
+            </th>
             <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">
               Type
             </th>
@@ -53,7 +53,7 @@ export default function TablesAdmin({tickets, isDone}) {
                 </td>
                 <td className="p-3">
                   <p className="font-medium">{r.userName}</p>
-                  <p className="text-gray-500">ESILV A2</p>
+                  <p className="text-gray-500">{r.title || "Ancien compte"}</p>
                 </td>
                 <td className="p-3">
                   <div
@@ -73,20 +73,20 @@ export default function TablesAdmin({tickets, isDone}) {
                   <div
                     className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}
                   >
-                    {r.step == 0?'Fichier STL':r.step == 1?'Impression pas commencé':r.step == 2?"Impression terminée":r.step >2?"Ticker fermé":''}
+                    {r.step == 0 ? 'Fichier STL' : r.step == 1 ? 'Impression pas commencé' : r.step == 2 ? "Impression terminée" : r.step > 2 ? "Ticker fermé" : ''}
                   </div>
                 </td>
                 <td className="p-3 text-center space-x-2">
                   <Link href={`/panel/admin/${r.id}`}>
-                  <button
-                    type="button"
-                    className="inline-flex justify-center items-center space-x-2 border font-medium focus:outline-none px-2 py-1 leading-5 text-sm rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none"
-                  >
-                    <MoonIcon className="inline-block w-4 h-4" />
-                    <span>Visualiser</span>
-                  </button>
+                    <button
+                      type="button"
+                      className="inline-flex justify-center items-center space-x-2 border font-medium focus:outline-none px-2 py-1 leading-5 text-sm rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none"
+                    >
+                      <MoonIcon className="inline-block w-4 h-4" />
+                      <span>Visualiser</span>
+                    </button>
                   </Link>
-{/*
+                  {/*
                   <button
                     type="button"
                     className="inline-flex justify-center items-center space-x-2 border font-medium focus:outline-none px-1 py-1 leading-5 text-sm rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none"
