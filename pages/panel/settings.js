@@ -86,7 +86,7 @@ export default function Settings({ user, role }) {
                   Mes informations
                 </h3>
                 <p className="mt-1 text-sm text-gray-600">
-                  Vous pouvez éditer sur cette page votre mot de passe. Si vous souhaitez modifier un autre paramètres, merci de nous contacter directement par mail à fablab@devinci.fr.
+                  Vous pouvez éditer sur cette page votre mot de passe. Si vous souhaitez modifier un autre paramètre, merci de nous contacter directement par mail à fablab@devinci.fr.
                 </p>
               </div>
             </div>
