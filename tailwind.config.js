@@ -16,6 +16,7 @@ module.exports = {
             'gradient-x':'gradient-x 3s ease infinite',
             'gradient-y':'gradient-y 15s ease infinite',
             'gradient-xy':'gradient-xy 15s ease infinite',
+            'gradient-placeholder':'loading 1s ease infinite',
             'blob': "blob 7s infinite",
         },
         'keyframes': {
@@ -32,6 +33,18 @@ module.exports = {
             "100%": {
               'transform': "tranlate(0px, 0px) scale(1)",
             },
+          },
+          'loading': {
+            '0%':{
+                'left': '-45%',
+
+            },
+            '100%':{
+                'left': '55%',
+                'background-image': 'linear-gradient(to left, rgba(251,251,251, .05))',
+                'background-image': '-moz-linear-gradient(to left, rgba(251,251,251, .05))',
+                'background-image': '-webkit-linear-gradient(to left, rgba(251,251,251, .05))',
+                        },
           },
             'gradient-y': {
                 '0%, 100%': {

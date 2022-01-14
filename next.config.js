@@ -16,6 +16,9 @@
     reactStrictMode: true,
     env: {
       API: process.env.API,
+      GHOST_URL: process.env.GHOST_URL,
+      GHOST_KEY: process.env.GHOST_KEY,
+
     }
   }
   

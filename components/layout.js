@@ -1,6 +1,6 @@
 import Navbar from "./navbar"
 
-const Layout = ({ children, user, role }) => (
+const Layout = ({ children, user = null, role = null }) => (
   <>
   <Navbar user={user} role={role} />
     {children}

@@ -17,7 +17,7 @@ function Navbar({ router, user, role }) {
     { name: "Blog", href: "/blog", current: pn.split('/')[1] == "blog" },
   ]
 
-  const isLogged = user.error == null;
+  const isLogged = (user != null && user.error == null);
 
   return <Disclosure as="nav" className="bg-white shadow">
     {({ open }) => (
@@ -70,7 +70,7 @@ function Navbar({ router, user, role }) {
                  * Ici on vérifie si l'utilisateur est connecté.
                  */}
 
-                {isLogged ? <Link href={role.length > 0 ? "/panel/admin" : "/panel"}>
+                {isLogged && role != null ? <Link href={role.length > 0 ? "/panel/admin" : "/panel"}>
                   <button
                     type="button"
                     className="relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -96,7 +96,7 @@ function Navbar({ router, user, role }) {
                   <div>
                     <Menu.Button className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                       <span className="sr-only">Open user menu</span>
-                      <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 text-lg">
+                      <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-500 text-lg">
                         {user == null ? "ET" : user.firstName.toString().toUpperCase()[0] + "" + user.lastName.toString().toUpperCase()[0]}
                       </div>
                     </Menu.Button>

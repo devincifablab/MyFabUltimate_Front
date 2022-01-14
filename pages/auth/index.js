@@ -14,7 +14,6 @@ export default function Auth() {
   const [password, setPassword] = useState(null);
   const [error, setError] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (router.query.mail != null) {
@@ -42,9 +41,6 @@ export default function Auth() {
       }
       router.replace('/auth')
     }
-    setDone(true);
-
-
   })
 
   async function login() {
@@ -97,7 +93,7 @@ export default function Auth() {
 
   const authHandler = async (err, data) => {
     console.log(err, data);
-    toast.info("Connexion en cours, veuillez patienter...", {
+    {/*toast.info("Connexion en cours, veuillez patienter...", {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -105,7 +101,7 @@ export default function Auth() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-    });
+    });*/}
     if (data == null) {
       toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
         position: "top-right",
@@ -157,6 +153,8 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
         });
+        window.sessionStorage.clear();
+        router.replace(router.asPath)
       })
   };
 
@@ -168,7 +166,7 @@ export default function Auth() {
             <img
               className="h-12 w-auto"
               src="/logo.png"
-              alt="Workflow"
+              alt="Devinci FabLab"
             />
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Connectez-vous à MyFab</h2>
           </div>
@@ -176,20 +174,17 @@ export default function Auth() {
           <div className="mt-8">
             <div>
               <div>
-                <p className="text-sm font-medium text-gray-700">Se connecter avec</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">Se connecter avec</p>
 
                 <div className="mt-1">
                   <div className="">
-                    {done ? <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} withUserData={true} className=""> <a
-                      href="#"
-                      className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                    >
-                      <span className="sr-only">Mon compte LéoID</span>
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" className="h-5 w-5" />
-                      <p className="ml-2">Mon compte LéoID</p>
-                    </a></MicrosoftLogin>
-                      : ''}
-
+                   {typeof window === 'undefined' ? null : <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} prompt="select_account" withUserData={true} debug={true} children={<div
+                        className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
+                      >
+                        <span className="sr-only">Mon compte LéoID</span>
+                        <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
+                        <p className="ml-2">Mon compte LéoID</p>
+                      </div>}/>}
                   </div>
 
                 </div>

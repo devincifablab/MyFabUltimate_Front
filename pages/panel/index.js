@@ -155,7 +155,7 @@ export default function NewPanel({ data, user, ticket, role }) {
                             className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
                           >
                             <span className="flex items-center truncate space-x-3">
-                              {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
+                              {getColor(project.step, project.waitingAnswer) == 10 ? <span className="flex h-3 w-3">
                                 <span className={classNames(
                                   project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
@@ -215,7 +215,7 @@ export default function NewPanel({ data, user, ticket, role }) {
                           <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
                             <div className="flex items-center space-x-3 lg:pl-2">
 
-                              {getColor(project.step, project.waitingAnswer) == 10 ? <span class="flex h-3 w-3">
+                              {getColor(project.step, project.waitingAnswer) == 10 ? <span className="flex h-3 w-3">
                                 <span className={classNames(
                                   project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
                                   "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
@@ -346,7 +346,6 @@ export async function getServerSideProps({ req }) {
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const ticket = await fetchAPIAuth("/ticket/me", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
-
 
   return {
     props: { user, ticket, role }, // will be passed to the page component as props
