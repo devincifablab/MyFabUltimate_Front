@@ -7,7 +7,7 @@ Bonjour ! Vous vous trouvez actuellement sur le respository de MyFab. Le site es
  4. Exécutez dans le dossier du répertoire `npm install`
  5. Et voilà c'est prêt ! Il vous suffit d'exécuter ensuite `npm run dev` pour lancer le site.
 
- ###Installation de Ghost:
+ ### Installation de Ghost:
  Ghost permet de faire un back-end pour notre blog. A la place d'avoir un lourd éditeur de contenu, Ghost nous permet d'avoir l'avantage d'un CMS, en gardant juste son API (donc pas de front pour les utilisateurs "normaux").
  L'installation se fait très simplement: https://ghost.org/docs/install/local/
 
