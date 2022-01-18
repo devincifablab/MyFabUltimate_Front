@@ -346,6 +346,15 @@ export async function getServerSideProps({ req, params }) {
   const file = await fetchAPIAuth("/ticket/" + params.id + "/file", cookies.jwt);
   const message = await fetchAPIAuth("/ticket/" + params.id + "/message", cookies.jwt);
 
+  if(user.acceptedRule == 0){
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/panel/rules",
+      },
+      props:{},
+    };  }
+
   return {
     props: { user, params, role, ticket, file, message }, // will be passed to the page component as props
   }

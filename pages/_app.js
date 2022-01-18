@@ -1,16 +1,15 @@
-import "tailwindcss/tailwind.css";
 import App from "next/app";
 import { createContext } from "react";
 import Router from "next/router";
 import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
-import 'react-markdown-editor-lite/lib/index.css';
 import 'moment/locale/fr'
 import '../styles/global.css'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Seo from "../components/seo";
-
+import Cookie from '../components/cookie';
+import { getCookie } from "cookies-next";
 
 //Binding events.
 Router.events.on("routeChangeStart", () => NProgress.start());
@@ -26,6 +25,7 @@ const MyApp = ({ Component, pageProps }) => {
       <Component {...pageProps}>
       </Component>
       <ToastContainer />
+      {getCookie('cookie')?'':<Cookie />}
     </>
   );
 };

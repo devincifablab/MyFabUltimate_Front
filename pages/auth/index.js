@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setCookies } from "cookies-next";
+import { getCookie, setCookies } from "cookies-next";
 import { useEffect, useState } from "react"
 import router from "next/router";
 import { toast } from "react-toastify";
@@ -92,7 +92,6 @@ export default function Auth() {
   }
 
   const authHandler = async (err, data) => {
-    console.log(err, data);
     {/*toast.info("Connexion en cours, veuillez patienter...", {
       position: "top-right",
       autoClose: 5000,
@@ -121,7 +120,7 @@ export default function Auth() {
         "Authorization": "Bearer " + data.accessToken
       },
       url: process.env.API + '/api/user/login/microsoft',
-    }).then((response) => {
+    }).then(async (response) => {
       if (response.status == 200) {
         if (checked) {
           setCookies('jwt', response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
@@ -137,7 +136,21 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
         });
-        router.push('/panel');
+
+        await axios({
+          method: 'GET',
+          headers: {
+            "dvflCookie": getCookie('jwt')
+          },
+          url: process.env.API + '/api/user/authorization',
+        }).then((response) => {
+          if(response.data.myFabAgent == 1){
+            router.push('/panel/admin')
+          } else {
+            router.push('/panel');
+          }
+        });
+
       }
     })
       .catch((error) => {

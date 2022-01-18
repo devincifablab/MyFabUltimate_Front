@@ -1,4 +1,4 @@
-import { InformationCircleIcon } from '@heroicons/react/outline'
+import { InformationCircleIcon, UserAddIcon } from '@heroicons/react/outline'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
 import LayoutPanel from '../../../components/layoutPanel'
@@ -12,6 +12,7 @@ import { getCookie } from 'cookies-next'
 import { setZero } from '../../../lib/function'
 import { toast } from 'react-toastify'
 import Seo from '../../../components/seo'
+import { PlusIcon } from '@heroicons/react/solid'
 
 export default function Settings({ user, role, me }) {
     const [open, setOpen] = useState(false);
@@ -20,6 +21,9 @@ export default function Settings({ user, role, me }) {
     const [password, setPassword] = useState(null);
     const [roleUser, setRoleUser] = useState("Chargement...");
     const [id, setId] = useState(null);
+
+    const [allRole, setAllRole] = useState([]);
+    const [userRole, setUserRole] = useState([]);
 
     useEffect(function () {
         if (role.filter(r => r.id == 1 || r.id == 2).length < 1) {
@@ -185,6 +189,28 @@ export default function Settings({ user, role, me }) {
         });
     }
 
+    async function settingModal(id) {
+
+        const cookie = getCookie('jwt');
+
+        var allRoles = await fetchAPIAuth("/role", cookie);
+        const user = await fetchAPIAuth("/user/" + id, cookie);
+        const userRole = await fetchAPIAuth("/user/" + id + "/role", cookie);
+
+        for(let i = 0;i<userRole.length;i++){
+            for(let j = 0;j<allRoles.length;j++){
+                if(userRole[i].id == allRoles[j].id){
+                    allRoles = allRoles.filter(e=>e.id!=userRole[i].id);
+                }
+            }
+        }
+
+        setUserRole(userRole);
+        setAllRole(allRoles);
+        setData(user);
+        setOpen(true);
+    }
+
     return (
         <>
             <LayoutPanel user={me} role={role}>
@@ -210,7 +236,7 @@ export default function Settings({ user, role, me }) {
                                         </div>
                                     </div>
                                 </div>
-                                <UserTablesAdmin user={result} id={getUser} />
+                                <UserTablesAdmin user={result} id={settingModal} />
                             </div>
 
                         </div>
@@ -252,7 +278,63 @@ export default function Settings({ user, role, me }) {
                                         <div className="mt-3 text-center sm:mt-5">
                                             <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
                                                 <p>Utilisateur <strong>#{setZero(data.id)}</strong>: {data.firstName} {data.lastName}</p>
-                                                <p>Rôle: {roleUser}</p>
+                                                <div>
+                                                    <div className='space-x-1 text-center'>
+                                                        {userRole.map(r => {
+                                                            return (
+                                                                <span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color }}>
+                                                                    {r.name}
+                                                                    <button
+                                                                        onClick={async () => {
+                                                                            setUserRole(userRole.filter(e => e != r));
+                                                                            var array = allRole;
+                                                                            array.push(r);
+                                                                            setAllRole(array);
+
+                                                                            await axios({
+                                                                                method: 'DELETE',
+                                                                                url: process.env.API + '/api/user/' + data.id + '/role/' + r.id,
+                                                                                headers: {
+                                                                                    'dvflCookie': getCookie('jwt')
+                                                                                },
+                                                                            }).then((response) => {
+                                                                                if (response.status == 200) {
+                                                                                    toast.success("Le rôle " + r.name + " a été supprimé à l'utilisateur #" + setZero(data.id), {
+                                                                                        position: "top-right",
+                                                                                        autoClose: 5000,
+                                                                                        hideProgressBar: false,
+                                                                                        closeOnClick: true,
+                                                                                        pauseOnHover: true,
+                                                                                        draggable: true,
+                                                                                        progress: undefined,
+                                                                                    });
+                                                                                } else { }
+                                                                            }).catch(e => {
+                                                                                toast.error("Une erreur est survenue. Impossible de supprimer le rôle", {
+                                                                                    position: "top-right",
+                                                                                    autoClose: 5000,
+                                                                                    hideProgressBar: false,
+                                                                                    closeOnClick: true,
+                                                                                    pauseOnHover: true,
+                                                                                    draggable: true,
+                                                                                    progress: undefined,
+                                                                                });
+                                                                            });
+                                                                        }}
+                                                                        type="button"
+                                                                        className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-white hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
+
+                                                                    >
+                                                                        <span className="sr-only">Remove small option</span>
+                                                                        <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
+                                                                            <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </span>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
                                             </Dialog.Title>
                                             <div className="mt-2">
                                                 <form className="space-y-8 divide-y divide-gray-200">
@@ -293,22 +375,60 @@ export default function Settings({ user, role, me }) {
                                                                     <label htmlFor="role" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
                                                                         Rôle
                                                                     </label>
-                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2">
-                                                                        <select
-                                                                            onChange={(e) => setRoleData(e.target.value)}
-                                                                            id="role"
-                                                                            name="role"
-                                                                            className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
-                                                                        >
-                                                                            <option></option>
-                                                                            <option>Aucun rôle</option>
-                                                                            <option>Agent</option>
-                                                                            <option>Modérateur</option>
-                                                                        </select>
+                                                                    <div className="mt-1 sm:mt-0 sm:col-span-2 space-x-1">
+                                                                        {allRole.map(r => {
+                                                                            return (<span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color }}>
+                                                                                {r.name}
+                                                                                <button
+                                                                                    onClick={async () => {
+                                                                                        setAllRole(allRole.filter(e => e != r));
+                                                                                        var array = userRole;
+                                                                                        array.push(r);
+                                                                                        setUserRole(array);
+
+                                                                                        await axios({
+                                                                                            method: 'POST',
+                                                                                            url: process.env.API + '/api/user/' + data.id + '/role/' + r.id,
+                                                                                            headers: {
+                                                                                                'dvflCookie': getCookie('jwt')
+                                                                                            },
+                                                                                        }).then((response) => {
+                                                                                            if (response.status == 200) {
+                                                                                                toast.success("Le rôle " + r.name + " a été ajouté à l'utilisateur #" + setZero(data.id), {
+                                                                                                    position: "top-right",
+                                                                                                    autoClose: 5000,
+                                                                                                    hideProgressBar: false,
+                                                                                                    closeOnClick: true,
+                                                                                                    pauseOnHover: true,
+                                                                                                    draggable: true,
+                                                                                                    progress: undefined,
+                                                                                                });
+                                                                                            } else { }
+                                                                                        }).catch(e => {
+                                                                                            toast.error("Une erreur est survenue. Impossible d'ajouter le rôle", {
+                                                                                                position: "top-right",
+                                                                                                autoClose: 5000,
+                                                                                                hideProgressBar: false,
+                                                                                                closeOnClick: true,
+                                                                                                pauseOnHover: true,
+                                                                                                draggable: true,
+                                                                                                progress: undefined,
+                                                                                            });
+                                                                                        });
+                                                                                    }}
+                                                                                    type="button"
+                                                                                    className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-white hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
+
+                                                                                >
+                                                                                    <span className="sr-only">Remove small option</span>
+                                                                                    <PlusIcon className='h-2 w-2' />
+                                                                                </button>
+                                                                            </span>);
+                                                                        })}
                                                                     </div>
                                                                 </div>
 
-                                                                <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                                                                {/*<div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                                                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
                                                                         Mot de passe
                                                                     </label>
@@ -322,7 +442,7 @@ export default function Settings({ user, role, me }) {
                                                                             className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md"
                                                                         />
                                                                     </div>
-                                                                </div>
+                                                                    </div>*/}
                                                             </div>
                                                         </div>
 

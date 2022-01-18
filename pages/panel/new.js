@@ -66,7 +66,6 @@ export default function NewPanel({user, role}) {
 
     const data = new FormData();
     const jwt = getCookie('jwt');
-    console.log(process.env.API);
 
     for (let i = 0; i < file.length; i++) {
       data.append(`filedata`, file[i][0]);
@@ -420,6 +419,16 @@ export default function NewPanel({user, role}) {
 export async function getServerSideProps({req}) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+
+  if(user.acceptedRule == 0){
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/panel/rules",
+      },
+      props:{},
+    };  }
+
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
 
   return {
