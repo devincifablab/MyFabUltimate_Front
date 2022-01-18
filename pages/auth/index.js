@@ -92,6 +92,9 @@ export default function Auth() {
   }
 
   const authHandler = async (err, data) => {
+    if(err){
+      return
+    }
     {/*toast.info("Connexion en cours, veuillez patienter...", {
       position: "top-right",
       autoClose: 5000,
