@@ -38,7 +38,7 @@ export default function NewPanel({user, role}) {
   };
 
   const onDrop = (event) => {
-    
+    event.preventDefault();
     setFile(oldArray => [...oldArray, event.dataTransfer.files]);
     setStatus(false)
     
@@ -47,6 +47,18 @@ export default function NewPanel({user, role}) {
   };
 
   const handleSubmit = async (e) => {
+    if(description == "Aucune déscription fournie." || group == null || file.length < 1){
+      toast.error("Tous les champs ne sont pas complétés.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        });
+        return
+    }
     e.preventDefault();
 
     const projectType = {
@@ -134,7 +146,7 @@ export default function NewPanel({user, role}) {
               </div>
             </div>
             <div className="mt-5 md:mt-0 md:col-span-2">
-              <form onSubmit={handleSubmit}>
+              <div onSubmit={handleSubmit}>
                 <div className="shadow sm:rounded-md sm:overflow-hidden">
                   <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <div>
@@ -209,7 +221,7 @@ export default function NewPanel({user, role}) {
                         onDragEnter={onDragEnter}
                         onDragLeave={onDragLeave}
                         onDragOver={onDragOver}
-                        onDrop={onDrop}
+                        onDrop={(e)=>onDrop(e)}
                       >
                         <div
                           className={`${status ? "border-gray-800" : "border-gray-300"
@@ -291,13 +303,14 @@ export default function NewPanel({user, role}) {
                 </div>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
+                    onClick={(e)=>handleSubmit(e)}
                     type="submit"
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Valider et envoyer mon fichier
                   </button>
                 </div>
-              </form>
+              </div>
 
             </div>
 
