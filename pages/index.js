@@ -37,15 +37,15 @@ const footer = [
 
 const Home = ({ posts }) => {
   const [user, setUser] = useState(null);
-    const [role, setRole] = useState(null);
+  const [role, setRole] = useState(null);
 
-    useEffect(async function () {
-      setUser(await fetchAPIAuth("/user/me", getCookie('jwt')))
-        setRole(await fetchAPIAuth("/user/role", getCookie('jwt')))
-    }, []);
+  useEffect(async function () {
+    setUser(await fetchAPIAuth("/user/me", getCookie('jwt')))
+    setRole(await fetchAPIAuth("/user/role", getCookie('jwt')))
+  }, []);
 
-    return (
-        <Layout user={user} role={role}>
+  return (
+    <Layout user={user} role={role}>
       {/*<Seo seo={homepage.seo} />*/}
       <div className="container xl:max-w-7xl mx-auto px-4 mt-16 lg:px-8 overflow-hidden">
         <div className="text-center mb-20">
@@ -135,8 +135,8 @@ const Home = ({ posts }) => {
           <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">Nos derniers articles</h1>
           <p className="text-lg leading-6 text-gray-500">Venez découvrir les actualités rédigés par les membres du FabLab.</p>
         </div>
-        <div className={`grid grid-cols-1 gap-12 max-w-4xl m-auto ${posts.length > 2? 'lg:grid-cols-3':posts.length == 2?'lg:grid-cols-2':'lg:grid-cols-1 max-w-sm'}`}>
-          {posts.length >0?posts.slice(0, 3).map(post => (
+        <div className={`grid grid-cols-1 gap-12 max-w-4xl m-auto ${posts.length > 2 ? 'lg:grid-cols-3' : posts.length == 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-1 max-w-sm'}`}>
+          {posts.length > 0 ? posts.slice(0, 3).map(post => (
             <Link href={"/blog/" + post.slug}>
               <div className="flex flex-col cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 duration-300">
                 <a className="block relative group rounded overflow-hidden">
@@ -155,7 +155,7 @@ const Home = ({ posts }) => {
                 </h4>
               </div>
             </Link>
-          )):"Oups, il n'y a aucun article pour le moment !"}
+          )) : "Oups, il n'y a aucun article pour le moment !"}
         </div>
       </div>
 
@@ -268,11 +268,11 @@ const Home = ({ posts }) => {
       <footer className="bg-white">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
           <div className="flex justify-center space-x-6 md:order-2">
-          <Link href={"/legals"}>
-                            <a key={"legals"} className="text-gray-400 hover:text-gray-500">
-                                <span className="text-md hover:text-black cursor-pointer">Mentions légales</span>
-                            </a>
-                        </Link>
+            <Link href={"/legals"}>
+              <a key={"legals"} className="text-gray-400 hover:text-gray-500">
+                <span className="text-md hover:text-black cursor-pointer">Mentions légales</span>
+              </a>
+            </Link>
             {footer.map((item) => (
               <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
                 <span className="sr-only">{item.name}</span>
