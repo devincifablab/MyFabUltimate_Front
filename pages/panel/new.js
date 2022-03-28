@@ -12,7 +12,7 @@ import Seo from "../../components/seo";
 
 const percents = (value,total) => Math.round(value/total)*100
 
-export default function NewPanel({user, role}) {
+export default function NewPanel({user, role, authorizations}) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
 
@@ -128,7 +128,7 @@ export default function NewPanel({user, role}) {
   }
 
   return (
-    <LayoutPanel user={user} role={role}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations}>
                   <Seo title={"Créer un ticket"} />
 
       <div className="px-10 py-10" id="status">
@@ -443,8 +443,9 @@ export async function getServerSideProps({req}) {
     };  }
 
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   return {
-    props: { user, role }, // will be passed to the page component as props
+    props: { user, role, authorizations }, // will be passed to the page component as props
   }
 }

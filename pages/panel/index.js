@@ -23,7 +23,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NewPanel({ data, user, ticket, role }) {
+export default function NewPanel({ data, user, ticket, role, authorizations }) {
 
   const faqs = [
     {
@@ -86,7 +86,7 @@ export default function NewPanel({ data, user, ticket, role }) {
   if (user.error == undefined) {
 
     return (
-      <LayoutPanel user={user} role={role}>
+      <LayoutPanel user={user} role={role} authorizations={authorizations}>
         <Seo title={"Panel"} />
 
         {/* Dernières activités */}
@@ -354,6 +354,7 @@ export async function getServerSideProps({ req }) {
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const ticket = await fetchAPIAuth("/ticket/me", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   if(user.acceptedRule == 0){
     return {
@@ -365,6 +366,6 @@ export async function getServerSideProps({ req }) {
     };  }
 
   return {
-    props: { user, ticket, role }, // will be passed to the page component as props
+    props: { user, ticket, role, authorizations }, // will be passed to the page component as props
   }
 }

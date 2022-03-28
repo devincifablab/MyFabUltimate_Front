@@ -26,7 +26,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const GestionTicket = ({ params, user, role, ticket, file, message }) => {
+const GestionTicket = ({ params, user, role, ticket, file, message, authorizations }) => {
   const [open, setOpen] = useState(false);
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
@@ -281,7 +281,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message }) => {
   }
 
   return (
-    <LayoutPanel user={user} role={role}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations}>
       <Seo title={"Ticket #" + setZero(ticket.id)} />
 
       {/* Dernières activités */}
@@ -755,6 +755,7 @@ export async function getServerSideProps({ req, params }) {
   const ticket = await fetchAPIAuth("/ticket/" + params.id, cookies.jwt);
   const file = await fetchAPIAuth("/ticket/" + params.id + "/file", cookies.jwt);
   const message = await fetchAPIAuth("/ticket/" + params.id + "/message", cookies.jwt);
+  const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   if(user.acceptedRule == 0){
     return {
@@ -767,7 +768,7 @@ export async function getServerSideProps({ req, params }) {
   }
 
   return {
-    props: { user, params, role, ticket, file, message }, // will be passed to the page component as props
+    props: { user, params, role, ticket, file, message, authorizations }, // will be passed to the page component as props
   }
 }
 

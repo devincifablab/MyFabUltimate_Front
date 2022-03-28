@@ -6,7 +6,7 @@ import OverviewAdmin from "../../../components/overviewAdmin";
 import Seo from "../../../components/seo";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 
-export default function Admin({ tickets, user, role }) {
+export default function Admin({ tickets, user, role, authorizations }) {
   const router = useRouter()
 
   useEffect(function () {
@@ -17,7 +17,7 @@ export default function Admin({ tickets, user, role }) {
   if (user.error == undefined && role.length != 0) {
     const openTicket = tickets.filter(r => r.isOpen === 1);
     return (
-      <LayoutPanel user={user} role={role}>
+      <LayoutPanel user={user} role={role} authorizations={authorizations}>
         <Seo title={"Administration"}  />
         <NavbarAdmin role={role} />
         <div className="md:py-8 md:px-6">
@@ -44,6 +44,7 @@ export async function getServerSideProps({ req }) {
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const tickets = await fetchAPIAuth("/ticket", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   if(user.acceptedRule == 0){
     return {
@@ -55,7 +56,7 @@ export async function getServerSideProps({ req }) {
     };  }
 
   return {
-    props: { tickets, user, role }, // will be passed to the page component as props
+    props: { tickets, user, role, authorizations }, // will be passed to the page component as props
   }
 }
 

@@ -11,13 +11,14 @@ import { logout } from "../lib/function";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-export default function LayoutPanel({ children, user, role }) {
+export default function LayoutPanel({ children, user, role, authorizations }) {
   const router = useRouter();
   const pn = router.pathname;
+  if(!authorizations) authorizations = {};
   
   const navigation = [
     { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show: true },
-    { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length > 0 },
+    { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: authorizations.myFabAgent == 1 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 

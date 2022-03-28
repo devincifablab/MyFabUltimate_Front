@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { getCookie } from "cookies-next";
 import Seo from "../../components/seo";
 
-export default function Settings({ user, role }) {
+export default function Settings({ user, role, authorizations }) {
   const [newPassword, setNewPassword] = useState(null);
   const [newPasswordConfirm, setNewPasswordConfirm] = useState(null);
   const [actualPassword, setActualPassword] = useState(null);
@@ -75,7 +75,7 @@ export default function Settings({ user, role }) {
   }
 
   return (
-    <LayoutPanel user={user} role={role}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations}>
       <Seo title={"Paramètres"} />
       <div className="px-10 py-10" id="status">
         <div>
@@ -343,6 +343,7 @@ export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   if(user.acceptedRule == 0){
     return {
@@ -354,6 +355,6 @@ export async function getServerSideProps({ req }) {
     };  }
 
   return {
-    props: { user, role }, // will be passed to the page component as props
+    props: { user, role, authorizations }, // will be passed to the page component as props
   }
 }

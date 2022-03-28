@@ -14,7 +14,7 @@ import { toast } from 'react-toastify'
 import Seo from '../../../components/seo'
 import { PlusIcon } from '@heroicons/react/solid'
 
-export default function Settings({ user, role, me }) {
+export default function Settings({ user, role, me, authorizations }) {
     const [open, setOpen] = useState(false);
     const [data, setData] = useState('');
     const [roleData, setRoleData] = useState(null);
@@ -213,7 +213,7 @@ export default function Settings({ user, role, me }) {
 
     return (
         <>
-            <LayoutPanel user={me} role={role}>
+            <LayoutPanel user={me} role={role} authorizations={authorizations}>
                 <Seo title={"Paramètres administrateurs"} />
                 <NavbarAdmin role={role} />
                 <section className="">
@@ -480,10 +480,11 @@ export async function getServerSideProps({ req }) {
     const user = await fetchAPIAuth("/user", cookies.jwt);
     const me = await fetchAPIAuth("/user/me", cookies.jwt);
     const role = await fetchAPIAuth("/user/role", cookies.jwt);
+    const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
 
     // Pass the data to our page via props
     return {
-        props: { user, role, me }, // will be passed to the page component as props
+        props: { user, role, me, authorizations }, // will be passed to the page component as props
     }
 }
