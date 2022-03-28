@@ -1,5 +1,6 @@
 import { MoonIcon } from "@heroicons/react/outline";
 import Link from 'next/link';
+import router from 'next/router'
 import { setZero } from "../lib/function";
 
 const colors = {
@@ -9,13 +10,6 @@ const colors = {
 };
 
 export default function TablesAdmin({ tickets, isDone }) {
-
-  var ticket;
-  if (isDone) {
-    ticket = tickets.filter(r => r.step < 3);
-  } else {
-    ticket = tickets;
-  }
   return (
     <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white">
       <table className="min-w-full text-sm align-middle whitespace-nowrap">
@@ -39,15 +33,16 @@ export default function TablesAdmin({ tickets, isDone }) {
             <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">
               Etat
             </th>
+            {/*
             <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">
               Actions
-            </th>
+</th>*/}
           </tr>
         </thead>
         <tbody>
-          {ticket.map((r) => {
+          {tickets.map((r) => {
             return (
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 hover:bg-gray-50" onClick={() => router.push(`/panel/admin/${r.id}`)}>
                 <td className="p-3 text-center">
                   <span className="font-medium">#{setZero(r.id)}</span>
                 </td>
@@ -57,25 +52,23 @@ export default function TablesAdmin({ tickets, isDone }) {
                 </td>
                 <td className="p-3">
                   <div
-                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-full ${colors[r.priorityColor]}`}
-                  >
+                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-full ${colors[r.priorityColor]}`}>
                     {r.priorityName}
                   </div>
                 </td>
                 <td className="p-3 text-center">
                   <div
-                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}
-                  >
+                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}>
                     {r.projectType}
                   </div>
                 </td>
                 <td className="p-3 text-center">
                   <div
-                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}
-                  >
-                    {r.step == 0 ? 'Fichier STL' : r.step == 1 ? 'Impression pas commencé' : r.step == 2 ? "Impression terminée" : r.step > 2 ? "Ticker fermé" : ''}
+                    className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}>
+                    {r.statusName}
                   </div>
                 </td>
+                  {/*
                 <td className="p-3 text-center space-x-2">
                   <Link href={`/panel/admin/${r.id}`}>
                     <button
@@ -86,14 +79,13 @@ export default function TablesAdmin({ tickets, isDone }) {
                       <span>Visualiser</span>
                     </button>
                   </Link>
-                  {/*
                   <button
                     type="button"
                     className="inline-flex justify-center items-center space-x-2 border font-medium focus:outline-none px-1 py-1 leading-5 text-sm rounded border-gray-300 bg-white text-gray-800 shadow-sm hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300 hover:shadow focus:ring focus:ring-gray-500 focus:ring-opacity-25 active:bg-white active:border-white active:shadow-none"
                   >
                     <DownloadIcon className="inline-block w-4 h-4" />
-</button>*/}
-                </td>
+</button>
+                </td>*/}
               </tr>
             );
           })}
