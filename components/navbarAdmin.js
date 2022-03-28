@@ -8,8 +8,8 @@ function classNames(...classes) {
 function NavbarAdmin({ router, role }) {
   const pn = router.pathname;
   const tabs = [
-    { name: 'Impressions à traiter', href: '/panel/admin/', current: pn.split('/')[3] === undefined, show: true },
-    { name: 'Historique des impressions', href: '/panel/admin/history', current: pn.split('/')[3] == 'history', show: true },
+    { name: 'Demandes à traiter', href: '/panel/admin/', current: pn.split('/')[3] === undefined, show: true },
+    { name: 'Historique des demandes', href: '/panel/admin/history', current: pn.split('/')[3] == 'history', show: true },
     { name: 'Paramètres', href: '/panel/admin/settings', current: pn.split('/')[3] == 'settings', show: role.filter(r => r.id == 1 || r.id == 2).length > 0 },
   ]
 

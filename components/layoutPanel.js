@@ -14,9 +14,10 @@ function classNames(...classes) {
 export default function LayoutPanel({ children, user, role }) {
   const router = useRouter();
   const pn = router.pathname;
+  
   const navigation = [
-    { name: "Panel", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show: true },
-    { name: "Zone d'administration", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length > 0 },
+    { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show: true },
+    { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: role.length > 0 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
@@ -363,7 +364,7 @@ export default function LayoutPanel({ children, user, role }) {
                   className={`${pn.split('/')[2] == "new" ? 'hidden' : 'block'} order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 sm:order-1 sm:ml-3`}
                 >
                   <CubeIcon width="16" height="16" className="mr-1" />
-                  Lancer une impression
+                  Créer une demande
                 </button>
               </Link>
             </div>

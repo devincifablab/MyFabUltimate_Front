@@ -23,7 +23,7 @@ export default function Admin({ tickets, user, role }) {
         <div className="md:py-8 md:px-6">
           <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
             <h2 className="text-2xl font-bold text-white">Bonjour, {user.firstName} 👋{" "}</h2>
-            <h3 className="text-md font-medium text-white">Il y a {openTicket.length} impression{openTicket.length > 1 ? 's' : ''} à traiter. N'hésitez pas à vous en occuper !</h3>
+            <h3 className="text-md font-medium text-white">Il y a {openTicket.length} impression{openTicket.length > 1 ? 's' : ''} à traiter. N'hésite pas à t'en occuper !</h3>
           </div>
         </div>
         <div>

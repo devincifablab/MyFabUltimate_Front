@@ -203,6 +203,9 @@ export default function NewPanel({ data, user, ticket, role }) {
                         <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <span className="lg:pl-2">Dernier état</span>
                         </th>
+                        <th className="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <span className="lg:pl-2">Type de projet</span>
+                        </th>
                         <th className="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Dernière mise à jour
                         </th>
@@ -238,10 +241,6 @@ export default function NewPanel({ data, user, ticket, role }) {
                                     {"#" + setZero(project.id)}
                                   </Link>
                                   {" "}
-                                  <span className="text-gray-500 font-normal">
-                                    {" "}
-                                    {project.projectType}
-                                  </span>
                                 </span>
                               </a>
                             </div>
@@ -250,8 +249,17 @@ export default function NewPanel({ data, user, ticket, role }) {
                             <div className="flex items-center space-x-3 lg:pl-2">
                               <a className="truncate hover:text-gray-600">
                                 <span>
+                                  {project.statusName}
+                                </span>
 
-                                  {getState(project.step, project.waitingAnswer)}
+                              </a>
+                            </div>
+                          </td>
+                          <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <div className="flex items-center space-x-3 lg:pl-2">
+                              <a className="truncate hover:text-gray-600">
+                                <span>
+                                  {project.projectType}
                                 </span>
 
                               </a>
