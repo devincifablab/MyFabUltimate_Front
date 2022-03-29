@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon } from "@heroicons/react/outline";
+import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon, UserIcon } from "@heroicons/react/outline";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import { removeCookies } from "cookies-next";
@@ -11,14 +11,15 @@ import { logout } from "../lib/function";
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
-export default function LayoutPanel({ children, user, role, authorizations }) {
+export default function LayoutPanel({ children, user, role, authorizations, titleMenu }) {
   const router = useRouter();
   const pn = router.pathname;
   if(!authorizations) authorizations = {};
   
   const navigation = [
-    { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn.split('/')[2] === undefined, show: true },
-    { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split('/')[2] == "admin", show: authorizations.myFabAgent == 1 },
+    { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn === "/panel", show: true },
+    { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split("/")[2] === "admin", show: authorizations.myFabAgent == 1 },
+    { name: "Gestions des utilisateurs", href: "/panel/users", icon: UserIcon, current: pn === "/panel/admin/settings", show: authorizations.myFabAgent == 1 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
@@ -35,6 +36,8 @@ export default function LayoutPanel({ children, user, role, authorizations }) {
 
   const name = user.firstName;
   const surname = user.lastName;
+
+  const title = titleMenu ? titleMenu : "Panel de demande d'impression 3D";
 
   return (
     <div className="relative h-screen flex overflow-hidden bg-white">
@@ -355,7 +358,7 @@ export default function LayoutPanel({ children, user, role, authorizations }) {
           <div className="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">
-                Panel de demande d'impression 3D
+                { title }
               </h1>
             </div>
             <div className="mt-4 flex sm:mt-0 sm:ml-4">

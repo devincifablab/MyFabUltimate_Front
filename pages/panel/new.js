@@ -128,7 +128,7 @@ export default function NewPanel({user, role, authorizations}) {
   }
 
   return (
-    <LayoutPanel user={user} role={role} authorizations={authorizations}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
                   <Seo title={"Créer un ticket"} />
 
       <div className="px-10 py-10" id="status">

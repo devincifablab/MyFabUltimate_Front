@@ -21,7 +21,7 @@ export default function OverviewAdmin({ tickets, user, role, authorizations }) {
   }
 
   return (
-    <LayoutPanel user={user} role={role} authorizations={authorizations}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
                   <Seo title={"Historique"} />
 
       <NavbarAdmin role={role} />

@@ -1,17 +1,17 @@
 import { InformationCircleIcon, UserAddIcon } from '@heroicons/react/outline'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
-import LayoutPanel from '../../../components/layoutPanel'
-import NavbarAdmin from '../../../components/navbarAdmin'
-import UserTablesAdmin from '../../../components/tablesUserAdmin'
-import { fetchAPIAuth, parseCookies } from '../../../lib/api'
+import LayoutPanel from '../../components/layoutPanel'
+import NavbarAdmin from '../../components/navbarAdmin'
+import UserTablesAdmin from '../../components/tablesUserAdmin'
+import { fetchAPIAuth, parseCookies } from '../../lib/api'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
-import { setZero } from '../../../lib/function'
+import { setZero } from '../../lib/function'
 import { toast } from 'react-toastify'
-import Seo from '../../../components/seo'
+import Seo from '../../components/seo'
 import { PlusIcon } from '@heroicons/react/solid'
 
 export default function Settings({ user, role, me, authorizations }) {
@@ -213,9 +213,8 @@ export default function Settings({ user, role, me, authorizations }) {
 
     return (
         <>
-            <LayoutPanel user={me} role={role} authorizations={authorizations}>
+            <LayoutPanel user={me} role={role} authorizations={authorizations} titleMenu="Gestion des utilisateurs">
                 <Seo title={"Paramètres administrateurs"} />
-                <NavbarAdmin role={role} />
                 <section className="">
                     <div className="container px-4 mx-auto">
                         <div className="flex flex-wrap -mx-4">

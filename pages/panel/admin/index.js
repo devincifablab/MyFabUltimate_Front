@@ -17,7 +17,7 @@ export default function Admin({ tickets, user, role, authorizations }) {
   if (user.error == undefined && role.length != 0) {
     const openTicket = tickets.filter(r => r.isOpen === 1);
     return (
-      <LayoutPanel user={user} role={role} authorizations={authorizations}>
+      <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
         <Seo title={"Administration"}  />
         <NavbarAdmin role={role} />
         <div className="md:py-8 md:px-6">

@@ -75,7 +75,7 @@ export default function Settings({ user, role, authorizations }) {
   }
 
   return (
-    <LayoutPanel user={user} role={role} authorizations={authorizations}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Paramètres">
       <Seo title={"Paramètres"} />
       <div className="px-10 py-10" id="status">
         <div>

@@ -86,7 +86,7 @@ export default function NewPanel({ data, user, ticket, role, authorizations }) {
   if (user.error == undefined) {
 
     return (
-      <LayoutPanel user={user} role={role} authorizations={authorizations}>
+      <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
         <Seo title={"Panel"} />
 
         {/* Dernières activités */}
