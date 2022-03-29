@@ -8,7 +8,7 @@ import {
   ExclamationIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../../components/steps";
-import { useEffect,Fragment, useState } from "react";
+import { useEffect, Fragment, useState } from "react";
 import Moment from "react-moment";
 import { ExclamationCircleIcon } from "@heroicons/react/solid";
 import STLViewer from 'stl-viewer'

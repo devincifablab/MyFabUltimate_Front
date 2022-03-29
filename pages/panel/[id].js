@@ -4,7 +4,7 @@ import {
   CubeIcon,
 } from "@heroicons/react/outline";
 import Steps from "../../components/steps";
-import { Fragment, useState } from "react";
+import { useEffect, Fragment, useState } from "react";
 import Moment from "react-moment";
 import STLViewer from 'stl-viewer'
 import { Dialog, Transition } from "@headlessui/react";
@@ -15,12 +15,27 @@ import { toast } from "react-toastify";
 import { setZero } from "../../lib/function";
 import Seo from "../../components/seo";
 
-const GestionTicket = ({ params, user, role, ticket, file, message, authorizations }) => {
+const GestionTicket = ({ params, user, role, ticket, file, message, authorizations, id }) => {
   const [open, setOpen] = useState(false);
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
 
   const router = useRouter();
+  
+  // Si l'id du ticket est invalid (un string par exemple) la page 404 va être affiché
+  useEffect(function () {
+    if (ticket.error) {
+      console.log(typeof id);
+      if(isNaN(id)) {
+        router.push('/404');
+      }else{
+        router.push('/403');
+      }
+      return;
+    }
+  }, []);
+  if(file.error) file = [];
+  if(message.error) message = [];
 
   const steps = [
     { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
@@ -340,11 +355,12 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
 
 export async function getServerSideProps({ req, params }) {
   const cookies = parseCookies(req);
+  const id = params.id;
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
-  const ticket = await fetchAPIAuth("/ticket/" + params.id, cookies.jwt);
-  const file = await fetchAPIAuth("/ticket/" + params.id + "/file", cookies.jwt);
-  const message = await fetchAPIAuth("/ticket/" + params.id + "/message", cookies.jwt);
+  const ticket = await fetchAPIAuth("/ticket/" + id, cookies.jwt);
+  const file = await fetchAPIAuth("/ticket/" + id + "/file", cookies.jwt);
+  const message = await fetchAPIAuth("/ticket/" + id + "/message", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   if(user.acceptedRule == 0){
@@ -357,7 +373,7 @@ export async function getServerSideProps({ req, params }) {
     };  }
 
   return {
-    props: { user, params, role, ticket, file, message, authorizations }, // will be passed to the page component as props
+    props: { user, params, role, ticket, file, message, authorizations, id }, // will be passed to the page component as props
   }
 }
 
