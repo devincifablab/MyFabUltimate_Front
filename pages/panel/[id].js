@@ -107,7 +107,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   }
 
   return (
-    <LayoutPanel user={user} role={role} authorizations={authorizations}>
+    <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Ticket #" + setZero(ticket.id)} />
 
       {/* Dernières activités */}
