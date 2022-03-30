@@ -26,7 +26,7 @@ export default function Settings({ user, role, me, authorizations }) {
     const [userRole, setUserRole] = useState([]);
 
     useEffect(function () {
-        if (role.filter(r => r.id == 1 || r.id == 2).length < 1) {
+        if (authorizations.viewUsers === 0) {
             router.push('/404');
         }
     }, []);
@@ -86,7 +86,6 @@ export default function Settings({ user, role, me, authorizations }) {
                     });
                 });
             } else if (roleData == "Aucun rôle") {
-                console.log(roleUser);
                 await axios({
                     method: 'DELETE',
                     url: process.env.API + '/api/user/' + id + '/role/' + idRole[roleUser].id,
@@ -277,13 +276,15 @@ export default function Settings({ user, role, me, authorizations }) {
                                         <div className="mt-3 text-center sm:mt-5">
                                             <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
                                                 <p>Utilisateur <strong>#{setZero(data.id)}</strong>: {data.firstName} {data.lastName}</p>
+                                                <div>{data.title ? data.title : "Ancien compte"}</div>
                                                 <div>
                                                     <div className='space-x-1 text-center'>
                                                         {userRole.map(r => {
+                                                            const buttonAvailable = r.isProtected === 1 ? authorizations.changeUserProtectedRole : authorizations.changeUserRole ;
                                                             return (
-                                                                <span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color }}>
+                                                                <span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color , paddingRight: buttonAvailable ? "" : "8px"}}>
                                                                     {r.name}
-                                                                    <button
+                                                                    {buttonAvailable ? <button
                                                                         onClick={async () => {
                                                                             setUserRole(userRole.filter(e => e != r));
                                                                             var array = allRole;
@@ -323,12 +324,12 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                         type="button"
                                                                         className="flex-shrink-0 ml-0.5 h-4 w-4 rounded-full inline-flex items-center justify-center text-white hover:bg-gray-200 hover:text-gray-500 focus:outline-none focus:bg-gray-500 focus:text-white"
 
-                                                                    >
+                                                                        >
                                                                         <span className="sr-only">Remove small option</span>
                                                                         <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
                                                                             <path strokeLinecap="round" strokeWidth="1.5" d="M1 1l6 6m0-6L1 7" />
                                                                         </svg>
-                                                                    </button>
+                                                                    </button> : ""}
                                                                 </span>
                                                             );
                                                         })}
@@ -372,13 +373,14 @@ export default function Settings({ user, role, me, authorizations }) {
 
                                                                 <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                                                                     <label htmlFor="role" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                                                                        Rôle
+                                                                        Rôle disponible
                                                                     </label>
                                                                     <div className="mt-1 sm:mt-0 sm:col-span-2 space-x-1">
                                                                         {allRole.map(r => {
-                                                                            return (<span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color }}>
+                                                                            const buttonAvailable = r.isProtected === 1 ? authorizations.changeUserProtectedRole : authorizations.changeUserRole ;
+                                                                            return (<span className="inline-flex items-center py-0.5 pl-2 pr-0.5 rounded-full text-xs font-medium text-white" style={{ backgroundColor: '#' + r.color , paddingRight: buttonAvailable ? "" : "8px" }}>
                                                                                 {r.name}
-                                                                                <button
+                                                                                {buttonAvailable ? <button
                                                                                     onClick={async () => {
                                                                                         setAllRole(allRole.filter(e => e != r));
                                                                                         var array = userRole;
@@ -421,7 +423,7 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                                 >
                                                                                     <span className="sr-only">Remove small option</span>
                                                                                     <PlusIcon className='h-2 w-2' />
-                                                                                </button>
+                                                                                </button> : "" }
                                                                             </span>);
                                                                         })}
                                                                     </div>
