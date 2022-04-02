@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon, UserIcon } from "@heroicons/react/outline";
+import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon, UsersIcon } from "@heroicons/react/outline";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import { removeCookies } from "cookies-next";
@@ -21,7 +21,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
   const navigation = [
     { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn === "/panel", show: true },
     { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split("/")[2] === "admin", show: authorizations.myFabAgent == 1 },
-    { name: "Gestions des utilisateurs", href: "/panel/users", icon: UserIcon, current: pn === "/panel/admin/settings", show: authorizations.myFabAgent == 1 },
+    { name: "Gestions des utilisateurs", href: "/panel/users", icon: UsersIcon, current: pn === "/panel/admin/settings", show: authorizations.myFabAgent == 1 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
