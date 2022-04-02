@@ -42,7 +42,7 @@ export default function TablesAdmin({ tickets, isDone }) {
         <tbody>
           {tickets.map((r) => {
             return (
-              <tr className="border-b border-gray-200 hover:bg-gray-50" onClick={() => router.push(`/panel/admin/${r.id}`)}>
+              <tr className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer" onClick={() => router.push(`/panel/${r.id}`)}>
                 <td className="p-3 text-center">
                   <span className="font-medium">#{setZero(r.id)}</span>
                 </td>

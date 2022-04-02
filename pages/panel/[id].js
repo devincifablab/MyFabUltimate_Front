@@ -2,6 +2,9 @@ import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import LayoutPanel from "../../components/layoutPanel";
 import {
   CubeIcon,
+  UserCircleIcon,
+  CogIcon,
+  ExclamationIcon
 } from "@heroicons/react/outline";
 import Steps from "../../components/steps";
 import { useEffect, Fragment, useState } from "react";
@@ -15,17 +18,28 @@ import { toast } from "react-toastify";
 import { setZero } from "../../lib/function";
 import Seo from "../../components/seo";
 
-const GestionTicket = ({ params, user, role, ticket, file, message, authorizations, id }) => {
+const colors = {
+  "2274e0": "text-gray-700 bg-gray-200",
+  "e9d41d": "text-amber-700 bg-amber-200",
+  "f30b0b": "text-white bg-gradient-to-r from-amber-400 to-red-500",
+};
+const fabColor = ["D51D65", "F5841D", "2CA0BB", "CDCDCD"];
+
+const GestionTicket = ({ params, user, role, ticket, file, message, authorizations, id, status, projectType }) => {
   const [open, setOpen] = useState(false);
+  const [openUser, setOpenUser] = useState(false);
+  const [openStatus, setOpenStatus] = useState(false);
+  const [newParam, setNewParam] = useState('');
+  const [paramType, setparamType] = useState('status');
   const [urlStl, setUrlStl] = useState('');
   const [comment, setComment] = useState('');
+  const [STLColor, setSTLColor] = useState("#FF0000");
 
   const router = useRouter();
   
   // Si l'id du ticket est invalid (un string par exemple) la page 404 va être affiché
   useEffect(function () {
     if (ticket.error) {
-      console.log(typeof id);
       if(isNaN(id)) {
         router.push('/404');
       }else{
@@ -37,11 +51,41 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   if(file.error) file = [];
   if(message.error) message = [];
 
-  const steps = [
-    { id: "Etape 1", name: "Validation du fichier STL", status: ticket.step == 0 ? "current" : "complete" },
-    { id: "Etape 2", name: "Lancement de l'impression", status: ticket.step == 1 ? "current" : ticket.step < 1 ? "notstarted" : "complete" },
-    { id: "Etape 3", name: "Pièce mise à disposition", status: ticket.step == 2 ? "current" : ticket.step < 2 ? "notstarted" : "complete" },
-  ];
+  async function change() {
+    const cookie = getCookie("jwt");
+    const data = {};
+    data[(paramType === "status" ? "idStatus" : "projecttype")] = newParam;
+  
+    await axios({
+      method: 'PUT',
+      url: process.env.API + '/api/ticket/' + params.id + '/' + (paramType === "status" ? "setStatus" : "setProjecttype") +'/',
+      params: data,
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then(() => {
+      toast.success((paramType === "status" ? "Le status du ticket a été mis à jour" : "Le type de projet à été modifié"), {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      router.replace(router.asPath);
+    }).catch((e) => {
+      toast.error("Une erreur est survenue, veuillez réessayer.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    })
+  }
 
   async function download(id, name) {
     const cookie = getCookie("jwt");
@@ -65,13 +109,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   async function sendComment(e) {
     e.preventDefault();
     const cookie = getCookie("jwt");
-    await axios({
-      method: 'PUT',
-      url: process.env.API + '/api/ticket/' + params.id + '/setWaitingAnswer/0',
-      headers: {
-        'dvflCookie': cookie
-      },
-    });
     await axios({
       method: 'POST',
       url: process.env.API + '/api/ticket/' + params.id + '/message',
@@ -102,7 +139,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
         progress: undefined,
       });
     })
-    document.getElementById('status').scrollIntoView();
     router.replace(router.asPath);
   }
 
@@ -121,162 +157,197 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     });
   }
 
+  async function changeSTLColor() {
+    setSTLColor("#" + (fabColor[Math.floor(Math.random() * fabColor.length)]));
+  }
+
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Ticket #" + setZero(ticket.id)} />
 
       {/* Dernières activités */}
-      <div id="status" className="px-12 py-8">
-        <Steps steps={steps} />
-      </div>
       <div className="py-6 px-3">
         <div className="mx-auto sm:px-6 lg:px-8 lg:gap-8">
 
           <main className="col-span-9">
-            <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+            <div className="container px-4 mx-auto">
+              <div className="flex flex-wrap -mx-4">
+                <div className="bg-white shadow overflow-hidden sm:rounded-lg w-full lg:w-2/3 px-4">
+                  <div className="px-4 py-5 sm:px-6">
 
-
-
-
-              <div className="px-4 py-5 sm:px-6">
-
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Détails de la demande d'impression
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-gray-500">
-                  Ticket n° {ticket.id}
-                </p>
-              </div>
-              <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-                <dl className="sm:divide-y sm:divide-gray-200">
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Nom et prénom
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.firstName + " " + (user.lastName).toString().toUpperCase()}
-                    </dd>
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      Fichiers et commentaires
+                    </h3>
+                    <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                      Ticket n° {ticket.id}
+                    </p>
                   </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Ecole et année
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.title || "Ancien compte"}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">Type</dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {ticket.projectType}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Adresse e-mail
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {user.email}
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Fichier(s) stl
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      <ul
-                        role="list"
-                        className="border border-gray-200 rounded-md divide-y divide-gray-200"
-                      >
-                        {file.map(r => {
-                          return (<div>
-                            <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
-                              <div className="w-0 flex-1 flex items-center">
-                                <CubeIcon
-                                  className="flex-shrink-0 h-5 w-5 text-gray-400"
-                                  aria-hidden="true"
-                                />
-                                <span className="ml-2 flex-1 w-0 truncate">
-                                  {r.filename}
-                                </span>
+                  <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                    <dl className="sm:divide-y sm:divide-gray-200">
+                      <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">
+                          Fichier(s) stl
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          <ul
+                            role="list"
+                            className="border border-gray-200 rounded-md divide-y divide-gray-200">
+                            {file.map(r => {
+                              return (<div>
+                                <li className="pl-3 pr-4 py-3 flex items-center justify-between text-sm">
+                                  <div className="w-0 flex-1 flex items-center">
+                                    <CubeIcon
+                                      className="flex-shrink-0 h-5 w-5 text-gray-400"
+                                      aria-hidden="true"
+                                    />
+                                    <span className="ml-2 flex-1 w-0 truncate">
+                                      {r.filename}
+                                    </span>
+                                  </div>
+                                  <div className="ml-4 flex-shrink-0">
+                                    <button
+                                      onClick={() => download(r.id, r.filename)}
+                                      className="font-medium text-indigo-600 hover:text-indigo-500"
+                                    >
+                                      Télécharger
+                                    </button>
+
+                                  </div>
+                                  <div className="ml-4 flex-shrink-0">
+                                    <button onClick={() => { changeSTLColor(); getUrlSTL(r.id); setOpen(true); }}>
+                                      Voir le fichier STL
+                                    </button>
+                                  </div>
+                                </li>
+                                {r.comment.length > 2 ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                                  <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
+                                </div> : ''}
                               </div>
-                              <div className="ml-4 flex-shrink-0">
-                                <button
-                                  onClick={() => download(r.id, r.filename)}
-                                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                                >
-                                  Télécharger
-                                </button>
-
-                              </div>
-                              <div className="ml-4 flex-shrink-0">
-                                <button onClick={() => { setOpen(true); getUrlSTL(r.id) }}>
-                                  Voir le fichier STL
-                                </button>
-                              </div>
-                            </li>
-                            {r.comment.length > 2 ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
-                              <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
-                            </div> : ''}
-                          </div>
-                          )
-                        })}
-                      </ul>
-                    </dd>
-                  </div>
-                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Commentaires
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      <ul role="list" className="divide-y divide-gray-200">
-                        {message.map((r) => (
-                          <li
-                            key={r.id}
-                            className="relative bg-white py-5 px-4 hover:bg-gray-50"
-                          >
-                            <div className="flex justify-between space-x-3">
-                              <div className="min-w-0 flex-1">
-                                <a href="#" className="block focus:outline-none">
-                                  <span className="absolute inset-0" aria-hidden="true" />
-                                  <p className="text-sm font-medium text-gray-900 truncate">{r.userName}</p>
-                                  <p className="text-sm text-gray-500 truncate">{r.subject}</p>
-                                </a>
-                              </div>
-                              <Moment format="Do MMM YYYY à HH:mm" locale="fr">
-                                {r.creationDate}
-                              </Moment>
+                              )
+                            })}
+                          </ul>
+                        </dd>
+                      </div>
+                      <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-gray-500">
+                          Commentaires
+                        </dt>
+                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                          <ul role="list" className="divide-y divide-gray-200">
+                            {message.map((r) => (
+                              <li
+                                key={r.id}
+                                className="relative bg-white py-5 px-4 hover:bg-gray-50"
+                              >
+                                <div className="flex justify-between space-x-3">
+                                  <div className="min-w-0 flex-1">
+                                    <a href="#" className="block focus:outline-none">
+                                      <span className="absolute inset-0 cursor-default" aria-hidden="true" />
+                                      <p className="text-sm font-medium text-gray-900 truncate">{r.userName}</p>
+                                      <p className="text-sm text-gray-500 truncate">{r.subject}</p>
+                                    </a>
+                                  </div>
+                                  <Moment format="Do MMM YYYY à HH:mm" locale="fr">
+                                    {r.creationDate}
+                                  </Moment>
+                                </div>
+                                <div className="mt-1">
+                                  <p className="line-clamp-2 text-sm text-gray-600">{r.content}</p>
+                                </div>
+                              </li>
+                            ))}
+                            <div>
+                              <textarea
+                                id="comment"
+                                name="comment"
+                                rows={3}
+                                onChange={(e) => setComment(e.target.value)}
+                                className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                                defaultValue={''}
+                              />
+                              <button
+                                onClick={(e) => { document.getElementById("comment").value = ''; sendComment(e) }}
+                                className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
+                              >
+                                Envoyer mon commentaire
+                              </button>
+                              <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
                             </div>
-                            <div className="mt-1">
-                              <p className="line-clamp-2 text-sm text-gray-600">{r.content}</p>
-                            </div>
-                          </li>
-                        ))}
-                        <div>
-                          <textarea
-                            id="comment"
-                            name="comment"
-                            rows={3}
-                            onChange={(e) => setComment(e.target.value)}
-                            className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                            defaultValue={''}
-                          />
-                          <button
-                            onClick={(e) => { document.getElementById("comment").value = ''; sendComment(e) }}
-                            className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-6 rounded border-indigo-700 bg-indigo-700 text-white hover:text-white hover:bg-indigo-800 hover:border-indigo-800 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-700 active:border-indigo-700"
-                          >
-                            Envoyer mon commentaire
-                          </button>
-                          <p className="mt-2 text-sm text-gray-500">Vous pouvez communiquer avec les membres du FabLab via ce formulaire.</p>
+                          </ul>
+                        </dd>
+                      </div>
 
+                    </dl>
+                  </div>
+                </div>
+
+                <div className="w-full lg:w-1/3 px-4 space-y-4">
+                  <div className="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <div className="px-4 py-5 sm:px-6">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                        Détails de la demande d'impression
+                      </h3>
+                      <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                        Ticket n° {ticket.id}
+                      </p>
+                    </div>
+                    <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
+                      <dl className="sm:divide-y sm:divide-gray-200">
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Utilisateur</dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
+                            <div>
+                              {user.firstName + " " + (user.lastName).toString().toUpperCase()}
+                              <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                                {user.title || "Ancien compte"}
+                              </p>
+                            </div>
+                            { authorizations.myFabAgent ? (<button class="bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-600 font-bold py-2 px-4 rounded" onClick={() => { setOpenUser(true); }}>
+                             <UserCircleIcon className="h-6 w-6"></UserCircleIcon>
+                            </button>) : "" }
+                          </dd>
                         </div>
-                      </ul>
-                    </dd>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Numéro de groupe</dt>                          
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
+                            { ticket.groupNumber }
+                          </dd>
+                        </div>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Type</dt>                          
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
+                            <div>
+                              { ticket.projectType }
+                            </div>
+                            { authorizations.myFabAgent ? (<button class="bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-600 font-bold py-2 px-4 rounded" onClick={() => { setparamType("projectType"); setOpenStatus(true); }}>
+                             <CogIcon className="h-6 w-6"></CogIcon>
+                            </button>) : "" }
+                          </dd>
+                        </div>
+                        <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Status</dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
+                            <div>
+                              { ticket.statusName }
+                            </div>
+                            { authorizations.myFabAgent ? (<button class="bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-600 font-bold py-2 px-4 rounded" onClick={() => { setparamType("status"); setOpenStatus(true); }}>
+                             <CogIcon className="h-6 w-6"></CogIcon>
+                            </button>) : "" }
+                          </dd>
+                        </div>
+                        { authorizations.myFabAgent ? (<div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Priorité</dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            <div className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-full ${colors[ticket.priorityColor]}`}>
+                              {ticket.priorityName}
+                            </div>
+                          </dd>
+                        </div>) : ""}
+                      </dl>
+                    </div>
                   </div>
-
-                </dl>
+                </div>
               </div>
-
             </div>
           </main>
         </div>
@@ -287,7 +358,68 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
         <Dialog
           as="div"
           className="fixed z-10 inset-0 overflow-y-auto"
-          onClose={setOpen}
+          onClose={setOpen}>
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0">
+              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
+
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true">
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                  <p className="text-center font-medium">Aperçu du fichier STL:</p>
+                  <center>
+                    <STLViewer
+                      width={300}
+                      height={200}
+                      modelColor= {STLColor}
+                      backgroundColor='#FFFFFF'
+                      rotate={true}
+                      orbitControls={true}
+                      model={urlStl}
+                      lightColor='#ffffff'
+                      lights={[1, 1, 1]}/>
+                  </center>
+                </div>
+                <div className="mt-5 sm:mt-6">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
+                    onClick={() => setOpen(false)}>
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      {/* modal */}
+      <Transition.Root show={openUser} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed z-10 inset-0 overflow-y-auto"
+          onClose={setOpenUser}
         >
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <Transition.Child
@@ -297,8 +429,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
               enterTo="opacity-100"
               leave="ease-in duration-200"
               leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
+              leaveTo="opacity-0" >
               <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
             </Transition.Child>
 
@@ -317,30 +448,126 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[50%] sm:w-full sm:p-6">
                 <div>
-                  <p className="text-center font-medium">Aperçu du fichier STL:</p>
-                  <center>
-                    <STLViewer
-                      width={300}
-                      height={200}
-                      modelColor='#4930b8'
-                      backgroundColor='#FFFFFF'
-                      rotate={true}
-                      orbitControls={true}
-                      model={urlStl}
-                      lightColor='#ffffff'
-                      lights={[1, 1, 1]}
-                    />
-                  </center>
+                  <p className="text-center font-medium">Aperçu de l'utilisateur :</p>
+                  <dl className="sm:divide-y sm:divide-gray-200">
+                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Nom et prénom
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {user.firstName + " " + (user.lastName).toString().toUpperCase()}
+                    </dd>
+                    <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Ecole et année
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {ticket.title || "Ancien compte"}
+                    </dd>
+                  </div>
+                  <div className="py-4 sm:py-5 sm:grid sm:grid-cols-6 sm:gap-4 sm:px-6">
+                    <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Adresse e-mail
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {ticket.email}
+                    </dd>
+                    <dt className="text-sm font-medium text-gray-500 whitespace-nowrap">
+                      Type de preojet
+                    </dt>
+                    <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                      {ticket.projectType}
+                    </dd>
+                  </div>
+                </dl>
                 </div>
                 <div className="mt-5 sm:mt-6">
                   <button
                     type="button"
                     className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setOpenUser(false)}>
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
+      {/* modal */}
+      <Transition.Root show={openStatus} as={Fragment}>
+        <Dialog
+          as="div"
+          className="fixed z-10 inset-0 overflow-y-auto"
+          onClose={setOpenStatus}
+        >
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0" >
+              <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
+
+            <span
+              className="hidden sm:inline-block sm:align-middle sm:h-screen"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enterTo="opacity-100 translate-y-0 sm:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            >
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[500px] sm:w-full sm:p-6">
+              <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <ExclamationIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
+                      Changer les étapes du ticket
+                    </Dialog.Title>
+                    <div className="mt-2">
+                      <select
+                        onChange={(e) => setNewParam(e.target.value)}
+                        id="type"
+                        name="type"
+                        className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md cursor-pointer"
+                      >
+                        {(paramType === "status" ? status : projectType).map((item) => {
+                          const elementSelected = (paramType === "status") ? ticket.statusName : ticket.projectType;
+                          return(<option selected={(item.name === elementSelected) ? "'selected'":""} value={item.id}>{item.name}</option>)
+                        })}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    onClick={() => { setOpenStatus(false); change() }}
                   >
-                    Retourner au ticket
+                    Confirmer
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+                    onClick={() => setOpenStatus(false)}
+                  >
+                    Annuler
                   </button>
                 </div>
               </div>
@@ -362,6 +589,8 @@ export async function getServerSideProps({ req, params }) {
   const file = await fetchAPIAuth("/ticket/" + id + "/file", cookies.jwt);
   const message = await fetchAPIAuth("/ticket/" + id + "/message", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
+  const status = await fetchAPIAuth("/status/");
+  const projectType = await fetchAPIAuth("/projectType/");
 
   if(user.acceptedRule == 0){
     return {
@@ -373,7 +602,7 @@ export async function getServerSideProps({ req, params }) {
     };  }
 
   return {
-    props: { user, params, role, ticket, file, message, authorizations, id }, // will be passed to the page component as props
+    props: { user, params, role, ticket, file, message, authorizations, id, status, projectType }, // will be passed to the page component as props
   }
 }
 

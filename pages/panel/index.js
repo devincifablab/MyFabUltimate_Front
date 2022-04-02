@@ -144,52 +144,6 @@ export default function NewPanel({ data, user, ticket, role, authorizations }) {
                       Ticket
                     </h2>
                   </div>
-                  <ul
-                    role="list"
-                    className="mt-3 border-t border-gray-200 divide-y divide-gray-100"
-                  >
-                    {ticket.map((project) => (
-                      <li key={project.id}>
-                        <Link href={"/panel/" + project.id}>
-                          <a
-                            className="group flex items-center justify-between px-4 py-4 hover:bg-gray-50 sm:px-6"
-                          >
-                            <span className="flex items-center truncate space-x-3">
-                              {getColor(project.step, project.waitingAnswer) == 10 ? <span className="flex h-3 w-3">
-                                <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
-                                  "animate-ping absolute inline-flex h-3 w-3 rounded-full opacity-75"
-                                )}></span>
-                                <span className={classNames(
-                                  project.step == 0 ? 'bg-indigo-200' : project.step == 1 ? 'bg-amber-300' : project.step == 2 ? 'bg-emerald-400' : project.step == 3 ? 'bg-emerald-600' : project.step == 4 ? 'bg-red-600' : '',
-                                  "relative inline-flex rounded-full h-3 w-3"
-                                )}></span>
-                              </span> : <div
-                                className={classNames(
-                                  getColor(project.step, project.waitingAnswer) == 0 ? 'bg-indigo-200' : getColor(project.step, project.waitingAnswer) == 1 ? 'bg-amber-200' : getColor(project.step, project.waitingAnswer) == 2 ? 'bg-emerald-300' : getColor(project.step, project.waitingAnswer) == 3 ? 'bg-emerald-500' : getColor(project.step, project.waitingAnswer) == 4 ? 'bg-red-500' : '',
-                                  "flex-shrink-0 w-2.5 h-2.5 rounded-full"
-                                )}
-                                aria-hidden="true"
-                              />}
-                              <span className="font-medium truncate text-sm leading-6">
-                                <Link href={`/panel/${project.id}`}>
-                                  {"#" + setZero(project.id)}
-                                </Link>{" "}
-                                <span className="truncate font-normal text-gray-500">
-                                  {" "}
-                                  {project.projectType}
-                                </span>
-                              </span>
-                            </span>
-                            <ChevronRightIcon
-                              className="ml-4 h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                              aria-hidden="true"
-                            />
-                          </a>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
 
                 {/* big projects */}
@@ -214,7 +168,7 @@ export default function NewPanel({ data, user, ticket, role, authorizations }) {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
                       {ticket.map((project) => (
-                        <tr key={project.id} onClick={() => router.push('/panel/' + project.id)} className="hover:bg-gray-50">
+                        <tr key={project.id} onClick={() => router.push('/panel/' + project.id)} className="hover:bg-gray-50 cursor-pointer">
                           <td className="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
                             <div className="flex items-center space-x-3 lg:pl-2">
 
