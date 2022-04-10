@@ -173,6 +173,7 @@ export default function Auth() {
         router.replace(router.asPath)
       })
   };
+  const microsoftAvalable = false;
 
   return (
     <div className="min-h-screen bg-white flex">
@@ -194,7 +195,23 @@ export default function Auth() {
 
                 <div className="mt-1">
                   <div className="">
-                   {typeof window === 'undefined' ? null : <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} prompt="select_account" withUserData={true} debug={true} children={<div
+                   {typeof window === 'undefined' || !microsoftAvalable ? <div>
+                     <div className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300" onClick={()=>{
+                       toast.error("La connection avec les LéoID est actuellement indisponible.", {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                      });
+                     }}>
+                        <span className="sr-only">Mon compte LéoID</span>
+                        <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
+                        <p className="ml-2">Mon compte LéoID</p>
+                      </div>
+                   </div> : <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} prompt="select_account" withUserData={true} debug={true} children={<div
                         className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
                       >
                         <span className="sr-only">Mon compte LéoID</span>
