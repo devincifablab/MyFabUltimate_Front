@@ -15,6 +15,7 @@ export default function Article({ post }) {
     const [like, setLike] = useState(0);
     const [tag, setTag] = useState('fablab');
 
+    console.log(post);
 
     useEffect(async function () {
         setUser(await fetchAPIAuth("/user/me", getCookie('jwt')))
@@ -72,7 +73,8 @@ export default function Article({ post }) {
 }
 
 export async function getStaticPaths() {
-    const posts = await getPosts()
+    const resGhost = await getPosts();
+    const posts = resGhost ? resGhost : [];
 
     // Get the paths we want to create based on posts
     const paths = posts.map((post) => ({
