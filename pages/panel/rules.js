@@ -18,7 +18,7 @@ import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
 import Seo from "../../components/seo";
-import RulesText from '../../components/Rules'
+import RulesText from '../../components/rules'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
