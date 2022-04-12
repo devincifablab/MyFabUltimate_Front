@@ -118,7 +118,7 @@ export default function NewPanel({user, role, authorizations}) {
       draggable: true,
       progress: undefined,
       });
-      router.push('/panel/'+upload_res.data.id)
+      router.push('/panel/newSuccess/?id=' + upload_res.data.id)
   }
 
 
