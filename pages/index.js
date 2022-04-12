@@ -184,7 +184,7 @@ const Home = ({ posts }) => {
                   <dt className="sr-only">Numéro de téléphone</dt>
                   <dd className="flex">
                     <PhoneIcon className="flex-shrink-0 h-6 w-6 text-gray-400" aria-hidden="true" />
-                    <span className="ml-3">+33 1 41 16 70 00</span>
+                    <span className="ml-3">Numéro de téléphone</span>
                   </dd>
                 </div>
                 <div className="mt-3">
