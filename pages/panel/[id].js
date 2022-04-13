@@ -32,6 +32,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   const [newParam, setNewParam] = useState('');
   const [paramType, setparamType] = useState('status');
   const [urlStl, setUrlStl] = useState('');
+  const [ticketFile, setTicketFile] = useState({});
   const [comment, setComment] = useState('');
   const [STLColor, setSTLColor] = useState("#FF0000");
 
@@ -161,6 +162,25 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     setSTLColor("#" + (fabColor[Math.floor(Math.random() * fabColor.length)]));
   }
 
+  async function saveFileData() {
+    setOpen(false);
+    const cookie = getCookie("jwt");
+    await axios({
+      method: 'PUT',
+      url: process.env.API + '/api/file/' + ticketFile.id,
+      data: {
+        comment: ticketFile.comment
+      },
+      headers: {
+        'dvflCookie': cookie
+      },
+    }).then((response) => {
+      console.log("fait");
+    }).catch((e) => {
+      console.log(e);
+    })
+  }
+
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Ticket #" + setZero(ticket.id)} />
@@ -214,7 +234,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
 
                                   </div>
                                   <div className="ml-4 flex-shrink-0">
-                                    <button onClick={() => { changeSTLColor(); getUrlSTL(r.id); setOpen(true); }}>
+                                    <button onClick={() => { console.log(r); changeSTLColor(); setTicketFile(r); getUrlSTL(r.id); setOpen(true); }}>
                                       Voir le fichier STL
                                     </button>
                                   </div>
@@ -358,7 +378,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
         <Dialog
           as="div"
           className="fixed z-10 inset-0 overflow-y-auto"
-          onClose={setOpen}>
+          onClose={saveFileData}>
           <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <Transition.Child
               as={Fragment}
@@ -384,13 +404,14 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
               leave="ease-in duration-200"
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[50%] sm:w-full sm:max-h-max sm:h-full sm:p-6">
                 <div>
                   <p className="text-center font-medium">Aperçu du fichier STL:</p>
+                  <p className="max-w-2xl text-sm text-gray-500 text-center">{ticketFile.filename}</p>
                   <center>
                     <STLViewer
-                      width={300}
-                      height={200}
+                      width={typeof window !== 'undefined' ? window.innerWidth / 100 * 45 : 300}
+                      height={typeof window !== 'undefined' ? window.innerHeight/2.2 : 200}
                       modelColor= {STLColor}
                       backgroundColor='#FFFFFF'
                       rotate={true}
@@ -398,13 +419,22 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                       model={urlStl}
                       lightColor='#ffffff'
                       lights={[1, 1, 1]}/>
+
+                  <p className="text-center font-medium">Commentaire:</p>
+                    <textarea
+                      id="comment"
+                      name="comment"
+                      rows={3}
+                      onChange={(e) => {ticketFile.comment=e.target.value; setTicketFile(ticketFile)}}
+                      className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                      defaultValue={ticketFile.comment}/>
                   </center>
                 </div>
-                <div className="mt-5 sm:mt-6">
+                <div className="mt-5 sm:mt-6 justify-center">
                   <button
                     type="button"
                     className="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-                    onClick={() => setOpen(false)}>
+                    onClick={() => {saveFileData();}}>
                     Fermer
                   </button>
                 </div>
