@@ -66,8 +66,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     }).then(() => {
       toast.success((paramType === "status" ? "Le status du ticket a été mis à jour" : "Le type de projet à été modifié"), {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -77,8 +77,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     }).catch((e) => {
       toast.error("Une erreur est survenue, veuillez réessayer.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -121,8 +121,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     }).then((response) => {
       toast.success("Votre commentaire a été envoyé !", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -131,8 +131,8 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
     }).catch((e) => {
       toast.error("Une erreur est survenue, veuillez réessayer.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

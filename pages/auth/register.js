@@ -18,8 +18,8 @@ export default function Register() {
     if (confirmPassword == null || password == null || password != confirmPassword) {
       toast.warn("Vos mots de passes ne correspondent pas.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -42,8 +42,8 @@ export default function Register() {
       }).then((response) => {
         toast.success("Vous êtes désormais inscrits. Vous pouvez vous connecter.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -57,8 +57,8 @@ export default function Register() {
           setTimeout(() => setError(false), 5000);
           toast.error("Impossible de vous inscrire. Vérifiez que vous ayez remplis tous les champs.", {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
+            autoClose: 3000,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,

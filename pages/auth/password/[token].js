@@ -25,8 +25,8 @@ export default function Forget({ params }) {
         if (response.status == 200) {
           toast.success("Votre nouveau mot de passe a été enregistré. Vous pouvez désormais vous connecter.", {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
+            autoClose: 3000,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -37,7 +37,7 @@ export default function Forget({ params }) {
           toast.warning("Votre mot de passe n'a pas pu rénitialisé. Vérifiez que vous ayez bien cliqué sur le bon lien de rénitialisation, ou que votre nouveau mot de passe est valide.", {
             position: "top-right",
             autoClose: 10000,
-            hideProgressBar: false,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -49,8 +49,8 @@ export default function Forget({ params }) {
           console.log(error);
           toast.error("Votre mot de passe n'a pas pu rénitialisé. Vérifiez que vous ayez bien cliqué sur le bon e-mail, ou que votre nouveau mot de passe est valide.", {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
+            autoClose: 3000,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -60,8 +60,8 @@ export default function Forget({ params }) {
     } else {
       toast.error("Vos mots de passes ne correspondent pas.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

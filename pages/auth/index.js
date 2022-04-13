@@ -20,8 +20,8 @@ export default function Auth() {
       if (router.query.mail == 'ok') {
         toast.success("Votre e-mail a été vérifié. Vous pouvez désormais vous connecter.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -31,8 +31,8 @@ export default function Auth() {
       } else {
         toast.error("Une erreur est survenue lors de la vérification de votre e-mail.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -66,8 +66,8 @@ export default function Auth() {
       } if (response.status == 204) {
         toast.warning("Votre adresse e-mail n'est pas validée. Veuillez vérifier vos mails.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -81,8 +81,8 @@ export default function Auth() {
         setTimeout(() => setError(false), 5000);
         toast.error("Impossible de vous connecter. Vérifiez votre mot de passe ou votre e-mail.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -107,8 +107,8 @@ export default function Auth() {
     if (data == null) {
       toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -132,8 +132,8 @@ export default function Auth() {
         }
         toast.success("Vous êtes désormais connecté ! Bienvenue " + data.givenName + " !", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -162,8 +162,8 @@ export default function Auth() {
         setTimeout(() => setError(false), 5000);
         toast.error("Impossible de vous connecter. Veuillez contacter fablab@devinci.fr.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,

@@ -16,8 +16,8 @@ export default function Settings({ user, role, authorizations }) {
     if (newPassword == null || newPasswordConfirm == null || newPassword != newPasswordConfirm || newPassword.length < 1) {
       toast.warning("Vos mots de passes ne sont pas identiques.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -38,8 +38,8 @@ export default function Settings({ user, role, authorizations }) {
         if (response.data.result == "password incorect") {
           toast.warn("Votre mot de passe actuel est incorrect.", {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
+            autoClose: 3000,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -48,8 +48,8 @@ export default function Settings({ user, role, authorizations }) {
         } else {
           toast.success("Votre mot de passe a été modifié !", {
             position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
+            autoClose: 3000,
+            hideProgressBar: true,
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
@@ -63,8 +63,8 @@ export default function Settings({ user, role, authorizations }) {
       }).catch((e) => {
         toast.error("Une erreur est survenue, veuillez réessayer. Vérifiez que votre mot de passe actuel est correct.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,

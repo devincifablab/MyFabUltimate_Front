@@ -25,7 +25,7 @@ export default function Forget() {
         toast.success("Si un compte existe à l'adresse e-mail " + email + ", vous receverez votre lien de récupération d'ici quelques minutes. Pensez à vérifier vos spams.", {
           position: "top-right",
           autoClose: 10000,
-          hideProgressBar: false,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
@@ -40,8 +40,8 @@ export default function Forget() {
         setTimeout(() => setError(false), 5000);
         toast.error("Une erreur s'est produite. Veuillez réessayer dans quelques instants.", {
           position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
+          autoClose: 3000,
+          hideProgressBar: true,
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,

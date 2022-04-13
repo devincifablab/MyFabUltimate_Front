@@ -50,8 +50,8 @@ export default function NewPanel({user, role, authorizations}) {
     if(description == "Aucune déscription fournie." || group == null || file.length < 1){
       toast.error("Tous les champs ne sont pas complétés.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -96,8 +96,8 @@ export default function NewPanel({user, role, authorizations}) {
     }).catch(e=>{
       toast.error("Une erreur est survenue, veuillez vérifier le formulaire ou actualiser la page.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -111,8 +111,8 @@ export default function NewPanel({user, role, authorizations}) {
     setGroup(null);
     toast.success('Le ticket #'+setZero(upload_res.data.id)+" a été créé !", {
       position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
+      autoClose: 3000,
+      hideProgressBar: true,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,

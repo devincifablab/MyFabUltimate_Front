@@ -62,8 +62,8 @@ export default function NewPanel({ data, user, ticket, role, authorizations }) {
     }).then(() => {
       toast.success("Le ticket #" + setZero(id) + " a été supprimé.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -72,8 +72,8 @@ export default function NewPanel({ data, user, ticket, role, authorizations }) {
     }).catch(() => {
       toast.error("Une erreur est survenue lors de la suppression du ticket #" + setZero(id) + ".", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

@@ -77,8 +77,8 @@ async function validateRules(){
       console.log(error);
       toast.error("Une erreur est survenue lors de la validation.", {
         position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
+        autoClose: 3000,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

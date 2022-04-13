@@ -66,8 +66,8 @@ export default function Settings({ user, role, me, authorizations }) {
                     if (response.status == 200) {
                         toast.success("Le rôle " + roleData + " a été ajouté à l'utilisateur #" + setZero(id), {
                             position: "top-right",
-                            autoClose: 5000,
-                            hideProgressBar: false,
+                            autoClose: 3000,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: true,
                             draggable: true,
@@ -77,8 +77,8 @@ export default function Settings({ user, role, me, authorizations }) {
                 }).catch(e => {
                     toast.error("Une erreur est survenue.", {
                         position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
+                        autoClose: 3000,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
@@ -97,8 +97,8 @@ export default function Settings({ user, role, me, authorizations }) {
                         console.log('rôle supprimé');
                         toast.success("Le rôle " + roleUser + " a été supprimé de l'utilisateur #" + setZero(id), {
                             position: "top-right",
-                            autoClose: 5000,
-                            hideProgressBar: false,
+                            autoClose: 3000,
+                            hideProgressBar: true,
                             closeOnClick: true,
                             pauseOnHover: true,
                             draggable: true,
@@ -109,8 +109,8 @@ export default function Settings({ user, role, me, authorizations }) {
                 }).catch(e => {
                     toast.error("Une erreur est survenue.", {
                         position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
+                        autoClose: 3000,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
@@ -134,8 +134,8 @@ export default function Settings({ user, role, me, authorizations }) {
                 if (response.status == 200) {
                     toast.success("Le mot de passe de l'utilisateur #" + setZero(id) + " a été mis à jour.", {
                         position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
+                        autoClose: 3000,
+                        hideProgressBar: true,
                         closeOnClick: true,
                         pauseOnHover: true,
                         draggable: true,
@@ -145,8 +145,8 @@ export default function Settings({ user, role, me, authorizations }) {
             }).catch(e => {
                 toast.error("Une erreur est survenue. Votre mot de passe n'a pas été mis à jour.", {
                     position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
+                    autoClose: 3000,
+                    hideProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true,
                     draggable: true,
@@ -301,8 +301,8 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                                 if (response.status == 200) {
                                                                                     toast.success("Le rôle " + r.name + " a été supprimé à l'utilisateur #" + setZero(data.id), {
                                                                                         position: "top-right",
-                                                                                        autoClose: 5000,
-                                                                                        hideProgressBar: false,
+                                                                                        autoClose: 3000,
+                                                                                        hideProgressBar: true,
                                                                                         closeOnClick: true,
                                                                                         pauseOnHover: true,
                                                                                         draggable: true,
@@ -312,8 +312,8 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                             }).catch(e => {
                                                                                 toast.error("Une erreur est survenue. Impossible de supprimer le rôle", {
                                                                                     position: "top-right",
-                                                                                    autoClose: 5000,
-                                                                                    hideProgressBar: false,
+                                                                                    autoClose: 3000,
+                                                                                    hideProgressBar: true,
                                                                                     closeOnClick: true,
                                                                                     pauseOnHover: true,
                                                                                     draggable: true,
@@ -397,8 +397,8 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                                             if (response.status == 200) {
                                                                                                 toast.success("Le rôle " + r.name + " a été ajouté à l'utilisateur #" + setZero(data.id), {
                                                                                                     position: "top-right",
-                                                                                                    autoClose: 5000,
-                                                                                                    hideProgressBar: false,
+                                                                                                    autoClose: 3000,
+                                                                                                    hideProgressBar: true,
                                                                                                     closeOnClick: true,
                                                                                                     pauseOnHover: true,
                                                                                                     draggable: true,
@@ -408,8 +408,8 @@ export default function Settings({ user, role, me, authorizations }) {
                                                                                         }).catch(e => {
                                                                                             toast.error("Une erreur est survenue. Impossible d'ajouter le rôle", {
                                                                                                 position: "top-right",
-                                                                                                autoClose: 5000,
-                                                                                                hideProgressBar: false,
+                                                                                                autoClose: 3000,
+                                                                                                hideProgressBar: true,
                                                                                                 closeOnClick: true,
                                                                                                 pauseOnHover: true,
                                                                                                 draggable: true,
