@@ -25,7 +25,7 @@ const colors = {
 };
 const fabColor = ["D51D65", "F5841D", "2CA0BB", "CDCDCD"];
 
-const GestionTicket = ({ params, user, role, ticket, file, message, authorizations, id, status, projectType }) => {
+const GestionTicket = ({ params, user, role, ticket, file, message, authorizations, id, status, projectType, printers }) => {
   const [open, setOpen] = useState(false);
   const [openUser, setOpenUser] = useState(false);
   const [openStatus, setOpenStatus] = useState(false);
@@ -37,7 +37,15 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   const [STLColor, setSTLColor] = useState("#FF0000");
 
   const router = useRouter();
-  
+
+  for (let index = 0; index < file.length; index++) {
+    file[index].changed = false;
+  }
+  const printerObject = {};
+  for (const printer of printers) {
+    printerObject[printer.id] = printer.name;
+  }
+
   // Si l'id du ticket est invalid (un string par exemple) la page 404 va être affiché
   useEffect(function () {
     if (ticket.error) {
@@ -169,15 +177,24 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
       method: 'PUT',
       url: process.env.API + '/api/file/' + ticketFile.id,
       data: {
-        comment: ticketFile.comment
+        comment: ticketFile.comment,
+        idprinter: ticketFile.idprinter
       },
       headers: {
         'dvflCookie': cookie
       },
     }).then((response) => {
-      console.log("fait");
     }).catch((e) => {
       console.log(e);
+      toast.error("Une erreur est survenue, veuillez réessayer.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     })
   }
 
@@ -239,8 +256,11 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                                     </button>
                                   </div>
                                 </li>
-                                {r.comment.length > 2 ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
-                                  <p><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
+                                {r.comment != "" ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                                  <p className="text-ellipsis overflow-hidden"><span className="font-medium">Commentaire sur le fichier</span>: {r.comment}</p>
+                                </div> : ''}
+                                {authorizations.myFabAgent ? <div className="pl-3 pr-4 flex mb-3 items-center justify-between text-sm">
+                                  <p className="text-ellipsis overflow-hidden"><span className="font-medium">Impression lancé sur</span>: {r.printerName ? r.printerName : "Non lancé"}</p>
                                 </div> : ''}
                               </div>
                               )
@@ -407,7 +427,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
               <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[50%] sm:w-full sm:max-h-max sm:h-full sm:p-6">
                 <div>
                   <p className="text-center font-medium">Aperçu du fichier STL:</p>
-                  <p className="max-w-2xl text-sm text-gray-500 text-center">{ticketFile.filename}</p>
+                  <p className="text-sm text-center text-gray-500">{ticketFile.filename}</p>
                   <center>
                     <STLViewer
                       width={typeof window !== 'undefined' ? window.innerWidth / 100 * 45 : 300}
@@ -420,14 +440,58 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                       lightColor='#ffffff'
                       lights={[1, 1, 1]}/>
 
-                  <p className="text-center font-medium">Commentaire:</p>
-                    <textarea
-                      id="comment"
-                      name="comment"
-                      rows={3}
-                      onChange={(e) => {ticketFile.comment=e.target.value; setTicketFile(ticketFile)}}
-                      className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                      defaultValue={ticketFile.comment}/>
+                    {authorizations.myFabAgent ? <div>
+                      <p className="text-center font-medium">Commentaire et imprimante:</p>
+                      <div className="flex flex-wrap -mx-4">
+                        <div className="overflow-hidden sm:rounded-lg w-full lg:w-7/12 pl-4">
+                          <textarea
+                            id="comment"
+                            name="comment"
+                            maxlength="256"
+                            rows={ticketFile.comment && ticketFile.comment.length < 150 ? 3 : 5}
+                            onChange={(e) => {
+                              if (ticketFile.comment!==e.target.value) {
+                                ticketFile.comment=e.target.value;
+                                setTicketFile(ticketFile);
+                              }
+                            }}
+                            className="mt-5 w-full shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                            defaultValue={ticketFile.comment}
+                          />
+                        </div>
+                        <div className="w-full lg:w-5/12 space-y-400 px-4">
+                          <select
+                            onChange={(e) => {
+                              //setNewParam(e.target.value)
+                              if (ticketFile.idprinter!==e.target.value) {
+                                ticketFile.idprinter = e.target.value;
+                                ticketFile.printerName = printerObject[ticketFile.idprinter];
+                                setTicketFile(ticketFile);
+                              }
+                            }}
+                            id="type"
+                            name="type"
+                            className="mt-5 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md cursor-pointer">
+                            <option value={0} selected={(ticketFile.idprinter===0) ? "'selected'" : ""}>(Sélectionnez une imprimante)</option>
+                            {printers.map((item) => {
+                              const elementSelected = ticketFile.idprinter === item.id;
+                              return(<option selected={elementSelected ? "'selected'" : ""} value={item.id}>{item.name}</option>)
+                            })}
+                          </select>
+                        </div>
+                      </div>
+                    </div> : <div>
+                      <p className="text-center font-medium">Commentaire:</p>
+                      <textarea
+                        id="comment"
+                        name="comment"
+                        rows={3}
+                        onChange={(e) => {ticketFile.comment=e.target.value; setTicketFile(ticketFile)}}
+                        className="mt-5 max-w-lg shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                        defaultValue={ticketFile.comment}
+                      />
+                    </div>}
+                    
                   </center>
                 </div>
                 <div className="mt-5 sm:mt-6 justify-center">
@@ -621,6 +685,7 @@ export async function getServerSideProps({ req, params }) {
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
   const status = await fetchAPIAuth("/status/");
   const projectType = await fetchAPIAuth("/projectType/");
+  const printers = await fetchAPIAuth("/printer/");
 
   if(user.acceptedRule == 0){
     return {
@@ -632,7 +697,7 @@ export async function getServerSideProps({ req, params }) {
     };  }
 
   return {
-    props: { user, params, role, ticket, file, message, authorizations, id, status, projectType }, // will be passed to the page component as props
+    props: { user, params, role, ticket, file, message, authorizations, id, status, projectType, printers }, // will be passed to the page component as props
   }
 }
 
