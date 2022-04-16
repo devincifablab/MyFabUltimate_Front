@@ -40,8 +40,8 @@ async function validateRules(){
     if(response.status===200){
       toast.success("Vous avez validé le règlement.", {
         position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
+        autoClose: 1500,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -50,8 +50,8 @@ async function validateRules(){
     }else{
       toast.warn("Vous avez déjà validé le règlement.", {
         position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
+        autoClose: 1500,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -71,7 +71,7 @@ async function validateRules(){
             router.push('/panel');
           }
         });
-      }, 3000)
+      }, 1500)
   })
     .catch((error) => {
       console.log(error);
@@ -93,9 +93,9 @@ export default function Rules() {
       <div className="flex h-screen bg-gray-50">
         <div className="max-w-3xl m-auto text-center space-y-3 ">
           <h1 className="font-semibold leading-6 text-xl">Avant d'accéder à MyFab, vous devez accepter notre règlement.</h1>
-          <p className="font-light text-md text-gray-500">L'utilisation de MyFab étant réglementer, l'acceptation de ces règles est obligatoire. Vous pouvez à tout moment nous contacter à fablab@devinci.fr si vous souhaitez faire valoir vos droits.</p>
+          <p className="font-light text-md text-gray-500">L'utilisation de MyFab étant réglementé, l'acceptation de ces règles est obligatoire. Vous pouvez à tout moment nous contacter à fablab@devinci.fr si vous souhaitez faire valoir vos droits.</p>
           
-          <div className="prose max-w-xl overflow-y-auto h-56 m-auto p-5 shadow-sm block w-full ring-indigo-500 border-indigo-500 sm:text-sm border rounded-md">
+          <div className="prose max-w-4xl overflow-y-auto max-h-96 mx-5 p-5 shadow-sm block w-full ring-indigo-500 border-indigo-500 sm:text-sm border rounded-md text-left text-justify">
             <RulesText/>
           </div>
           <button
@@ -103,7 +103,7 @@ export default function Rules() {
         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         onClick={()=>{validateRules()}}
       >
-        J'accepte le règlement
+        J'ai lu et j'accepte le règlement
       </button>
       </div>
       </div>
