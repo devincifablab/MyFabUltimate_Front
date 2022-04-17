@@ -22,7 +22,7 @@ export default function Cookie() {
                 <p className="ml-3 font-medium text-white truncate">
                   <span className="md:hidden">Vous devez accepter les cookies !</span>
                   <span className="hidden md:inline">L'utilisation du site web implique l'acceptation de cookies pour le fonctionnement de nos services.</span>
-                  <Link href={'/rgpd'}><span className='underline ml-1 cursor-pointer hidden md:inline'>En savoir plus</span></Link>
+                  <Link href={'/rules'}><span className='underline ml-1 cursor-pointer hidden md:inline'>En savoir plus</span></Link>
                 </p>
               </div>
               <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
@@ -37,7 +37,7 @@ export default function Cookie() {
               <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-3 md:hidden">
                 <button
                   type="button"
-                  onClick={()=>router.push('/rgpd')}
+                  onClick={()=>router.push('/rules')}
                   className="-mr-1 flex p-2 rounded-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
                 >
                   <span className="sr-only">En savoir plus</span>
