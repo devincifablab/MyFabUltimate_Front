@@ -113,15 +113,22 @@ export default function Rules() {
 export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
-
-  if(user.acceptedRule == 1 || user.error){
+  if (user.error) {
     return {
       redirect: {
         permanent: false,
-        destination: "/panel",
+        destination: "/auth/",
       },
       props:{},
-    };  
+    };
+  }else if(user.acceptedRule == 1){
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/panel/",
+      },
+      props:{},
+    };
   }
 
   return {

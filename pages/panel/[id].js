@@ -15,7 +15,7 @@ import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { setZero } from "../../lib/function";
+import { setZero, isUserConnected } from "../../lib/function";
 import Seo from "../../components/seo";
 
 const colors = {
@@ -676,9 +676,11 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
 
 export async function getServerSideProps({ req, params }) {
   const cookies = parseCookies(req);
-  const id = params.id;
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const resUserConnected = isUserConnected(user);
+  if(resUserConnected) return resUserConnected;
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
+  const id = params.id;
   const ticket = await fetchAPIAuth("/ticket/" + id, cookies.jwt);
   const file = await fetchAPIAuth("/ticket/" + id + "/file", cookies.jwt);
   const message = await fetchAPIAuth("/ticket/" + id + "/message", cookies.jwt);
@@ -686,15 +688,6 @@ export async function getServerSideProps({ req, params }) {
   const status = await fetchAPIAuth("/status/");
   const projectType = await fetchAPIAuth("/projectType/");
   const printers = await fetchAPIAuth("/printer/");
-
-  if(user.acceptedRule == 0){
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/panel/rules",
-      },
-      props:{},
-    };  }
 
   return {
     props: { user, params, role, ticket, file, message, authorizations, id, status, projectType, printers }, // will be passed to the page component as props

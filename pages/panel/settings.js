@@ -3,6 +3,7 @@ import { useState } from "react";
 import LayoutPanel from "../../components/layoutPanel";
 import axios from 'axios';
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
+import { isUserConnected } from '../../lib/function';
 import { toast } from 'react-toastify';
 import { getCookie } from "cookies-next";
 import Seo from "../../components/seo";
@@ -342,17 +343,10 @@ export default function Settings({ user, role, authorizations }) {
 export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const resUserConnected = isUserConnected(user);
+  if(resUserConnected) return resUserConnected;
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
-
-  if(user.acceptedRule == 0){
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/panel/rules",
-      },
-      props:{},
-    };  }
 
   return {
     props: { user, role, authorizations }, // will be passed to the page component as props

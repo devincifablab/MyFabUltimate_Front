@@ -2,8 +2,8 @@ import Link from "next/link";
 import React from "react";
 import LayoutPanel from "../../components/layoutPanel";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
+import { setZero, isUserConnected } from "../../lib/function";
 import Seo from "../../components/seo";
-import { setZero } from "../../lib/function";
 import { toast } from "react-toastify";
 
 export default function NewPanel({ user, role, ticket, file, authorizations, inviteLink}) {
@@ -147,19 +147,12 @@ export default function NewPanel({ user, role, ticket, file, authorizations, inv
 export async function getServerSideProps({req}) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  const resUserConnected = isUserConnected(user);
+  if(resUserConnected) return resUserConnected;
   const idTicket = req["__NEXT_INIT_QUERY"].id;
   const ticket = await fetchAPIAuth("/ticket/" + idTicket, cookies.jwt);
   const file = await fetchAPIAuth("/ticket/" + idTicket + "/file", cookies.jwt);
   const inviteLink = await fetchAPIAuth("/user/discord/serverInvite/");
-
-  if(user.acceptedRule == 0){
-    return {
-      redirect: {
-        permanent: false,
-        destination: "/panel/rules",
-      },
-      props:{},
-    };  }
 
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);

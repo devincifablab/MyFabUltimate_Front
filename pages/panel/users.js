@@ -9,7 +9,7 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import axios from 'axios'
 import { getCookie } from 'cookies-next'
-import { setZero } from '../../lib/function'
+import { setZero, isUserConnected } from '../../lib/function'
 import { toast } from 'react-toastify'
 import Seo from '../../components/seo'
 import { PlusIcon } from '@heroicons/react/solid'
@@ -478,8 +478,10 @@ export default function Settings({ user, role, me, authorizations }) {
 export async function getServerSideProps({ req }) {
 
     const cookies = parseCookies(req);
-    const user = await fetchAPIAuth("/user", cookies.jwt);
     const me = await fetchAPIAuth("/user/me", cookies.jwt);
+    const resUserConnected = isUserConnected(me);
+    if(resUserConnected) return resUserConnected;
+    const user = await fetchAPIAuth("/user", cookies.jwt);
     const role = await fetchAPIAuth("/user/role", cookies.jwt);
     const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
