@@ -5,6 +5,7 @@ import router from "next/router";
 import { toast } from "react-toastify";
 import Link from 'next/link';
 import MicrosoftLogin from "react-microsoft-login";
+import { fetchAPIAuth, parseCookies } from "../../lib/api";
 
 export default function Auth() {
 
@@ -321,4 +322,22 @@ export default function Auth() {
       </div>
     </div>
   )
+}
+
+export async function getServerSideProps({ req }) {
+  const cookies = parseCookies(req);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+
+  if(user.error == null){
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/panel/",
+      },
+      props:{},
+    };  }
+
+  return {
+    props: { }, // will be passed to the page component as props
+  }
 }

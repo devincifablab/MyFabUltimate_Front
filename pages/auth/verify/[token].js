@@ -1,4 +1,5 @@
 import axios from "axios";
+import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 
 export default function Verify() {
 
@@ -34,7 +35,19 @@ export default function Verify() {
     )
 }
 
-export async function getServerSideProps({ params }) {
+export async function getServerSideProps({ req, params }) {
+    const cookies = parseCookies(req);
+    const user = await fetchAPIAuth("/user/me", cookies.jwt);
+  
+    if(user.error == null){
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/panel/",
+        },
+        props:{},
+      };  }
+    
     var success = false;
     await axios({
         method: 'PUT',
@@ -62,6 +75,4 @@ export async function getServerSideProps({ params }) {
             },
         }
     }
-
-
 }

@@ -2,6 +2,7 @@ import axios from "axios";
 import router from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 
 export default function Forget({ params }) {
   const [password1, setPassword1] = useState(null);
@@ -143,4 +144,22 @@ export default function Forget({ params }) {
       </div>
     </div>
   )
+}
+
+export async function getServerSideProps({ req }) {
+  const cookies = parseCookies(req);
+  const user = await fetchAPIAuth("/user/me", cookies.jwt);
+
+  if(user.error == null){
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/panel/",
+      },
+      props:{},
+    };  }
+
+  return {
+    props: { }, // will be passed to the page component as props
+  }
 }
