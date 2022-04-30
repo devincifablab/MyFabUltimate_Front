@@ -2,7 +2,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
 import { Dialog, Menu, Transition } from "@headlessui/react";
-import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon, UsersIcon } from "@heroicons/react/outline";
+import { HomeIcon, MenuAlt1Icon, XIcon, BeakerIcon, CubeIcon, UsersIcon, ClipboardListIcon } from "@heroicons/react/outline";
 import { SelectorIcon } from "@heroicons/react/solid";
 import { useRouter } from "next/router";
 import { removeCookies } from "cookies-next";
@@ -18,10 +18,17 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
   const pn = router.pathname;
   if(!authorizations) authorizations = {};
   
+  console.log(authorizations);
+  //name = le nom qui est affiché
+  //href = le lien du bouton
+  //icon = l'icon du bouton
+  //current = boolean pour mettre le bouton en avant pour dire qu'il est sélectionné
+  //show = boolean pour montrer ou non le bouton selon les rôles de l'utilisateur
   const navigation = [
     { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn === "/panel", show: true },
     { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split("/")[2] === "admin", show: authorizations.myFabAgent == 1 },
     { name: "Gestions des utilisateurs", href: "/panel/users", icon: UsersIcon, current: pn === "/panel/admin/settings", show: authorizations.myFabAgent == 1 },
+    { name: "Gestions du blog", href: process.env.GHOST_URL + "/ghost", icon: ClipboardListIcon, current: false, show: authorizations.myFabAgent == 1 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
@@ -311,8 +318,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
                           className={classNames(
                             active ? "bg-gray-100 text-gray-900" : "text-gray-700",
                             "block px-4 py-2 text-sm cursor-pointer"
-                          )}
-                        >
+                          )}>
 
                           <button
                           >Mes paramètres</button>
