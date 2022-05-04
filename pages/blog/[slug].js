@@ -15,8 +15,6 @@ export default function Article({ post }) {
     const [like, setLike] = useState(0);
     const [tag, setTag] = useState('fablab');
 
-    console.log(post);
-
     useEffect(async function () {
         setUser(await fetchAPIAuth("/user/me", getCookie('jwt')))
         setRole(await fetchAPIAuth("/user/role", getCookie('jwt')))
