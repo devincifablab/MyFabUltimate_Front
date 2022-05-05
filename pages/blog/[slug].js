@@ -56,6 +56,7 @@ export default function Article({ post }) {
                 </div>
 
                 <div className='w-full m-auto space-y-5 prose' dangerouslySetInnerHTML={{ __html: post.html }} />
+                {/*
                 <div className='flex place-items-center'>
                     <div className={`HeartAnimation -ml-10 md:-ml-5 ${animate ? 'animate' : ''}`} onClick={async () => {
                         setAnimate(!animate); animate ? setLike(like
@@ -65,11 +66,13 @@ export default function Article({ post }) {
                     <p className={` -ml-7 font-semibold ${animate ? 'text-black' : 'text-gray-500'}`}>{like}</p>
                     <p className='text-gray-500 ml-3'>Avez-vous aimé cet article ?</p>
                 </div>
+                */}
             </div>
         </Layout>
     )
 }
 
+/*
 export async function getStaticPaths() {
     const resGhost = await getPosts();
     const posts = resGhost ? resGhost : [];
@@ -82,11 +85,12 @@ export async function getStaticPaths() {
     // { fallback: false } means posts not found should 404.
     return { paths, fallback: false }
 }
+*/
 
 
 // Pass the page slug over to the "getSinglePost" function
 // In turn passing it to the posts.read() to query the Ghost Content API
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
     const post = await getSinglePost(context.params.slug)
 
     if (!post) {
