@@ -18,7 +18,6 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
   const pn = router.pathname;
   if(!authorizations) authorizations = {};
   
-  console.log(authorizations);
   //name = le nom qui est affiché
   //href = le lien du bouton
   //icon = l'icon du bouton
