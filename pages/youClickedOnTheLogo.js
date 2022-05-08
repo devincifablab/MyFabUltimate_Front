@@ -1,4 +1,3 @@
-
 import { fetchAPIAuth, parseCookies } from "../lib/api";
 
 export default function Rules() {
@@ -12,6 +11,14 @@ export default function Rules() {
 export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
+
+  await fetch(process.env.API + "/api/clickonlogopaint", {
+    method: 'post',
+    headers: new Headers({
+      'dvflCookie': '' + cookies.jwt,
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }),
+  });
 
   return {
     props: { }, // will be passed to the page component as props
