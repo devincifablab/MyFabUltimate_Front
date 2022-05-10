@@ -15,7 +15,7 @@ const percents = (value,total) => Math.round(value/total)*100
 export default function NewPanel({user, role, authorizations}) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
-
+  const [userClick, setUserClick] = useState(false);
   const [file, setFile] = useState([]);
   const [description, setDescription] = useState('Aucune déscription fournie.')
   const [type, setType] = useState('PIX 1');
@@ -303,9 +303,10 @@ export default function NewPanel({user, role, authorizations}) {
                 </div>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
-                    onClick={(e)=>handleSubmit(e)}
+                    onClick={(e)=>{setUserClick(true);handleSubmit(e)}}
                     type="submit"
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed"
+                    disabled={ userClick }
                   >
                     Valider et envoyer mon fichier
                   </button>
