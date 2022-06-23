@@ -45,7 +45,7 @@ export default function Article({ post }) {
                     </div>
                     <p className='font-light text-gray-400'>{post.excerpt}</p>
                     <div className='flex space-x-3'>
-                        <img src={post.authors[0].profile_image || '/logo_square.png'} className='w-10 h-10 rounded-full' />
+                        <img src={post.authors[0].profile_image || process.env.BASE_PATH + '/logo_square.png'} className='w-10 h-10 rounded-full' />
                         <div>
                             <p className='font-medium -mb-1'>{post.authors[0].name}</p>
                             <p className='text-sm text-gray-400'><Moment format="Do MMM YYYY à HH:mm" locale="fr">{post.created_at}</Moment> · {post.reading_time} min</p>

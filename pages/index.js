@@ -77,7 +77,7 @@ const Home = ({ posts }) => {
               loop={true}
               className="mt-5 rounded-lg mx-auto shadow-lg relative"
             >
-              <source src="video/banner.mp4" type="video/mp4" />
+              <source src={process.env.BASE_PATH + "/video/banner.mp4"} type="video/mp4" />
             </video>
           </div>
         </center>
@@ -112,17 +112,17 @@ const Home = ({ posts }) => {
             <div className="items-center justify-center">
               <img
                 className="rounded-lg shadow-2xl"
-                src="/photo/P1000136.jpg"
+                src={process.env.BASE_PATH + "/photo/P1000136.jpg"}
                 alt="Banner"
               />
               <div className="grid grid-cols-2 gap-2 content-start mt-5">
                 <img
                   className="rounded-lg shadow-lg"
-                  src="/photo/P1000163.jpg"
+                  src={process.env.BASE_PATH + "/photo/P1000163.jpg"}
                   alt="Banner"
                 /><img
                   className="rounded-lg shadow-lg"
-                  src="/photo/P1000167.jpg"
+                  src={process.env.BASE_PATH + "/photo/P1000167.jpg"}
                   alt="Banner"
                 />
               </div>
@@ -140,10 +140,10 @@ const Home = ({ posts }) => {
             <Link href={"/blog/" + post.slug}>
               <div className="flex flex-col cursor-pointer transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 duration-300">
                 <a className="block relative group rounded overflow-hidden">
-                  <img src={post.feature_image || '/logo.png'} alt="Image blog" className="rounded-lg" />
+                  <img src={post.feature_image || process.env.BASE_PATH + '/logo.png'} alt="Image blog" className="rounded-lg" />
                 </a>
                 <div className='flex space-x-3 py-3'>
-                  <img src={post.authors[0].profile_image || '/logo_square.png'} className='w-10 h-10 rounded-full' />
+                  <img src={post.authors[0].profile_image || process.env.BASE_PATH + '/logo_square.png'} className='w-10 h-10 rounded-full' />
                   <div>
                     <p className='font-medium -mb-1'>{post.authors[0].name}</p>
                     <p className='text-sm text-gray-400'><Moment format="Do MMM YYYY à HH:mm" locale="fr">{post.created_at}</Moment> · {post.reading_time} min</p>

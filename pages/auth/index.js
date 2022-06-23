@@ -183,7 +183,7 @@ export default function Auth() {
           <div>
             <img
               className="h-12 w-auto"
-              src="/logo.png"
+              src={process.env.BASE_PATH + "/logo.png"}
               alt="Devinci FabLab"
             />
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Connectez-vous à MyFab</h2>
@@ -209,7 +209,7 @@ export default function Auth() {
                       });
                      }}>
                         <span className="sr-only">Mon compte LéoID</span>
-                        <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
+                        <img src={process.env.BASE_PATH + "/photo/Microsoft_logo.svg"} className="h-5 w-5" />
                         <p className="ml-2">Mon compte LéoID</p>
                       </div>
                    </div> : <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} prompt="select_account" withUserData={true} debug={true} children={<div

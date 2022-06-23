@@ -44,7 +44,7 @@ function Navbar({ router, user, role }) {
                 />
                 <img
                   className="hidden lg:block h-8 w-auto"
-                  src="/logo.png"
+                  src={process.env.BASE_PATH + "/logo.png"}
                   alt="Fablab"
                 />
               </div>
@@ -157,7 +157,7 @@ function Navbar({ router, user, role }) {
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
-                  src={user == null ? "https://eu.ui-avatars.com/api/?name=John Doe" : "https://eu.ui-avatars.com/api/?name=" + user.firstName + " " + user.lastName}
+                  src={user == null ? "https://eu.ui-avatars.com/api/?name=John+Doe" : "https://eu.ui-avatars.com/api/?name=" + user.firstName[0] + "+" + user.lastName[0]}
                   alt=""
                 />
               </div>

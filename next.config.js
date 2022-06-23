@@ -18,6 +18,6 @@ module.exports = {
     API: process.env.API,
     GHOST_URL: process.env.GHOST_URL,
     GHOST_KEY: process.env.GHOST_KEY,
-
+    BASE_PATH: process.env.BASE_PATH ? process.env.BASE_PATH : ""
   }
 }

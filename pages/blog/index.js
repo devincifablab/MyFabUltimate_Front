@@ -34,7 +34,7 @@ export default function Blog({ posts }) {
                                 <img src={posts[0].feature_image || '/logo.png'} alt="Image blog" className="rounded-lg" />
                                 <div className="flex flex-col">
                                     <div className='flex space-x-3 py-5 md:py-0 md:mb-3'>
-                                        <img src={posts[0].authors[0].profile_image || '/logo_square.png'} className='w-10 h-10 rounded-full' />
+                                        <img src={posts[0].authors[0].profile_image || process.env.BASE_PATH + '/logo_square.png'} className='w-10 h-10 rounded-full' />
                                         <div>
                                             <p className='font-medium -mb-1'>{posts[0].authors[0].name}</p>
                                             <p className='text-sm text-gray-400'><Moment format="Do MMM YYYY à HH:mm" locale="fr">{posts[0].created_at}</Moment> · {posts[0].reading_time} min</p>
@@ -59,7 +59,7 @@ export default function Blog({ posts }) {
                                         <img src={post.feature_image || '/logo.png'} alt="Image blog" className="rounded-lg" />
                                     </a>
                                     <div className='flex space-x-3 py-3'>
-                                        <img src={post.authors[0].profile_image || '/logo_square.png'} className='w-10 h-10 rounded-full' />
+                                        <img src={post.authors[0].profile_image || process.env.BASE_PATH + '/logo_square.png'} className='w-10 h-10 rounded-full' />
                                         <div>
                                             <p className='font-medium -mb-1'>{post.authors[0].name}</p>
                                             <p className='text-sm text-gray-400'><Moment format="Do MMM YYYY à HH:mm" locale="fr">{post.created_at}</Moment> · {post.reading_time} min</p>

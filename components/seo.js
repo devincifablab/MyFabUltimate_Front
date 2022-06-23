@@ -6,7 +6,7 @@ const Seo = ({ title, description, image }) => {
     // Add title suffix
     metaTitle: `${title} | ${siteName}`,
     // Get full image URL
-    shareImage: image|| '/photo/seo.png',
+    shareImage: image || process.env.BASE_PATH + '/photo/seo.png',
     metaDescription: description || 'Bienvenue sur le site du Devinci FabLab !'
   }
 
@@ -17,7 +17,7 @@ const Seo = ({ title, description, image }) => {
           <title>{fullSeo.metaTitle}</title>
           <meta property="og:title" content={fullSeo.metaTitle} />
           <meta name="twitter:title" content={fullSeo.metaTitle} />
-          <link rel="icon" href="/favicon.ico" />
+          <link rel="icon" href={process.env.BASE_PATH + "/favicon.ico"} />
         </>
       )}
       {fullSeo.metaDescription && (

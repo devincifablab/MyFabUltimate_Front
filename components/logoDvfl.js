@@ -3,7 +3,7 @@ function entierAleatoire(max) {
 }
 
 function chooseLogo(isEdu){
-  return isEdu && entierAleatoire(100) === 0 ? {img:"/logoPaint.png", link:"/youClickedOnTheLogo"} : {img:"/logo.png"};
+  return isEdu && entierAleatoire(100) === 0 ? {img:process.env.BASE_PATH + "/logoPaint.png", link:process.env.BASE_PATH +"/youClickedOnTheLogo"} : {img:process.env.BASE_PATH + "/logo.png"};
 }
 
 function LogoDvfl({user = null}) {
