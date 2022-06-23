@@ -78,7 +78,7 @@ export default function Register() {
           <div>
             <img
               className="h-12 w-auto"
-              src="/logo.png"
+              src={process.env.BASE_PATH + "/logo.png"}
               alt="Workflow"
             />
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Enregistrez-vous sur MyFab</h2>
