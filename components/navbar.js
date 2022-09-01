@@ -14,7 +14,7 @@ function Navbar({ router, user, role }) {
   const pn = router.pathname;
   const navigations = [
     { name: "Accueil", href: "/", current: pn == "/" },
-    { name: "Blog", href: "/blog", current: pn.split('/')[1] == "blog" },
+    //{ name: "Blog", href: "/blog", current: pn.split('/')[1] == "blog" },
   ]
 
   const isLogged = (user != null && user.error == null);

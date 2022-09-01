@@ -130,6 +130,8 @@ const Home = ({ posts }) => {
           </div>
         </div>
       </section>
+
+      {/*
       <div className="space-y-5 px-5">
         <div className="text-center">
           <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">Nos derniers articles</h1>
@@ -265,6 +267,7 @@ const Home = ({ posts }) => {
           </div>
         </div>
       </div>
+      */}
       <footer className="bg-white">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
           <div className="flex justify-center space-x-6 md:order-2">
@@ -290,6 +293,7 @@ const Home = ({ posts }) => {
 };
 
 export async function getServerSideProps() {
+  /*
   const posts = await getPosts();
 
   if (!posts) {
@@ -297,9 +301,10 @@ export async function getServerSideProps() {
       props: { posts: {} }
     }
   }
+  */
 
   return {
-    props: { posts }
+    props: {  }
   }
 }
 
