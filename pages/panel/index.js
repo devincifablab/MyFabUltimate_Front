@@ -25,21 +25,24 @@ function classNames(...classes) {
 
 export default function NewPanel({ data, user, ticket, role, authorizations }) {
 
+  // Le fichier STL ne s'ouvre pas.
+  // La demande n'est pas claire, que dois-je faire ?
+  // J'ai validé une impression alors que j'aurais dû la refuser.
   const faqs = [
     {
-      question: "Le fichier STL ne s'ouvre pas.",
+      question: "La FAQ, n'a pas de vraie question pourquoi ?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+        "On n'a pas pris le temps de l'écrire.",
     },
     {
-      question: "La demande n'est pas claire, que dois-je faire ?",
+      question: "Comment je fais pour rajouter une question dans la FAQ ?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+        "Pose t'as question à un membre du DeVinci FabLab, et je (le grand concepteur du site) serai ravie de la rajouter ici.",
     },
     {
-      question: "J'ai validé une impression alors que j'aurais dû la refuser.",
+      question: "Quand est-ce que la FAQ sera disponible ?",
       answer:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+        "Aucune idée, mais la patience est une vertue.",
     },
     // More questions...
   ]
