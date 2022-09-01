@@ -9,7 +9,8 @@ export default function Cookie() {
 
     const router = useRouter();
 
-  return (
+  return (<div></div>);
+  /*
     <>
       <div className={`fixed inset-x-0 bottom-0 ${show?'':'hidden'}`}>
         <div className="bg-indigo-600">
@@ -50,4 +51,5 @@ export default function Cookie() {
       </div>
     </>
   )
+  */
 }
