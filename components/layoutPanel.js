@@ -27,7 +27,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
     { name: "Mes demandes", href: "/panel", icon: HomeIcon, current: pn === "/panel", show: true },
     { name: "Gestions des demandes", href: "/panel/admin", icon: BeakerIcon, current: pn.split("/")[2] === "admin", show: authorizations.myFabAgent == 1 },
     { name: "Gestions des utilisateurs", href: "/panel/users", icon: UsersIcon, current: pn === "/panel/admin/settings", show: authorizations.myFabAgent == 1 },
-    { name: "Gestions du blog", href: process.env.GHOST_URL + "/ghost", icon: ClipboardListIcon, current: false, show: authorizations.myFabAgent == 1 },
+    //{ name: "Gestions du blog", href: process.env.GHOST_URL + "/ghost", icon: ClipboardListIcon, current: false, show: authorizations.myFabAgent == 1 },
     { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 

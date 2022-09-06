@@ -88,23 +88,10 @@ const Home = ({ posts }) => {
           <div className="order-1 w-full mt-[88px] md:mt-0">
             <div className="max-w-md text-center m-auto mb-10 md:max-w-4xl md:text-left md:m-0">
               <h2 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
-                Lorem ipsum. <br /> The quick brown fox jumps over the lazy dog.
+                Le DeVinci FabLab<br /> Qui sommes nous ?
               </h2>
               <p className="mt-10 text-lg leading-6 text-gray-500">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tempor sapien
-                faucibus vel nibh. Vel, neque, sapien, eget amet cursus vitae. Nullam nunc
-                tristique sem proin et tincidunt vestibulum ut. Magna mollis bibendum
-                sagittis urna ut vitae, vitae id arcu. Ut nibh vitae risus magna risus,
-                interdum vel ornare laoreet.
-              </p>
-              <p className="mt-10 text-lg leading-6 text-gray-500">
-                Morbi sed commodo volutpat arcu. Ultricies nulla tortor mauris lorem. Metus
-                lacinia praesent mattis iaculis congue. Ut quam imperdiet nisl nulla euismod
-                urna erat. Euismod sed diam faucibus odio convallis turpis risus id.
-                Pulvinar auctor cum eget fames. Condimentum enim integer sed consectetur
-                lectus morbi ornare proin tincidunt. Nibh nunc nec faucibus diam nunc, et
-                pharetra proin. Tincidunt pellentesque ultricies viverra tellus congue.
-                Ipsum netus placerat euismod sem ipsum iaculis pulvinar elementum turpis.
+              Le DeVinci FabLab est une association étudiante du Pôle Léonard De Vinci qui s'occupe de l'espace de fabrication situé au fond du Leaning center. Le but de notre association est de vous aider dans vos projets académiques comme personnels, que ce soit avec des outils, des machines, des matériaux ou des formations. Nous gérons ainsi le parc d'imprimante 3D qui vous permettra de réaliser toutes les pièces que vous aurez conçues, ainsi que les ateliers mis à la disposition de tous où vous pourrez faire votre bricolage. L'espace a les mêmes horaires d'ouverture que le pôle donc n'hésitez pas à venir nous y rencontrer !
               </p>
             </div>
           </div>

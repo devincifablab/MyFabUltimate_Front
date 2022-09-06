@@ -346,13 +346,31 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                              <UserCircleIcon className="h-6 w-6"></UserCircleIcon>
                             </button>) : "" }
                           </dd>
+
+                          { authorizations.myFabAgent ? (<dd className="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-3 flex justify-between">
+                            <div>
+                              Cet utilisateur a créé { ticket.ticketCountUser } ticket{ ticket.ticketCountUser > 1 ? "s" : "" } cette année
+                            </div>
+                          </dd>) : "" }
                         </div>
                         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Numéro de groupe</dt>                          
                           <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
                             { ticket.groupNumber }
                           </dd>
+
+                          { authorizations.myFabAgent ? (<dd className="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-3 flex justify-between">
+                            <div>
+                              Ce groupe a créé { ticket.ticketCountGroup } ticket{ ticket.ticketCountGroup > 1 ? "s" : "" } cette année
+                            </div>
+                          </dd>) : "" }
                         </div>
+                        { authorizations.myFabAgent ? (<div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                          <dt className="text-sm font-medium text-gray-500">Nombre de ticket créé</dt>
+                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                            {"3"}
+                          </dd>
+                        </div>) : ""}
                         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Type</dt>                          
                           <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
@@ -689,6 +707,7 @@ export async function getServerSideProps({ req, params }) {
   const projectType = await fetchAPIAuth("/projectType/");
   const printers = await fetchAPIAuth("/printer/");
 
+  console.log(ticket);
   return {
     props: { user, params, role, ticket, file, message, authorizations, id, status, projectType, printers }, // will be passed to the page component as props
   }
