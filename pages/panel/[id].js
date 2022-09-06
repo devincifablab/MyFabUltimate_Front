@@ -365,12 +365,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                             </div>
                           </dd>) : "" }
                         </div>
-                        { authorizations.myFabAgent ? (<div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                          <dt className="text-sm font-medium text-gray-500">Nombre de ticket créé</dt>
-                          <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                            {"3"}
-                          </dd>
-                        </div>) : ""}
                         <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                           <dt className="text-sm font-medium text-gray-500">Type</dt>                          
                           <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 flex justify-between">
@@ -649,7 +643,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <Dialog.Title as="h3" className="text-lg leading-6 font-medium text-gray-900">
-                      Changer les étapes du ticket
+                      Changer le {(paramType === "status" ? "status" : "type")} du ticket
                     </Dialog.Title>
                     <div className="mt-2">
                       <select
@@ -707,7 +701,6 @@ export async function getServerSideProps({ req, params }) {
   const projectType = await fetchAPIAuth("/projectType/");
   const printers = await fetchAPIAuth("/printer/");
 
-  console.log(ticket);
   return {
     props: { user, params, role, ticket, file, message, authorizations, id, status, projectType, printers }, // will be passed to the page component as props
   }
