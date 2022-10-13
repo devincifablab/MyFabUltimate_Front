@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import LogoDvfl from "./logoDvfl";
 import { logout } from "../lib/function";
 import axios from "axios";
-let version = "1.0.0";
+let version = null;
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -36,24 +36,27 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
     if (role.length == 0 && pn.split("/")[2] == "admin") {
       router.push("/404");
     }
-    setTimeout(async () => {
-      await axios({
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        url: process.env.API + "/api/version",
-      })
-        .then((response) => {
-          if (response.status == 200) {
-            version = response.data.version;
-          }
+    console.log(version);
+    if (!version) {
+      setTimeout(async () => {
+        await axios({
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          url: process.env.API + "/api/version",
         })
-        .catch((error) => {
-          console.log(error);
-        });
-    }, 0);
+          .then((response) => {
+            if (response.status == 200) {
+              version = response.data.version;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }, 100);
+    }
   }, []);
   if (role.length == 0 && pn.split("/")[2] == "admin") {
     return "";
@@ -212,7 +215,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
               <span className="text-xs text-gray-400 text-center" onClick={() => router.push("https://github.com/eliasto/")}>
                 Front-End by Eliasto
               </span>
-              <span className="text-xs text-gray-400 text-center">version {version} - fablab@devinci.fr</span>
+              <span className="text-xs text-gray-400 text-center">version {version ? version : "1.0.0"} - fablab@devinci.fr</span>
             </div>
           </Transition.Child>
           <div className="flex-shrink-0 w-14" aria-hidden="true"></div>
@@ -322,7 +325,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
           <span className="text-xs text-gray-400 text-center" onClick={() => router.push("https://github.com/eliasto/")}>
             Front-End by Eliasto
           </span>
-          <span className="text-xs text-gray-400 text-center">version {version} - fablab@devinci.fr</span>
+          <span className="text-xs text-gray-400 text-center">version {version ? version : "1.0.0"} - fablab@devinci.fr</span>
         </div>
       </div>
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
