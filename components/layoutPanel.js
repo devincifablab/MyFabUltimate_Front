@@ -206,7 +206,13 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
                   </div>
                 </nav>
               </div>
-              <span className="text-xs text-gray-400 text-center">version {version}</span>
+              <span className="text-xs text-gray-400 text-center" onClick={() => router.push("https://github.com/MathieuSchl/")}>
+                MyFab by Cody
+              </span>
+              <span className="text-xs text-gray-400 text-center" onClick={() => router.push("https://github.com/eliasto/")}>
+                Front-End by Eliasto
+              </span>
+              <span className="text-xs text-gray-400 text-center">version {version} - fablab@devinci.fr</span>
             </div>
           </Transition.Child>
           <div className="flex-shrink-0 w-14" aria-hidden="true"></div>
