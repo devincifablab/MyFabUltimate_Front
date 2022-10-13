@@ -2,23 +2,23 @@ import React from "react";
 import { useState } from "react";
 import { CubeIcon } from "@heroicons/react/solid";
 import LayoutPanel from "../../components/layoutPanel";
-import axios from 'axios';
+import axios from "axios";
 import { getCookie } from "cookies-next";
 import { setZero, isUserConnected } from "../../lib/function";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import router from "next/router";
 import Seo from "../../components/seo";
 
-const percents = (value,total) => Math.round(value/total)*100
+const percents = (value, total) => Math.round(value / total) * 100;
 
-export default function NewPanel({user, role, authorizations}) {
+export default function NewPanel({ user, role, authorizations }) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
   const [userClick, setUserClick] = useState(false);
   const [file, setFile] = useState([]);
-  const [description, setDescription] = useState('Aucune déscription fournie.')
-  const [type, setType] = useState('PIX 1');
+  const [description, setDescription] = useState("Aucune déscription fournie.");
+  const [type, setType] = useState("PIX 1");
   const [group, setGroup] = useState(null);
   const [percent, setPercent] = useState(0);
 
@@ -39,15 +39,12 @@ export default function NewPanel({user, role, authorizations}) {
 
   const onDrop = (event) => {
     event.preventDefault();
-    setFile(oldArray => [...oldArray, event.dataTransfer.files]);
-    setStatus(false)
-    
-
-   
+    setFile((oldArray) => [...oldArray, event.dataTransfer.files]);
+    setStatus(false);
   };
 
   const handleSubmit = async (e) => {
-    if(description == "Aucune déscription fournie." || group == null || file.length < 1){
+    if (description == "Aucune déscription fournie." || group == null || file.length < 1) {
       toast.error("Tous les champs ne sont pas complétés.", {
         position: "top-right",
         autoClose: 3000,
@@ -56,44 +53,45 @@ export default function NewPanel({user, role, authorizations}) {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-        return
+      });
+      setUserClick(false);
+      return;
     }
     e.preventDefault();
 
     const projectType = {
-      "PIX 1":{
-        id: 1
+      "PIX 1": {
+        id: 1,
       },
-      "PIX 2":{
-        id:2
+      "PIX 2": {
+        id: 2,
       },
-      "PING":{
-        id:3
+      PING: {
+        id: 3,
       },
-      "PI²":{id:4},
-      "Associatif":{id:5},
-      "Autre":{id:6}
-    }
+      "PI²": { id: 4 },
+      Associatif: { id: 5 },
+      Autre: { id: 6 },
+    };
 
     const data = new FormData();
-    const jwt = getCookie('jwt');
+    const jwt = getCookie("jwt");
 
     for (let i = 0; i < file.length; i++) {
       data.append(`filedata`, file[i][0]);
     }
-    data.append('comment', description);
-    data.append('groupNumber', group);
-    data.append('projectType', projectType[type].id);
+    data.append("comment", description);
+    data.append("groupNumber", group);
+    data.append("projectType", projectType[type].id);
     const upload_res = await axios({
-      method: 'POST',
-      url: process.env.API+'/api/ticket',
+      method: "POST",
+      url: process.env.API + "/api/ticket",
       data,
       headers: {
-        'dvflCookie': jwt
+        dvflCookie: jwt,
       },
-      onUploadProgress: (progress) => setPercent(percents(progress.loaded,progress.total))
-    }).catch(e=>{
+      onUploadProgress: (progress) => setPercent(percents(progress.loaded, progress.total)),
+    }).catch((e) => {
       toast.error("Une erreur est survenue, veuillez vérifier le formulaire ou actualiser la page.", {
         position: "top-right",
         autoClose: 3000,
@@ -102,14 +100,14 @@ export default function NewPanel({user, role, authorizations}) {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
-    })
-    document.getElementById('status').scrollIntoView();
+      });
+    });
+    document.getElementById("status").scrollIntoView();
     setFile([]);
-    setDescription('Aucune déscription fournie.')
-    setType('PIX 1');
+    setDescription("Aucune déscription fournie.");
+    setType("PIX 1");
     setGroup(null);
-    toast.success('Le ticket #'+setZero(upload_res.data.id)+" a été créé !", {
+    toast.success("Le ticket #" + setZero(upload_res.data.id) + " a été créé !", {
       position: "top-right",
       autoClose: 3000,
       hideProgressBar: true,
@@ -117,32 +115,25 @@ export default function NewPanel({user, role, authorizations}) {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      });
-      router.push('/panel/newSuccess/?id=' + upload_res.data.id)
-  }
-
+    });
+    router.push("/panel/newSuccess/?id=" + upload_res.data.id);
+  };
 
   const handleChange = (e) => {
-    setFile(oldArray => [...oldArray, e.target.files]);
-
-  }
+    setFile((oldArray) => [...oldArray, e.target.files]);
+  };
 
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
-                  <Seo title={"Créer un ticket"} />
+      <Seo title={"Créer un ticket"} />
 
       <div className="px-10 py-10" id="status">
         <div>
           <div className="md:grid md:grid-cols-3 md:gap-6">
             <div className="md:col-span-1">
               <div className="px-4 sm:px-0">
-                <h3 className="text-lg font-medium leading-6 text-gray-900">
-                  Informations
-                </h3>
-                <p className="mt-1 text-sm text-gray-600">
-                  Ces informations permettront de traiter aux mieux votre
-                  impression. Merci de les remplir correctement.
-                </p>
+                <h3 className="text-lg font-medium leading-6 text-gray-900">Informations</h3>
+                <p className="mt-1 text-sm text-gray-600">Ces informations permettront de traiter aux mieux votre impression. Merci de les remplir correctement.</p>
               </div>
             </div>
             <div className="mt-5 md:mt-0 md:col-span-2">
@@ -150,10 +141,7 @@ export default function NewPanel({user, role, authorizations}) {
                 <div className="shadow sm:rounded-md sm:overflow-hidden">
                   <div className="px-4 py-5 bg-white space-y-6 sm:p-6">
                     <div>
-                      <label
-                        htmlFor="about"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="about" className="block text-sm font-medium text-gray-700">
                         Commentaires
                       </label>
                       <div className="mt-1">
@@ -166,17 +154,11 @@ export default function NewPanel({user, role, authorizations}) {
                           placeholder="Bonjour, pourriez-vous l'imprimer avec du PLA lila ? Merci."
                         />
                       </div>
-                      <p className="mt-2 text-sm text-gray-500">
-                        Description détaillée de la demande d'impression du
-                        fichier.
-                      </p>
+                      <p className="mt-2 text-sm text-gray-500">Description détaillée de la demande d'impression du fichier.</p>
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="type"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="type" className="block text-sm font-medium text-gray-700">
                         Type de projet
                       </label>
                       <select
@@ -195,10 +177,7 @@ export default function NewPanel({user, role, authorizations}) {
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="group"
-                        className="block text-sm font-medium text-gray-700"
-                      >
+                      <label htmlFor="group" className="block text-sm font-medium text-gray-700">
                         N° de groupe
                       </label>
                       <div className="mt-1">
@@ -214,88 +193,70 @@ export default function NewPanel({user, role, authorizations}) {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Fichier STL
-                      </label>
-                      <div
-                        onDragEnter={onDragEnter}
-                        onDragLeave={onDragLeave}
-                        onDragOver={onDragOver}
-                        onDrop={(e)=>onDrop(e)}
-                      >
+                      <label className="block text-sm font-medium text-gray-700">Fichier STL</label>
+                      <div onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDragOver={onDragOver} onDrop={(e) => onDrop(e)}>
                         <div
-                          className={`${status ? "border-gray-800" : "border-gray-300"
-                            } ${percentage != 0 ? "hidden" : "block"
-                            } dropzone mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md`}
+                          className={`${status ? "border-gray-800" : "border-gray-300"} ${
+                            percentage != 0 ? "hidden" : "block"
+                          } dropzone mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md`}
                         >
                           <div className="space-y-1 text-center">
-                            <CubeIcon
-                              className={`mx-auto h-12 w-12 ${status ? "text-indigo-700" : "text-gray-400"
-                                }`}
-                            />
+                            <CubeIcon className={`mx-auto h-12 w-12 ${status ? "text-indigo-700" : "text-gray-400"}`} />
                             <div className="flex text-sm text-gray-600">
                               <label
                                 htmlFor="file-upload"
                                 className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                               >
                                 <span>Choisir un fichier</span>
-                                <input
-                                  onChange={handleChange}
-                                  id="file-upload"
-                                  name="file-upload"
-                                  type="file"
-                                  accept=".stl" 
-                                  className="sr-only"
-                                />
+                                <input onChange={handleChange} id="file-upload" name="file-upload" type="file" accept=".stl" className="sr-only" />
                               </label>
-                              <p className="pl-1 hidden md:block">
-                                ou déposez-le
-                              </p>
+                              <p className="pl-1 hidden md:block">ou déposez-le</p>
                             </div>
-                            <p className="text-xs text-gray-500">
-                              STL jusqu'à 64MB
-                            </p>
+                            <p className="text-xs text-gray-500">STL jusqu'à 64MB</p>
                           </div>
                         </div>
                       </div>
 
-
                       {/* progress bar */}
-                      {file.length>0?<div className="flex items-center w-full h-5 bg-indigo-100 rounded-lg overflow-hidden mt-5">
-                            <div
-                              role="progressbar"
-                              aria-valuenow={percent}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                              className="flex items-center justify-center self-stretch transition-all duration-500 ease-out bg-indigo-500 text-white text-sm font-semibold"
-                              style={{ width: `${percent}%` }}
-                            >
-                              {percent}%
-                            </div>
-                          </div>:''}
-                      {file.length>=1?file.map(r=>{
-                        return(<div
-                          className="block mt-3"
-                        >
-                          <p className="text-md font-semibold text-gray-700">
-                            {r[0].name}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setFile(file.filter(function(item) {
-                                return item !== r
-                            })
-                            );
-
-                            }}
-                            className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-5 text-sm rounded border-indigo-200 bg-indigo-200 text-indigo-700 hover:text-indigo-700 hover:bg-indigo-300 hover:border-indigo-300 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-200 active:border-indigo-200"
+                      {file.length > 0 ? (
+                        <div className="flex items-center w-full h-5 bg-indigo-100 rounded-lg overflow-hidden mt-5">
+                          <div
+                            role="progressbar"
+                            aria-valuenow={percent}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            className="flex items-center justify-center self-stretch transition-all duration-500 ease-out bg-indigo-500 text-white text-sm font-semibold"
+                            style={{ width: `${percent}%` }}
                           >
-                            Supprimer le fichier
-                          </button>
-                        </div>)
-                      }):''}
-                      
+                            {percent}%
+                          </div>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      {file.length >= 1
+                        ? file.map((r) => {
+                            if (r[0] == null) return null;
+                            return (
+                              <div className="block mt-3">
+                                <p className="text-md font-semibold text-gray-700">{r[0].name}</p>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setFile(
+                                      file.filter(function (item) {
+                                        return item !== r;
+                                      })
+                                    );
+                                  }}
+                                  className="mt-3 inline-flex justify-center items-center space-x-2 border font-semibold focus:outline-none px-3 py-2 leading-5 text-sm rounded border-indigo-200 bg-indigo-200 text-indigo-700 hover:text-indigo-700 hover:bg-indigo-300 hover:border-indigo-300 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 active:bg-indigo-200 active:border-indigo-200"
+                                >
+                                  Supprimer le fichier
+                                </button>
+                              </div>
+                            );
+                          })
+                        : ""}
 
                       <div className="text-center mt-5"></div>
                     </div>
@@ -303,18 +264,19 @@ export default function NewPanel({user, role, authorizations}) {
                 </div>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
-                    onClick={(e)=>{setUserClick(true);handleSubmit(e)}}
+                    onClick={(e) => {
+                      setUserClick(true);
+                      handleSubmit(e);
+                    }}
                     type="submit"
                     className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300 disabled:cursor-not-allowed"
-                    disabled={ userClick }
+                    disabled={userClick}
                   >
                     Valider et envoyer mon fichier
                   </button>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
 
@@ -430,16 +392,16 @@ export default function NewPanel({user, role, authorizations}) {
   );
 }
 
-export async function getServerSideProps({req}) {
+export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const resUserConnected = isUserConnected(user);
-  if(resUserConnected) return resUserConnected;
+  if (resUserConnected) return resUserConnected;
 
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   return {
     props: { user, role, authorizations }, // will be passed to the page component as props
-  }
+  };
 }
