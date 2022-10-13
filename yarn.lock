@@ -1086,9 +1086,9 @@
   "version" "1.0.4"
 
 "moment@^2.29.0", "moment@^2.29.1":
-  "integrity" "sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw=="
-  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.3.tgz"
-  "version" "2.29.3"
+  "integrity" "sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w=="
+  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.4.tgz"
+  "version" "2.29.4"
 
 "mrmime@^1.0.0":
   "integrity" "sha512-a70zx7zFfVO7XpnQ2IX1Myh9yY4UYvfld/dikWRnsXxbyvMcfz+u6UfgNAtH+k2QqtJuzVpv6eLTx1G2+WKZbQ=="
@@ -1676,7 +1676,7 @@
   "version" "72.0.0"
 
 "three@^0.72.0":
-  "integrity" "sha1-rE65X9TlsVnA/6u2CWF/7JCjNrI="
+  "integrity" "sha512-raTakv7kEae66TY1QqFYhWU9AWmYJa0Bcnr3pmhn9qsSCyfp5olgTW1loFbkRpwYn1l0Cf/4q6Sv9bbCkSJAZQ=="
   "resolved" "https://registry.npmjs.org/three/-/three-0.72.0.tgz"
   "version" "0.72.0"
 

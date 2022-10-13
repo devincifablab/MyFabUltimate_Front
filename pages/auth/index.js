@@ -1,16 +1,13 @@
 import axios from "axios";
 import { getCookie, setCookies } from "cookies-next";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import router from "next/router";
 import { toast } from "react-toastify";
-import Link from 'next/link';
+import Link from "next/link";
 import MicrosoftLogin from "react-microsoft-login";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 
 export default function Auth() {
-
-
-
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [error, setError] = useState(false);
@@ -18,7 +15,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (router.query.mail != null) {
-      if (router.query.mail == 'ok') {
+      if (router.query.mail == "ok") {
         toast.success("Votre e-mail a été vérifié. Vous pouvez désormais vous connecter.", {
           position: "top-right",
           autoClose: 3000,
@@ -28,7 +25,6 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
         });
-
       } else {
         toast.error("Une erreur est survenue lors de la vérification de votre e-mail.", {
           position: "top-right",
@@ -40,42 +36,66 @@ export default function Auth() {
           progress: undefined,
         });
       }
-      router.replace('/auth')
+      router.replace("/auth");
+    } else {
+      // Connection avec le DVIC
+      const JWT = getCookie("JWT");
+      if (JWT) {
+        axios({
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          url: process.env.API + "/api/user/login/JWT/",
+          data: {
+            JWT,
+          },
+        }).then((response) => {
+          if (response.status == 200) {
+            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
+            router.push("/panel");
+          }
+        });
+      }
     }
-  })
+  });
 
   async function login() {
     await axios({
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
-      url: process.env.API + '/api/user/login',
+      url: process.env.API + "/api/user/login",
       data: {
         email,
-        password
+        password,
+        rememberMe: checked,
       },
-    }).then((response) => {
-      if (response.status == 200) {
-        if (checked) {
-          setCookies('jwt', response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
-        } else {
-          setCookies('jwt', response.data.dvflCookie);
-        }
-        router.push('/panel');
-      } if (response.status == 204) {
-        toast.warning("Votre adresse e-mail n'est pas validée. Veuillez vérifier vos mails.", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-      }
     })
+      .then((response) => {
+        if (response.status == 200) {
+          if (!checked) {
+            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
+          } else {
+            setCookies("jwt", response.data.dvflCookie);
+          }
+          router.push("/panel");
+        }
+        if (response.status == 204) {
+          toast.warning("Votre adresse e-mail n'est pas validée. Veuillez vérifier vos mails.", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+      })
       .catch((error) => {
         console.log(error);
         setError(true);
@@ -89,14 +109,15 @@ export default function Auth() {
           draggable: true,
           progress: undefined,
         });
-      })
+      });
   }
 
   const authHandler = async (err, data) => {
-    if(err){
-      return
+    if (err) {
+      return;
     }
-    {/*toast.info("Connexion en cours, veuillez patienter...", {
+    {
+      /*toast.info("Connexion en cours, veuillez patienter...", {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -104,7 +125,8 @@ export default function Auth() {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-    });*/}
+    });*/
+    }
     if (data == null) {
       toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
         position: "top-right",
@@ -117,46 +139,46 @@ export default function Auth() {
       });
     }
     await axios({
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        "Authorization": "Bearer " + data.accessToken
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + data.accessToken,
       },
-      url: process.env.API + '/api/user/login/microsoft',
-    }).then(async (response) => {
-      if (response.status == 200) {
-        if (checked) {
-          setCookies('jwt', response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
-        } else {
-          setCookies('jwt', response.data.dvflCookie);
-        }
-        toast.success("Vous êtes désormais connecté ! Bienvenue " + data.givenName + " !", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
-        await axios({
-          method: 'GET',
-          headers: {
-            "dvflCookie": getCookie('jwt')
-          },
-          url: process.env.API + '/api/user/authorization',
-        }).then((response) => {
-          if(response.data.myFabAgent == 1){
-            router.push('/panel/admin')
-          } else {
-            router.push('/panel');
-          }
-        });
-
-      }
+      url: process.env.API + "/api/user/login/microsoft",
     })
+      .then(async (response) => {
+        if (response.status == 200) {
+          if (checked) {
+            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
+          } else {
+            setCookies("jwt", response.data.dvflCookie);
+          }
+          toast.success("Vous êtes désormais connecté ! Bienvenue " + data.givenName + " !", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+
+          await axios({
+            method: "GET",
+            headers: {
+              dvflCookie: getCookie("jwt"),
+            },
+            url: process.env.API + "/api/user/authorization",
+          }).then((response) => {
+            if (response.data.myFabAgent == 1) {
+              router.push("/panel/admin");
+            } else {
+              router.push("/panel");
+            }
+          });
+        }
+      })
       .catch((error) => {
         console.log(error);
         setError(true);
@@ -171,8 +193,8 @@ export default function Auth() {
           progress: undefined,
         });
         window.sessionStorage.clear();
-        router.replace(router.asPath)
-      })
+        router.replace(router.asPath);
+      });
   };
   const microsoftAvalable = false;
 
@@ -181,11 +203,7 @@ export default function Auth() {
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div>
-            <img
-              className="h-12 w-auto"
-              src={process.env.BASE_PATH + "/logo.png"}
-              alt="Devinci FabLab"
-            />
+            <img className="h-12 w-auto" src={process.env.BASE_PATH + "/logo.png"} alt="Devinci FabLab" />
             <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Connectez-vous à MyFab</h2>
           </div>
 
@@ -196,31 +214,50 @@ export default function Auth() {
 
                 <div className="mt-1">
                   <div className="">
-                   {typeof window === 'undefined' || !microsoftAvalable ? <div>
-                     <div className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300" onClick={()=>{
-                       toast.error("La connection avec les LéoID est actuellement indisponible.", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                      });
-                     }}>
-                        <span className="sr-only">Mon compte LéoID</span>
-                        <img src={process.env.BASE_PATH + "/photo/Microsoft_logo.svg"} className="h-5 w-5" />
-                        <p className="ml-2">Mon compte LéoID</p>
+                    {typeof window === "undefined" || !microsoftAvalable ? (
+                      <div>
+                        <div
+                          className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
+                          onClick={() => {
+                            const timeout = 5000;
+                            toast.success("Lorsque vous serez connecté, revenez sur cette page pour utiliser MyFab.", {
+                              position: "top-right",
+                              autoClose: timeout,
+                              hideProgressBar: true,
+                              closeOnClick: true,
+                              pauseOnHover: true,
+                              draggable: true,
+                              progress: undefined,
+                            });
+                            setTimeout(() => {
+                              router.push(
+                                "https://adfs.devinci.fr/adfs/ls/?SAMLRequest=fVPbjtowEH3fr0B5h1yAXWKRSBR6QaKAIO1DXypjT7qWEjv1THbZv69j2ML2Ql6izJxz5hx7MkVeVw2btfSod%2FCzBaS7Xu9YVxqZb2VBazUzHBUyzWtARoLtZ59XLBlErLGGjDBV8IZ0m8MRwZIyuiMtF1mwWb9fbT4u19%2B5GMVyNEnS5CDvk8kDTMZlPIxGqYA0uk%2BTeAglj1PZEb%2BCRaeRBU7SCyG2sNRIXJMrRknSj6N%2BPCziBzYesnHyrUMtXD6lOXnmI1GDLAy5LHEg4UlpoQal9d9hhWFH2J4DvlNaKv3jdrLDCYTsU1Fs%2B9vNvugkZq9550ZjW4Pdg31SAr7sVhcP0lX%2B8tAYpB1g43jg3TgxIqsOLcFJzE07qy21hGMWxEHucdPuHpg%2FFJv%2FIT4Nr5sXeMPWLtJysTWVEi%2B%2B3j0fjK05%2FT95PIh9Rcl%2B6aGs1diAUKUCGfyWmVWVeZ5b4ARZQLaFoBe%2BGX5eP5B%2BGV0%2BgiP15qZuuFXYXRgcuaBzwEvIa%2Fi8ctu1gzK%2FuYCCiQ7nylv3ejZWdtcMws0uLHfmjaXzIf1T%2FOQ6vGE7v3ttX%2F9Z%2BS8%3D&RelayState=https%3A%2F%2Fdvic.devinci.fr%2Fadfs%2FpostResponse%2F"
+                              );
+                            }, timeout);
+                          }}
+                        >
+                          <span className="sr-only">Mon compte LéoID</span>
+                          <img src={process.env.BASE_PATH + "/photo/Microsoft_logo.svg"} className="h-5 w-5" />
+                          <p className="ml-2">Mon compte LéoID</p>
+                        </div>
                       </div>
-                   </div> : <MicrosoftLogin clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"} authCallback={authHandler} prompt="select_account" withUserData={true} debug={true} children={<div
-                        className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
-                      >
-                        <span className="sr-only">Mon compte LéoID</span>
-                        <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
-                        <p className="ml-2">Mon compte LéoID</p>
-                      </div>}/>}
+                    ) : (
+                      <MicrosoftLogin
+                        clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"}
+                        authCallback={authHandler}
+                        prompt="select_account"
+                        withUserData={true}
+                        debug={true}
+                        children={
+                          <div className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300">
+                            <span className="sr-only">Mon compte LéoID</span>
+                            <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
+                            <p className="ml-2">Mon compte LéoID</p>
+                          </div>
+                        }
+                      />
+                    )}
                   </div>
-
                 </div>
               </div>
 
@@ -236,7 +273,7 @@ export default function Auth() {
             <div className="mt-6">
               <div className="space-y-6">
                 <div className="">
-                  <label htmlFor="email" className={`block text-sm font-medium ${error ? 'text-red-500' : 'text-gray-700'}`}>
+                  <label htmlFor="email" className={`block text-sm font-medium ${error ? "text-red-500" : "text-gray-700"}`}>
                     Adresse e-mail
                   </label>
                   <div className="mt-1">
@@ -247,13 +284,15 @@ export default function Auth() {
                       type="email"
                       autoComplete="email"
                       required
-                      className={`appearance-none block w-full px-3 py-2 border ${error ? 'border-red-300 ' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        error ? "border-red-300 " : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label htmlFor="password" className={`block text-sm font-medium ${error ? 'text-red-500' : 'text-gray-700'}`}>
+                  <label htmlFor="password" className={`block text-sm font-medium ${error ? "text-red-500" : "text-gray-700"}`}>
                     Mot de passe
                   </label>
                   <div className="mt-1">
@@ -264,7 +303,9 @@ export default function Auth() {
                       type="password"
                       autoComplete="current-password"
                       required
-                      className={`appearance-none block w-full px-3 py-2 border ${error ? 'border-red-300' : 'border-gray-300'} rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                      className={`appearance-none block w-full px-3 py-2 border ${
+                        error ? "border-red-300" : "border-gray-300"
+                      } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                     />
                   </div>
                 </div>
@@ -284,10 +325,9 @@ export default function Auth() {
                   </div>
 
                   <div className="text-sm">
-                    <Link href="/auth/forget"><a className="font-medium text-indigo-600 hover:text-indigo-500">
-                      Mot de passe oublié ?
-                    </a></Link>
-
+                    <Link href="/auth/forget">
+                      <a className="font-medium text-indigo-600 hover:text-indigo-500">Mot de passe oublié ?</a>
+                    </Link>
                   </div>
                 </div>
 
@@ -321,23 +361,24 @@ export default function Auth() {
         />
       </div>
     </div>
-  )
+  );
 }
 
 export async function getServerSideProps({ req }) {
   const cookies = parseCookies(req);
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
 
-  if(user.error == null){
+  if (user.error == null) {
     return {
       redirect: {
         permanent: false,
         destination: "/panel/",
       },
-      props:{},
-    };  }
+      props: {},
+    };
+  }
 
   return {
-    props: { }, // will be passed to the page component as props
-  }
+    props: {}, // will be passed to the page component as props
+  };
 }
