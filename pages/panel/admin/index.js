@@ -1,24 +1,73 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import LayoutPanel from "../../../components/layoutPanel";
 import NavbarAdmin from "../../../components/navbarAdmin";
 import OverviewAdmin from "../../../components/overviewAdmin";
 import Seo from "../../../components/seo";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
+import axios from "axios";
+import { getCookie } from "cookies-next";
 import { isUserConnected } from "../../../lib/function";
 
-export default function Admin({ tickets, user, role, authorizations }) {
+export default function Admin({ user, role, authorizations }) {
   const router = useRouter();
+  const [maxPage, setMaxPage] = useState(1);
+  const [actualPage, setActualPage] = useState(0);
+  let newActualPage = 0;
+  const [ticketResult, setTicketResult] = useState([]);
 
   useEffect(function () {
     if (user.error != undefined || role.length == 0) {
       router.push("/404");
     }
+
+    update();
   }, []);
+
+  function nextPrevPage(addPage) {
+    if (actualPage + addPage < 0 || actualPage + addPage >= maxPage) return;
+    setActualPage(actualPage + addPage);
+    newActualPage = actualPage + addPage;
+    update();
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    // send state to server with e.g. `window.fetch`
+    update(true);
+  }
+
+  async function update(newReserch) {
+    if (newReserch) setActualPage(0);
+    const jwt = getCookie("jwt");
+    await axios({
+      method: "get",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        dvflCookie: jwt,
+      },
+      url: process.env.API + "/api/ticket",
+      params: { page: newActualPage, selectOpenOnly: true },
+    })
+      .then((response) => {
+        setMaxPage(response.data.maxPage);
+        setTicketResult(response.data.values);
+      })
+      .catch(() => {
+        toast.error("Une erreur est survenue lors du chargement des tickets.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      });
+  }
+
   if (user.error == undefined && role.length != 0) {
-    console.log(tickets.values);
-    const openTicket = tickets.values.filter((r) => r.isOpen === 1);
-    console.log(openTicket);
     return (
       <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
         <Seo title={"Administration"} />
@@ -27,12 +76,12 @@ export default function Admin({ tickets, user, role, authorizations }) {
           <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
             <h2 className="text-2xl font-bold text-white">Bonjour, {user.firstName} 👋 </h2>
             <h3 className="text-md font-medium text-white">
-              Il y a {openTicket.length} impression{openTicket.length > 1 ? "s" : ""} à traiter. N'hésite pas à t'en occuper !
+              Il y a {ticketResult.length} impression{ticketResult.length > 1 ? "s" : ""} à traiter. N'hésite pas à t'en occuper !
             </h3>
           </div>
         </div>
         <div></div>
-        <OverviewAdmin tickets={openTicket} />
+        <OverviewAdmin tickets={ticketResult} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} />
       </LayoutPanel>
     );
   } else {
@@ -45,11 +94,10 @@ export async function getServerSideProps({ req }) {
   const user = await fetchAPIAuth("/user/me", cookies.jwt);
   const resUserConnected = isUserConnected(user);
   if (resUserConnected) return resUserConnected;
-  const tickets = await fetchAPIAuth("/ticket", cookies.jwt);
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
   return {
-    props: { tickets, user, role, authorizations }, // will be passed to the page component as props
+    props: { user, role, authorizations }, // will be passed to the page component as props
   };
 }
