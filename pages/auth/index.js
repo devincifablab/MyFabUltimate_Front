@@ -51,10 +51,22 @@ export default function Auth() {
           data: {
             JWT,
           },
-        }).then((response) => {
+        }).then(async (response) => {
           if (response.status == 200) {
             setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
-            router.push("/panel");
+            await axios({
+              method: "GET",
+              headers: {
+                dvflCookie: response.data.dvflCookie,
+              },
+              url: process.env.API + "/api/user/authorization",
+            }).then((response) => {
+              if (response.data.myFabAgent == 1) {
+                router.push("/panel/admin");
+              } else {
+                router.push("/panel");
+              }
+            });
           }
         });
       }
@@ -75,14 +87,26 @@ export default function Auth() {
         rememberMe: checked,
       },
     })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status == 200) {
           if (!checked) {
             setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
           } else {
             setCookies("jwt", response.data.dvflCookie);
           }
-          router.push("/panel");
+          await axios({
+            method: "GET",
+            headers: {
+              dvflCookie: response.data.dvflCookie,
+            },
+            url: process.env.API + "/api/user/authorization",
+          }).then((response) => {
+            if (response.data.myFabAgent == 1) {
+              router.push("/panel/admin");
+            } else {
+              router.push("/panel");
+            }
+          });
         }
         if (response.status == 204) {
           toast.warning("Votre adresse e-mail n'est pas validée. Veuillez vérifier vos mails.", {
