@@ -104,20 +104,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
                   </div>
                 </div>
               </div>
-              <TablesAdmin tickets={ticketResult} isDone={false} />
-              <div class="grid place-items-center mb-10">
-                <div class="inline-flex mt-3">
-                  <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l rounded-r mr-2" onClick={() => nextPrevPage(-1)}>
-                    &lt;
-                  </button>
-                  <p class="inline-flex py-2 px-4">
-                    Pages&nbsp;<p class="font-bold">{actualPage + 1}</p>&nbsp;sur&nbsp;<p class="font-bold">{maxPage != 0 ? maxPage : 1}</p>
-                  </p>
-                  <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l rounded-r ml-2 mr-6" onClick={() => nextPrevPage(1)}>
-                    &gt;
-                  </button>
-                </div>
-              </div>
+              <TablesAdmin tickets={ticketResult} isDone={false} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} />
             </div>
           </div>
         </div>
