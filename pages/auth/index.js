@@ -94,7 +94,7 @@ export default function Auth() {
       .then(async (response) => {
         if (response.status == 200) {
           if (!checked) {
-            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
+            setCookies("jwt", response.data.dvflCookie, { expires });
           } else {
             setCookies("jwt", response.data.dvflCookie);
           }
