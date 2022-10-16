@@ -41,6 +41,7 @@ export default function Auth() {
       // Connection avec le DVIC
       const JWT = getCookie("JWT");
       if (JWT) {
+        const expires = new Date(Date.now() + 7200000);
         axios({
           method: "POST",
           headers: {
@@ -50,10 +51,11 @@ export default function Auth() {
           url: process.env.API + "/api/user/login/JWT/",
           data: {
             JWT,
+            expires,
           },
         }).then(async (response) => {
           if (response.status == 200) {
-            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 7200000) });
+            setCookies("jwt", response.data.dvflCookie, { expires });
             await axios({
               method: "GET",
               headers: {
@@ -74,6 +76,7 @@ export default function Auth() {
   });
 
   async function login() {
+    const expires = new Date(Date.now() + 7200000);
     await axios({
       method: "POST",
       headers: {
@@ -85,6 +88,7 @@ export default function Auth() {
         email,
         password,
         rememberMe: checked,
+        expires: !checked ? expires : null,
       },
     })
       .then(async (response) => {
