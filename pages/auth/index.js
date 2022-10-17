@@ -53,24 +53,38 @@ export default function Auth() {
             JWT,
             expires,
           },
-        }).then(async (response) => {
-          if (response.status == 200) {
-            setCookies("jwt", response.data.dvflCookie, { expires });
-            await axios({
-              method: "GET",
-              headers: {
-                dvflCookie: response.data.dvflCookie,
-              },
-              url: process.env.API + "/api/user/authorization",
-            }).then((response) => {
-              if (response.data.myFabAgent == 1) {
-                router.push("/panel/admin");
-              } else {
-                router.push("/panel");
-              }
-            });
-          }
-        });
+        })
+          .then(async (response) => {
+            if (response.status == 200) {
+              setCookies("jwt", response.data.dvflCookie, { expires });
+              await axios({
+                method: "GET",
+                headers: {
+                  dvflCookie: response.data.dvflCookie,
+                },
+                url: process.env.API + "/api/user/authorization",
+              }).then((response) => {
+                if (response.data.myFabAgent == 1) {
+                  router.push("/panel/admin");
+                } else {
+                  router.push("/panel");
+                }
+              });
+            }
+          })
+          .catch((error) => {
+            if (error.response.status === 403) {
+              toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+            }
+          });
       }
     }
   });
@@ -143,17 +157,6 @@ export default function Auth() {
   const authHandler = async (err, data) => {
     if (err) {
       return;
-    }
-    {
-      /*toast.info("Connexion en cours, veuillez patienter...", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });*/
     }
     if (data == null) {
       toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
@@ -247,21 +250,42 @@ export default function Auth() {
                         <div
                           className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
                           onClick={() => {
-                            const timeout = 5000;
-                            toast.success("Lorsque vous serez connecté, revenez sur cette page pour utiliser MyFab.", {
-                              position: "top-right",
-                              autoClose: timeout,
-                              hideProgressBar: true,
-                              closeOnClick: true,
-                              pauseOnHover: true,
-                              draggable: true,
-                              progress: undefined,
+                            axios({
+                              method: "GET",
+                              headers: {
+                                Accept: "application/json",
+                                "Content-Type": "application/json",
+                              },
+                              url: process.env.API + "/api/myFabOpen",
+                            }).then((response) => {
+                              if (response.data.myFabOpen === true) {
+                                const timeout = 5000;
+                                toast.success("Lorsque vous serez connecté, revenez sur cette page pour utiliser MyFab.", {
+                                  position: "top-right",
+                                  autoClose: timeout,
+                                  hideProgressBar: true,
+                                  closeOnClick: true,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  progress: undefined,
+                                });
+                                setTimeout(() => {
+                                  router.push(
+                                    "https://adfs.devinci.fr/adfs/ls/?SAMLRequest=fVPbjtowEH3fr0B5h1yAXWKRSBR6QaKAIO1DXypjT7qWEjv1THbZv69j2ML2Ql6izJxz5hx7MkVeVw2btfSod%2FCzBaS7Xu9YVxqZb2VBazUzHBUyzWtARoLtZ59XLBlErLGGjDBV8IZ0m8MRwZIyuiMtF1mwWb9fbT4u19%2B5GMVyNEnS5CDvk8kDTMZlPIxGqYA0uk%2BTeAglj1PZEb%2BCRaeRBU7SCyG2sNRIXJMrRknSj6N%2BPCziBzYesnHyrUMtXD6lOXnmI1GDLAy5LHEg4UlpoQal9d9hhWFH2J4DvlNaKv3jdrLDCYTsU1Fs%2B9vNvugkZq9550ZjW4Pdg31SAr7sVhcP0lX%2B8tAYpB1g43jg3TgxIqsOLcFJzE07qy21hGMWxEHucdPuHpg%2FFJv%2FIT4Nr5sXeMPWLtJysTWVEi%2B%2B3j0fjK05%2FT95PIh9Rcl%2B6aGs1diAUKUCGfyWmVWVeZ5b4ARZQLaFoBe%2BGX5eP5B%2BGV0%2BgiP15qZuuFXYXRgcuaBzwEvIa%2Fi8ctu1gzK%2FuYCCiQ7nylv3ejZWdtcMws0uLHfmjaXzIf1T%2FOQ6vGE7v3ttX%2F9Z%2BS8%3D&RelayState=https%3A%2F%2Fdvic.devinci.fr%2Fadfs%2FpostResponse%2F"
+                                  );
+                                }, timeout);
+                              } else {
+                                toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
+                                  position: "top-right",
+                                  autoClose: 3000,
+                                  hideProgressBar: true,
+                                  closeOnClick: true,
+                                  pauseOnHover: true,
+                                  draggable: true,
+                                  progress: undefined,
+                                });
+                              }
                             });
-                            setTimeout(() => {
-                              router.push(
-                                "https://adfs.devinci.fr/adfs/ls/?SAMLRequest=fVPbjtowEH3fr0B5h1yAXWKRSBR6QaKAIO1DXypjT7qWEjv1THbZv69j2ML2Ql6izJxz5hx7MkVeVw2btfSod%2FCzBaS7Xu9YVxqZb2VBazUzHBUyzWtARoLtZ59XLBlErLGGjDBV8IZ0m8MRwZIyuiMtF1mwWb9fbT4u19%2B5GMVyNEnS5CDvk8kDTMZlPIxGqYA0uk%2BTeAglj1PZEb%2BCRaeRBU7SCyG2sNRIXJMrRknSj6N%2BPCziBzYesnHyrUMtXD6lOXnmI1GDLAy5LHEg4UlpoQal9d9hhWFH2J4DvlNaKv3jdrLDCYTsU1Fs%2B9vNvugkZq9550ZjW4Pdg31SAr7sVhcP0lX%2B8tAYpB1g43jg3TgxIqsOLcFJzE07qy21hGMWxEHucdPuHpg%2FFJv%2FIT4Nr5sXeMPWLtJysTWVEi%2B%2B3j0fjK05%2FT95PIh9Rcl%2B6aGs1diAUKUCGfyWmVWVeZ5b4ARZQLaFoBe%2BGX5eP5B%2BGV0%2BgiP15qZuuFXYXRgcuaBzwEvIa%2Fi8ctu1gzK%2FuYCCiQ7nylv3ejZWdtcMws0uLHfmjaXzIf1T%2FOQ6vGE7v3ttX%2F9Z%2BS8%3D&RelayState=https%3A%2F%2Fdvic.devinci.fr%2Fadfs%2FpostResponse%2F"
-                              );
-                            }, timeout);
                           }}
                         >
                           <span className="sr-only">Mon compte LéoID</span>
