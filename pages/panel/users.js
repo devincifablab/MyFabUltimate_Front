@@ -2,8 +2,8 @@ import { InformationCircleIcon, UserAddIcon } from "@heroicons/react/outline";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import LayoutPanel from "../../components/layoutPanel";
-import NavbarAdmin from "../../components/navbarAdmin";
 import UserTablesAdmin from "../../components/tablesUserAdmin";
+import WebSocket from "../../components/webSocket";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -100,6 +100,7 @@ export default function Settings({ role, me, authorizations }) {
   return (
     <>
       <LayoutPanel user={me} role={role} authorizations={authorizations} titleMenu="Gestion des utilisateurs">
+        <WebSocket event={[{ name: "event-reload-users", action: update }]} />
         <Seo title={"Paramètres administrateurs"} />
         <section className="">
           <div className="container px-4 mx-auto">
