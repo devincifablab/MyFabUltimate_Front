@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import LayoutPanel from "../../../components/layoutPanel";
 import NavbarAdmin from "../../../components/navbarAdmin";
+import WebSocket from "../../../components/webSocket";
 import Seo from "../../../components/seo";
 import TablesAdmin from "../../../components/tablesAdmin";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
@@ -65,6 +66,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
 
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
+      <WebSocket event={[{ name: "event-reload-tickets", action: update }]} />
       <Seo title={"Historique"} />
 
       <NavbarAdmin role={role} />

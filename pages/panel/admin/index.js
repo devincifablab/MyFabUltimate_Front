@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import LayoutPanel from "../../../components/layoutPanel";
 import NavbarAdmin from "../../../components/navbarAdmin";
 import OverviewAdmin from "../../../components/overviewAdmin";
+import WebSocket from "../../../components/webSocket";
 import Seo from "../../../components/seo";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 import axios from "axios";
 import { getCookie } from "cookies-next";
 import { isUserConnected } from "../../../lib/function";
+import { toast } from "react-toastify";
 
 export default function Admin({ user, role, authorizations }) {
   const router = useRouter();
@@ -29,12 +31,6 @@ export default function Admin({ user, role, authorizations }) {
     setActualPage(actualPage + addPage);
     newActualPage = actualPage + addPage;
     update();
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    // send state to server with e.g. `window.fetch`
-    update(true);
   }
 
   async function update(newReserch) {
@@ -70,6 +66,7 @@ export default function Admin({ user, role, authorizations }) {
   if (user.error == undefined && role.length != 0) {
     return (
       <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
+        <WebSocket event={[{ name: "event-reload-tickets", action: update }]} />
         <Seo title={"Administration"} />
         <NavbarAdmin role={role} />
         <div className="md:py-8 md:px-6">

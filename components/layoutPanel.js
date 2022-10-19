@@ -36,7 +36,6 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
     if (role.length == 0 && pn.split("/")[2] == "admin") {
       router.push("/404");
     }
-    console.log(version);
     if (!version) {
       setTimeout(async () => {
         await axios({
