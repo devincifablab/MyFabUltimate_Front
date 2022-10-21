@@ -9,7 +9,32 @@ const colors = {
   f30b0b: "text-white bg-gradient-to-r from-amber-400 to-red-500",
 };
 
+function dateDiff(date1, date2) {
+  var diff = {}; // Initialisation du retour
+  var tmp = date2 - date1;
+  tmp = Math.floor(tmp / 1000); // Nombre de secondes entre les 2 dates
+  diff.sec = tmp % 60; // Extraction du nombre de secondes
+
+  tmp = Math.floor((tmp - diff.sec) / 60); // Nombre de minutes (partie entière)
+  diff.min = tmp % 60; // Extraction du nombre de minutes
+  if (!diff.min) return `${diff.sec} seconde${diff.sec > 1 ? "s" : ""}`;
+
+  tmp = Math.floor((tmp - diff.min) / 60); // Nombre d'heures (entières)
+  diff.hour = tmp % 24; // Extraction du nombre d'heures
+  if (!diff.hour) return `${diff.min} minute${diff.min > 1 ? "s" : ""}`;
+
+  tmp = Math.floor((tmp - diff.hour) / 24); // Nombre de jours restants
+  diff.day = tmp % 365;
+  if (!diff.day) return `${diff.hour} heure${diff.hour > 1 ? "s" : ""}`;
+
+  tmp = Math.floor((tmp - diff.day) / 24); // Nombre d'années
+  diff.year = tmp;
+  if (!diff.year) return `${diff.day} jour${diff.day > 1 ? "s" : ""}`;
+  return `${diff.year} année${diff.year > 1 ? "s" : ""}`;
+}
+
 export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage }) {
+  const dateNow = new Date();
   return (
     <div>
       <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white">
@@ -17,11 +42,12 @@ export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage
           <thead>
             <tr className="border-b border-gray-200">
               <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Id</th>
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">Nom</th>
+              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Nom</th>
+              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Créé il y a</th>
               {/*<th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">
               Email
             </th>*/}
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">Priorité</th>
+              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Priorité</th>
               <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Type</th>
               <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Etat</th>
               {/*
@@ -37,11 +63,14 @@ export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage
                   <td className="p-3 text-center">
                     <span className="font-medium">#{setZero(r.id)}</span>
                   </td>
-                  <td className="p-3">
+                  <td className="p-3 text-center">
                     <p className="font-medium">{r.userName}</p>
                     <p className="text-gray-500">{r.title || "Ancien compte"}</p>
                   </td>
-                  <td className="p-3">
+                  <td className="p-3 text-center">
+                    <div className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-ful`}>{dateDiff(new Date(r.creationDate), dateNow)}</div>
+                  </td>
+                  <td className="p-3 text-center">
                     <div className={`font-medium inline-flex px-2 py-1 leading-4 text-md rounded-full ${colors[r.priorityColor]}`}>{r.priorityName}</div>
                   </td>
                   <td className="p-3 text-center">
