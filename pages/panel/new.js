@@ -12,7 +12,7 @@ import Seo from "../../components/seo";
 
 const percents = (value, total) => Math.round(value / total) * 100;
 
-export default function NewPanel({ user, role, authorizations }) {
+export default function NewPanel({ user, role, authorizations, projectType }) {
   const [percentage, setPercentage] = useState(0);
   const [status, setStatus] = useState(false);
   const [userClick, setUserClick] = useState(false);
@@ -167,12 +167,14 @@ export default function NewPanel({ user, role, authorizations }) {
                         name="type"
                         className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                       >
-                        <option>PIX 1</option>
-                        <option>PIX 2</option>
-                        <option>PING</option>
-                        <option>PI²</option>
-                        <option>Associatif</option>
-                        <option>Autre</option>
+                        {projectType.map((item) => {
+                          const elementSelected = projectType[0].name;
+                          return (
+                            <option selected={item.name === elementSelected ? "'selected'" : ""} value={item.name}>
+                              {item.name}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
 
@@ -401,7 +403,9 @@ export async function getServerSideProps({ req }) {
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
 
+  const projectType = await fetchAPIAuth("/projectType/");
+
   return {
-    props: { user, role, authorizations }, // will be passed to the page component as props
+    props: { user, role, authorizations, projectType }, // will be passed to the page component as props
   };
 }
