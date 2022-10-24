@@ -10,27 +10,23 @@ const colors = {
 };
 
 function dateDiff(date1, date2) {
-  var diff = {}; // Initialisation du retour
-  var tmp = date2 - date1;
-  tmp = Math.floor(tmp / 1000); // Nombre de secondes entre les 2 dates
-  diff.sec = tmp % 60; // Extraction du nombre de secondes
+  const diffYears = date2.getFullYear() - date1.getFullYear();
+  if (diffYears !== 0) return `${diffYears} année${diffYears > 1 ? "s" : ""}`;
 
-  tmp = Math.floor((tmp - diff.sec) / 60); // Nombre de minutes (partie entière)
-  diff.min = tmp % 60; // Extraction du nombre de minutes
+  const diffMonth = date2.getMonth() - date1.getMonth();
+  if (diffMonth !== 0) return `${diffMonth} mois`;
 
-  tmp = Math.floor((tmp - diff.min) / 60); // Nombre d'heures (entières)
-  diff.hour = tmp % 24; // Extraction du nombre d'heures
+  const diffDate = date2.getDate() - date1.getDate();
+  if (diffDate !== 0) return `${diffDate} jour${diffDate > 1 ? "s" : ""}`;
 
-  tmp = Math.floor((tmp - diff.hour) / 24); // Nombre de jours restants
-  diff.day = tmp % 365;
+  const diffHour = date2.getDate() - date1.getDate();
+  if (diffHour !== 0) return `${diffHour} heure${diffHour > 1 ? "s" : ""}`;
 
-  tmp = Math.floor((tmp - diff.day) / 24); // Nombre d'années
-  diff.year = tmp;
-  if (diff.year) `${diff.year} année${diff.year > 1 ? "s" : ""}`;
-  if (diff.day) return `${diff.day} jour${diff.day > 1 ? "s" : ""}`;
-  if (diff.hour) return `${diff.hour} heure${diff.hour > 1 ? "s" : ""}`;
-  if (diff.min) return `${diff.min} minute${diff.min > 1 ? "s" : ""}`;
-  if (diff.sec) return `${diff.sec} seconde${diff.sec > 1 ? "s" : ""}`;
+  const diffMinute = date2.setMinutes() - date1.setMinutes();
+  if (diffMinute !== 0) return `${diffMinute} minute${diffMinute > 1 ? "s" : ""}`;
+
+  const diffSecond = date2.setSeconds() - date1.setSeconds();
+  if (diffSecond !== 0) return `${diffSecond} seconde${diffSecond > 1 ? "s" : ""}`;
 }
 
 export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage }) {
