@@ -1,11 +1,10 @@
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import LayoutPanel from "../../components/layoutPanel";
 import { CubeIcon, UserCircleIcon, CogIcon, ExclamationIcon } from "@heroicons/react/outline";
-import Steps from "../../components/steps";
 import { useEffect, Fragment, useState } from "react";
 import Moment from "react-moment";
 import STLViewer from "stl-viewer";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Menu } from "@headlessui/react";
 import { getCookie } from "cookies-next";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -388,7 +387,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                           {authorizations.myFabAgent ? (
                             <dd className="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-3 flex justify-between">
                               <div>
-                                Cet utilisateur a créé {ticket.ticketCountUser} ticket{ticket.ticketCountUser > 1 ? "s" : ""} cette année
+                                Cet utilisateur a {ticket.ticketCountUser} ticket{ticket.ticketCountUser > 1 ? "s" : ""} réalisé{ticket.ticketCountUser > 1 ? "s" : ""} cette année
                               </div>
                             </dd>
                           ) : (
@@ -402,7 +401,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
                           {authorizations.myFabAgent ? (
                             <dd className="mt-1 text-sm text-gray-400 sm:mt-0 sm:col-span-3 flex justify-between">
                               <div>
-                                Ce groupe a créé {ticket.ticketCountGroup} ticket{ticket.ticketCountGroup > 1 ? "s" : ""} cette année
+                                Ce groupe a {ticket.ticketCountGroup} ticket{ticket.ticketCountGroup > 1 ? "s" : ""} réalisé{ticket.ticketCountGroup > 1 ? "s" : ""} cette année
                               </div>
                             </dd>
                           ) : (
