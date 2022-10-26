@@ -1,18 +1,52 @@
-import { MoonIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import { setZero } from "../lib/function";
 
-export default function UserTablesAdmin({ user, id, maxPage, actualPage, nextPrevPage }) {
+function getChevron(collumnState, type) {
+  if (!collumnState) return null;
+  if (collumnState[type] === true) return <ChevronUpIcon className="w-5 h-5 m-auto" />;
+  if (collumnState[type] === false) return <ChevronDownIcon className="w-5 h-5 m-auto" />;
+  return null;
+}
+
+export default function UserTablesAdmin({ user, id, maxPage, actualPage, nextPrevPage, collumnState, changeCollumnState }) {
   if (user.error) user = [];
+  const changeCollumnDefined = changeCollumnState ? true : false;
+  if (!changeCollumnState) changeCollumnState = function () {};
   return (
     <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white">
       <table className="min-w-full text-sm align-middle whitespace-nowrap">
         <thead>
           <tr className="border-b border-gray-200">
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Id</th>
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Prénom</th>
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Nom</th>
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">E-mail</th>
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Ecole et année</th>
+            <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+              <div className="inline-flex" onClick={() => changeCollumnState("id")}>
+                Id
+                {getChevron(collumnState, "id")}
+              </div>
+            </th>
+            <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+              <div className="inline-flex" onClick={() => changeCollumnState("firstname")}>
+                Prénom
+                {getChevron(collumnState, "firstname")}
+              </div>
+            </th>
+            <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+              <div className="inline-flex" onClick={() => changeCollumnState("lastname")}>
+                Nom
+                {getChevron(collumnState, "lastname")}
+              </div>
+            </th>
+            <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+              <div className="inline-flex" onClick={() => changeCollumnState("email")}>
+                E-mail
+                {getChevron(collumnState, "email")}
+              </div>
+            </th>
+            <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+              <div className="inline-flex" onClick={() => changeCollumnState("title")}>
+                Ecole et année
+                {getChevron(collumnState, "title")}
+              </div>
+            </th>
           </tr>
         </thead>
         <tbody>

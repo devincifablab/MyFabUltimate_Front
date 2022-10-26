@@ -14,6 +14,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
   const [inputValue, setInputValue] = useState("");
   const [maxPage, setMaxPage] = useState(1);
   const [actualPage, setActualPage] = useState(0);
+  const [collumnState, setCollumnState] = useState({});
   let newActualPage = 0;
   const [ticketResult, setTicketResult] = useState([]);
 
@@ -28,15 +29,31 @@ export default function OverviewAdmin({ user, role, authorizations }) {
     update();
   }
 
+  function changeCollumnState(collumnClicked) {
+    const newCollumnState = {};
+    if (!collumnState[collumnClicked]) newCollumnState[collumnClicked] = true;
+    else if (collumnState[collumnClicked]) newCollumnState[collumnClicked] = false;
+    setCollumnState(newCollumnState);
+    update(true, newCollumnState);
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     // send state to server with e.g. `window.fetch`
     update(true);
   }
 
-  async function update(newReserch) {
+  async function update(newReserch, newCollumnState) {
+    const actualCollumnState = newCollumnState ? newCollumnState : collumnState;
+    const keys = Object.keys(actualCollumnState);
     if (newReserch) setActualPage(0);
     const jwt = getCookie("jwt");
+    const params = { page: newActualPage, inputValue };
+    if (keys.length === 1) {
+      params["collumnName"] = keys[0];
+      params["order"] = actualCollumnState[keys[0]];
+    }
+
     await axios({
       method: "get",
       headers: {
@@ -45,7 +62,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
         dvflCookie: jwt,
       },
       url: process.env.API + "/api/ticket",
-      params: { page: newActualPage, inputValue },
+      params,
     })
       .then((response) => {
         setMaxPage(response.data.maxPage);
@@ -89,7 +106,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
                           />
                         </svg>
                       </div>
-                      <div class="w-full inline-flex">
+                      <div className="w-full inline-flex">
                         <input
                           onChange={(e) => {
                             setInputValue(e.target.value);
@@ -98,7 +115,7 @@ export default function OverviewAdmin({ user, role, authorizations }) {
                           type="text"
                           placeholder="Rechercher un ticket"
                         />
-                        <button type="submit" class="w-2/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => update(true)}>
+                        <button type="submit" className="w-2/12 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => update(true)}>
                           Rechercher
                         </button>
                       </div>
@@ -106,7 +123,15 @@ export default function OverviewAdmin({ user, role, authorizations }) {
                   </div>
                 </div>
               </div>
-              <TablesAdmin tickets={ticketResult} isDone={false} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} />
+              <TablesAdmin
+                tickets={ticketResult}
+                isDone={false}
+                maxPage={maxPage}
+                actualPage={actualPage}
+                nextPrevPage={nextPrevPage}
+                collumnState={collumnState}
+                changeCollumnState={changeCollumnState}
+              />
             </div>
           </div>
         </div>

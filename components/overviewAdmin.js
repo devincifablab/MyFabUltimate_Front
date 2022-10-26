@@ -23,7 +23,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function OverviewAdmin({ tickets, maxPage, actualPage, nextPrevPage }) {
+export default function OverviewAdmin({ tickets, maxPage, actualPage, nextPrevPage, collumnState, changeCollumnState }) {
   return (
     <section className="">
       <div className="container px-4 mx-auto">
@@ -31,7 +31,15 @@ export default function OverviewAdmin({ tickets, maxPage, actualPage, nextPrevPa
           {/* Tickets à traiter */}
           <div className="w-full lg:w-2/3 md:px-6 mt-5 mb-8 lg:mb-0">
             {tickets.length > 0 ? (
-              <TablesAdmin tickets={tickets} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} isDone={true} />
+              <TablesAdmin
+                tickets={tickets}
+                maxPage={maxPage}
+                actualPage={actualPage}
+                nextPrevPage={nextPrevPage}
+                isDone={true}
+                collumnState={collumnState}
+                changeCollumnState={changeCollumnState}
+              />
             ) : (
               <div className="p-4 md:p-5 rounded flex justify-between text-gray-700 bg-gray-100">
                 <p>Il n'y a aucun ticket à traiter. Vous pouvez accéder à l'historique des tickets déjà traités en cliquant sur le bouton suivant.</p>

@@ -21,6 +21,7 @@ export default function Settings({ role, me, authorizations }) {
   const [inputValue, setInputValue] = useState("");
   const [maxPage, setMaxPage] = useState(1);
   const [actualPage, setActualPage] = useState(0);
+  const [collumnState, setCollumnState] = useState({});
   let newActualPage = 0;
   const [usersListResult, setUsersListResult] = useState([]);
   const [allRole, setAllRole] = useState([]);
@@ -33,9 +34,17 @@ export default function Settings({ role, me, authorizations }) {
     update(true);
   }, []);
 
-  async function update(newReserch) {
+  async function update(newReserch, newCollumnState) {
+    const actualCollumnState = newCollumnState ? newCollumnState : collumnState;
+    const keys = Object.keys(actualCollumnState);
     if (newReserch) setActualPage(0);
     const jwt = getCookie("jwt");
+    const params = { page: newActualPage, inputValue };
+    if (keys.length === 1) {
+      params["collumnName"] = keys[0];
+      params["order"] = actualCollumnState[keys[0]];
+    }
+
     await axios({
       method: "get",
       headers: {
@@ -44,7 +53,7 @@ export default function Settings({ role, me, authorizations }) {
         dvflCookie: jwt,
       },
       url: process.env.API + "/api/user",
-      params: { page: newActualPage, inputValue },
+      params,
     })
       .then((response) => {
         setMaxPage(response.data.maxPage);
@@ -68,6 +77,14 @@ export default function Settings({ role, me, authorizations }) {
     setActualPage(actualPage + addPage);
     newActualPage = actualPage + addPage;
     update();
+  }
+
+  function changeCollumnState(collumnClicked) {
+    const newCollumnState = {};
+    if (!collumnState[collumnClicked]) newCollumnState[collumnClicked] = true;
+    else if (collumnState[collumnClicked]) newCollumnState[collumnClicked] = false;
+    setCollumnState(newCollumnState);
+    update(true, newCollumnState);
   }
 
   function handleSubmit(e) {
@@ -140,7 +157,15 @@ export default function Settings({ role, me, authorizations }) {
                     </div>
                   </div>
                 </div>
-                <UserTablesAdmin user={usersListResult} id={settingModal} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} />
+                <UserTablesAdmin
+                  user={usersListResult}
+                  id={settingModal}
+                  maxPage={maxPage}
+                  actualPage={actualPage}
+                  nextPrevPage={nextPrevPage}
+                  collumnState={collumnState}
+                  changeCollumnState={changeCollumnState}
+                />
               </div>
             </div>
           </div>

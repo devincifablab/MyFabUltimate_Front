@@ -15,6 +15,7 @@ export default function Admin({ user, role, authorizations }) {
   const router = useRouter();
   const [maxPage, setMaxPage] = useState(1);
   const [actualPage, setActualPage] = useState(0);
+  const [collumnState, setCollumnState] = useState({});
   let newActualPage = 0;
   const [ticketResult, setTicketResult] = useState([]);
 
@@ -33,9 +34,25 @@ export default function Admin({ user, role, authorizations }) {
     update();
   }
 
-  async function update(newReserch) {
+  function changeCollumnState(collumnClicked) {
+    const newCollumnState = {};
+    if (!collumnState[collumnClicked]) newCollumnState[collumnClicked] = true;
+    else if (collumnState[collumnClicked]) newCollumnState[collumnClicked] = false;
+    setCollumnState(newCollumnState);
+    update(true, newCollumnState);
+  }
+
+  async function update(newReserch, newCollumnState) {
+    const actualCollumnState = newCollumnState ? newCollumnState : collumnState;
+    const keys = Object.keys(actualCollumnState);
     if (newReserch) setActualPage(0);
     const jwt = getCookie("jwt");
+    const params = { page: newActualPage, selectOpenOnly: true };
+    if (keys.length === 1) {
+      params["collumnName"] = keys[0];
+      params["order"] = actualCollumnState[keys[0]];
+    }
+
     await axios({
       method: "get",
       headers: {
@@ -44,7 +61,7 @@ export default function Admin({ user, role, authorizations }) {
         dvflCookie: jwt,
       },
       url: process.env.API + "/api/ticket",
-      params: { page: newActualPage, selectOpenOnly: true },
+      params,
     })
       .then((response) => {
         setMaxPage(response.data.maxPage);
@@ -78,7 +95,14 @@ export default function Admin({ user, role, authorizations }) {
           </div>
         </div>
         <div></div>
-        <OverviewAdmin tickets={ticketResult} maxPage={maxPage} actualPage={actualPage} nextPrevPage={nextPrevPage} />
+        <OverviewAdmin
+          tickets={ticketResult}
+          maxPage={maxPage}
+          actualPage={actualPage}
+          nextPrevPage={nextPrevPage}
+          collumnState={collumnState}
+          changeCollumnState={changeCollumnState}
+        />
       </LayoutPanel>
     );
   } else {

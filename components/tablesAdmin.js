@@ -1,6 +1,5 @@
-import { MoonIcon } from "@heroicons/react/outline";
-import Link from "next/link";
 import router from "next/router";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/outline";
 import { setZero } from "../lib/function";
 
 const colors = {
@@ -29,27 +28,58 @@ function dateDiff(date1, date2) {
   if (diffSecond !== 0) return `${diffSecond} seconde${diffSecond > 1 ? "s" : ""}`;
 }
 
-export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage }) {
+function getChevron(collumnState, type) {
+  if (!collumnState) return null;
+  if (collumnState[type] === true) return <ChevronUpIcon className="w-5 h-5 m-auto" />;
+  if (collumnState[type] === false) return <ChevronDownIcon className="w-5 h-5 m-auto" />;
+  return null;
+}
+
+export default function TablesAdmin({ tickets, maxPage, actualPage, nextPrevPage, collumnState, changeCollumnState }) {
   const dateNow = new Date();
+  const changeCollumnDefined = changeCollumnState ? true : false;
+  if (!changeCollumnState) changeCollumnState = function () {};
   return (
     <div>
       <div className="border border-gray-200 rounded overflow-x-auto min-w-full bg-white">
         <table className="min-w-full text-sm align-middle whitespace-nowrap">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Id</th>
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Nom</th>
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Créé il y a</th>
-              {/*<th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-left">
-              Email
-            </th>*/}
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Priorité</th>
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Type</th>
-              <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">Etat</th>
-              {/*
-            <th className="p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center">
-              Actions
-            </th>*/}
+            <tr className="border-b border-gray-200 bg-gray-100">
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("id")}>
+                  Id
+                  {getChevron(collumnState, "id")}
+                </div>
+              </th>
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("name")}>
+                  Nom
+                  {getChevron(collumnState, "name")}
+                </div>
+              </th>
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("createAt")}>
+                  Créé il y a{getChevron(collumnState, "createAt")}
+                </div>
+              </th>
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("priority")}>
+                  Priorité
+                  {getChevron(collumnState, "priority")}
+                </div>
+              </th>
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("type")}>
+                  Type
+                  {getChevron(collumnState, "type")}
+                </div>
+              </th>
+              <th className={`p-3 text-gray-700 bg-gray-100 font-medium text-sm tracking-wider uppercase text-center ${changeCollumnDefined ? "cursor-pointer select-none" : ""}`}>
+                <div className="inline-flex" onClick={() => changeCollumnState("status")}>
+                  État
+                  {getChevron(collumnState, "status")}
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
