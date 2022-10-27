@@ -14,6 +14,7 @@ import axios from "axios";
 import { ChevronDownIcon } from "@heroicons/react/outline";
 import { toast } from "react-toastify";
 import Seo from "../../components/seo";
+import WebSocket from "../../components/webSocket";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -41,6 +42,10 @@ export default function NewPanel({ data, user, role, authorizations }) {
   ];
 
   const router = useRouter();
+  function realodPage() {
+    router.replace(router.asPath);
+  }
+
   useEffect(function () {
     if (user.error != undefined) {
       router.push("/404");
@@ -124,6 +129,7 @@ export default function NewPanel({ data, user, role, authorizations }) {
     return (
       <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
         <Seo title={"Panel"} />
+        <WebSocket realodPage={realodPage} event={[]} userId={user.id} />
 
         {/* Dernières activités */}
         <div className="py-6 px-3">

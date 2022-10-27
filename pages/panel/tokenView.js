@@ -1,5 +1,5 @@
-import { InformationCircleIcon, UserAddIcon } from "@heroicons/react/outline";
 import router from "next/router";
+import WebSocket from "../../components/webSocket";
 import { useEffect, useState } from "react";
 import LayoutPanel from "../../components/layoutPanel";
 import TableTablesAdmin from "../../components/tablesToken";
@@ -8,6 +8,10 @@ import { isUserConnected } from "../../lib/function";
 import Seo from "../../components/seo";
 
 export default function Settings({ role, me, authorizations, token }) {
+  function realodPage() {
+    router.replace(router.asPath);
+  }
+
   useEffect(function () {
     if (authorizations.manageUser === 0) {
       router.push("/404");
@@ -18,6 +22,7 @@ export default function Settings({ role, me, authorizations, token }) {
     <>
       <LayoutPanel user={me} role={role} authorizations={authorizations} titleMenu="Gestion des tokens de création de compte">
         <Seo title={"Paramètres administrateurs"} />
+        <WebSocket realodPage={realodPage} event={[]} userId={me.id} />
         <section className="">
           <div className="container px-4 mx-auto">
             <div className="flex flex-wrap -mx-4">

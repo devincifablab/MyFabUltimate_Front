@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { setZero, isUserConnected } from "../../lib/function";
 import Seo from "../../components/seo";
+import WebSocket from "../../components/webSocket";
 
 const colors = {
   "2274e0": "text-gray-700 bg-gray-200",
@@ -31,6 +32,9 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   const [STLColor, setSTLColor] = useState("#FF0000");
 
   const router = useRouter();
+  function realodPage() {
+    router.replace(router.asPath);
+  }
 
   for (let index = 0; index < file.length; index++) {
     file[index].changed = false;
@@ -94,7 +98,6 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
 
   async function cancelTicket() {
     const cookie = getCookie("jwt");
-    const data = {};
 
     await axios({
       method: "PUT",
@@ -236,6 +239,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Ticket #" + setZero(ticket.id)} />
+      <WebSocket realodPage={realodPage} event={[]} userId={user.id} />
 
       {/* Dernières activités */}
       <div className="py-6 px-3">

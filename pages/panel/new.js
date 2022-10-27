@@ -9,6 +9,7 @@ import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import { toast } from "react-toastify";
 import router from "next/router";
 import Seo from "../../components/seo";
+import WebSocket from "../../components/webSocket";
 
 const percents = (value, total) => Math.round(value / total) * 100;
 
@@ -21,6 +22,10 @@ export default function NewPanel({ user, role, authorizations, projectType }) {
   const [type, setType] = useState("PIX 1");
   const [group, setGroup] = useState(null);
   const [percent, setPercent] = useState(0);
+
+  function realodPage() {
+    router.replace(router.asPath);
+  }
 
   const onDragEnter = (event) => {
     setStatus(true);
@@ -126,6 +131,7 @@ export default function NewPanel({ user, role, authorizations, projectType }) {
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Créer un ticket"} />
+      <WebSocket realodPage={realodPage} event={[]} userId={user.id} />
 
       <div className="px-10 py-10" id="status">
         <div>

@@ -7,6 +7,13 @@ class WebSocket extends Component {
   componentDidMount() {
     this.socket = io(process.env.API, { transports: ["websocket", "polling"], autoConnect: false, multiplex: false });
     this.socket.connect();
+    if (this.props.userId) {
+      this.socket.emit("join-room", `user-${this.props.userId}`);
+
+      this.socket.on("reload-user", () => {
+        this.props.realodPage();
+      });
+    }
 
     for (const event of this.props.event) {
       this.socket.on(event.name, () => {
@@ -16,7 +23,6 @@ class WebSocket extends Component {
   }
 
   componentWillUnmount() {
-    console.log("disconnected");
     if (this.socket) this.socket.disconnect();
   }
 

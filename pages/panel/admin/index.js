@@ -5,6 +5,7 @@ import NavbarAdmin from "../../../components/navbarAdmin";
 import OverviewAdmin from "../../../components/overviewAdmin";
 import WebSocket from "../../../components/webSocket";
 import Seo from "../../../components/seo";
+import Error from "../../404";
 import { fetchAPIAuth, parseCookies } from "../../../lib/api";
 import axios from "axios";
 import { getCookie } from "cookies-next";
@@ -13,6 +14,21 @@ import { toast } from "react-toastify";
 
 export default function Admin({ user, role, authorizations }) {
   const router = useRouter();
+  function realodPage() {
+    router.replace(router.asPath);
+    getAuth();
+
+    async function getAuth() {
+      const jwt = getCookie("jwt");
+      const authorizations = await fetchAPIAuth("/user/authorization/", jwt);
+      if (authorizations.myFabAgent) {
+        update();
+      } else {
+        setTicketResult([]);
+      }
+    }
+  }
+
   const [maxPage, setMaxPage] = useState(1);
   const [actualPage, setActualPage] = useState(0);
   const [collumnState, setCollumnState] = useState({});
@@ -20,11 +36,9 @@ export default function Admin({ user, role, authorizations }) {
   const [ticketResult, setTicketResult] = useState([]);
 
   useEffect(function () {
-    if (user.error != undefined || role.length == 0) {
-      router.push("/404");
+    if (authorizations.myFabAgent) {
+      update();
     }
-
-    update();
   }, []);
 
   function nextPrevPage(addPage) {
@@ -80,34 +94,38 @@ export default function Admin({ user, role, authorizations }) {
       });
   }
 
-  if (user.error == undefined && role.length != 0) {
-    return (
-      <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
-        <WebSocket event={[{ name: "event-reload-tickets", action: update }]} />
-        <Seo title={"Administration"} />
-        <NavbarAdmin role={role} />
-        <div className="md:py-8 md:px-6">
-          <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
-            <h2 className="text-2xl font-bold text-white">Bonjour, {user.firstName} 👋 </h2>
-            <h3 className="text-md font-medium text-white">
-              Il y a {ticketResult.length} impression{ticketResult.length > 1 ? "s" : ""} à traiter. N'hésite pas à t'en occuper !
-            </h3>
+  return (
+    <div>
+      <WebSocket realodPage={realodPage} event={[{ name: "event-reload-tickets", action: update }]} userId={user.id} />
+      {authorizations.myFabAgent ? (
+        <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Gestion des demandes">
+          <Seo title={"Administration"} />
+          <NavbarAdmin role={role} />
+          <div className="md:py-8 md:px-6">
+            <div className="container px-8 md:px-16 py-8 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500">
+              <h2 className="text-2xl font-bold text-white">Bonjour, {user.firstName} 👋 </h2>
+              <h3 className="text-md font-medium text-white">
+                Il y a {ticketResult.length} impression{ticketResult.length > 1 ? "s" : ""} à traiter. N'hésite pas à t'en occuper !
+              </h3>
+            </div>
           </div>
+          <div></div>
+          <OverviewAdmin
+            tickets={ticketResult}
+            maxPage={maxPage}
+            actualPage={actualPage}
+            nextPrevPage={nextPrevPage}
+            collumnState={collumnState}
+            changeCollumnState={changeCollumnState}
+          />
+        </LayoutPanel>
+      ) : (
+        <div>
+          <Error />
         </div>
-        <div></div>
-        <OverviewAdmin
-          tickets={ticketResult}
-          maxPage={maxPage}
-          actualPage={actualPage}
-          nextPrevPage={nextPrevPage}
-          collumnState={collumnState}
-          changeCollumnState={changeCollumnState}
-        />
-      </LayoutPanel>
-    );
-  } else {
-    return "";
-  }
+      )}
+    </div>
+  );
 }
 
 export async function getServerSideProps({ req }) {
