@@ -1,5 +1,8 @@
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 import LayoutPanel from "../../components/layoutPanel";
+import Seo from "../../components/seo";
+import WebSocket from "../../components/webSocket";
+import Error from "../404";
 import { CubeIcon, UserCircleIcon, CogIcon, ExclamationIcon } from "@heroicons/react/outline";
 import { useEffect, Fragment, useState } from "react";
 import Moment from "react-moment";
@@ -10,8 +13,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { setZero, isUserConnected } from "../../lib/function";
-import Seo from "../../components/seo";
-import WebSocket from "../../components/webSocket";
 
 const colors = {
   "2274e0": "text-gray-700 bg-gray-200",
@@ -81,7 +82,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
           draggable: true,
           progress: undefined,
         });
-        router.replace(router.asPath);
+        realodPage();
       })
       .catch((e) => {
         toast.error("Une erreur est survenue, veuillez réessayer.", {
@@ -116,7 +117,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
           draggable: true,
           progress: undefined,
         });
-        router.replace(router.asPath);
+        realodPage();
       })
       .catch((e) => {
         toast.error("Une erreur est survenue, veuillez réessayer.", {
@@ -185,7 +186,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
           progress: undefined,
         });
       });
-    router.replace(router.asPath);
+    realodPage();
   }
 
   async function getUrlSTL(id) {
@@ -239,7 +240,7 @@ const GestionTicket = ({ params, user, role, ticket, file, message, authorizatio
   return (
     <LayoutPanel user={user} role={role} authorizations={authorizations} titleMenu="Panel de demande d'impression 3D">
       <Seo title={"Ticket #" + setZero(ticket.id)} />
-      <WebSocket realodPage={realodPage} event={[]} userId={user.id} />
+      <WebSocket realodPage={realodPage} event={[]} userId={user.id} ticketId={ticket.id} />
 
       {/* Dernières activités */}
       <div className="py-6 px-3">

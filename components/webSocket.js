@@ -15,6 +15,14 @@ class WebSocket extends Component {
       });
     }
 
+    if (this.props.ticketId) {
+      this.socket.emit("join-room", `ticket-${this.props.ticketId}`);
+
+      this.socket.on("reload-ticket", () => {
+        this.props.realodPage();
+      });
+    }
+
     for (const event of this.props.event) {
       this.socket.on(event.name, () => {
         event.action();
