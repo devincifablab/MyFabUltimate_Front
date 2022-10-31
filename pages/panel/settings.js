@@ -43,8 +43,8 @@ export default function Settings({ user, role, authorizations }) {
         },
       })
         .then((response) => {
-          if (response.data.result == "password incorect") {
-            toast.warn("Votre mot de passe actuel est incorrect.", {
+          if (response.status === 204) {
+            toast.error("Votre mot de passe actuel est incorrect.", {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: true,
@@ -147,62 +147,70 @@ export default function Settings({ user, role, authorizations }) {
                         />
                       </div>
                     </div>
-                    <div className={`${user.isMicrosoft == 0 ? "hidden" : "visible space-y-5"}`}>
-                      <h1 className="text-lg font-medium leading-6 text-gray-900">Changer mon mot de passe</h1>
+                    {user.isMicrosoft == 0 ? (
                       <div>
-                        <label htmlFor="actualPassword" className="block text-sm font-medium text-gray-700">
-                          Mot de passe actuel
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            onChange={(e) => setActualPassword(e.target.value)}
-                            type="password"
-                            name="actualPassword"
-                            id="actualPassword"
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
+                        <h1 className="text-lg font-medium leading-6 text-gray-900">Changer mon mot de passe</h1>
+                        <div>
+                          <label htmlFor="actualPassword" className="block text-sm font-medium text-gray-700">
+                            Mot de passe actuel
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              onChange={(e) => setActualPassword(e.target.value)}
+                              type="password"
+                              name="actualPassword"
+                              id="actualPassword"
+                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            Mot de passe
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              type="password"
+                              name="password"
+                              id="password"
+                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                            Confirmer votre mot de passe
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                              type="password"
+                              name="confirmPassword"
+                              id="confirmPassword"
+                              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                            />
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                          Mot de passe
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            type="password"
-                            name="password"
-                            id="password"
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                          Confirmer votre mot de passe
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            onChange={(e) => setNewPasswordConfirm(e.target.value)}
-                            type="password"
-                            name="confirmPassword"
-                            id="confirmPassword"
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                    ) : (
+                      <div></div>
+                    )}
                   </div>
                 </div>
-                <div className={`px-4 py-3 bg-gray-50 text-right sm:px-6 ${user.isMicrosoft == 0 ? "hidden" : "visible"}`}>
-                  <button
-                    onClick={() => changePassword()}
-                    type="submit"
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  >
-                    Valider et changer mon mot de passe
-                  </button>
-                </div>
+                {user.isMicrosoft == 0 ? (
+                  <div className={`px-4 py-3 bg-gray-50 text-right sm:px-6`}>
+                    <button
+                      onClick={() => changePassword()}
+                      type="submit"
+                      className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                      Valider et changer mon mot de passe
+                    </button>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
               </div>
             </div>
           </div>
