@@ -14,6 +14,18 @@ export default function Auth() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    if (router.query.close != null) {
+      setCookies("adfs", false);
+      toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
     if (router.query.mail != null) {
       if (router.query.mail == "ok") {
         toast.success("Votre e-mail a été vérifié. Vous pouvez désormais vous connecter.", {
@@ -39,53 +51,8 @@ export default function Auth() {
       router.replace("/auth");
     } else {
       // Connection avec le DVIC
-      const JWT = getCookie("JWT");
-      if (JWT) {
-        const expires = new Date(Date.now() + 7200000);
-        axios({
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          url: process.env.API + "/api/user/login/JWT/",
-          data: {
-            JWT,
-            expires,
-          },
-        })
-          .then(async (response) => {
-            if (response.status == 200) {
-              setCookies("jwt", response.data.dvflCookie, { expires });
-              await axios({
-                method: "GET",
-                headers: {
-                  dvflCookie: response.data.dvflCookie,
-                },
-                url: process.env.API + "/api/user/authorization",
-              }).then((response) => {
-                if (response.data.myFabAgent == 1) {
-                  router.push("/panel/admin");
-                } else {
-                  router.push("/panel");
-                }
-              });
-            }
-          })
-          .catch((error) => {
-            if (error.response.status === 403) {
-              toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-              });
-            }
-          });
-      }
+      const adfs = getCookie("adfs");
+      if (adfs) router.push(process.env.API + "/api/user/login/adfs/");
     }
   });
 
@@ -154,81 +121,6 @@ export default function Auth() {
       });
   }
 
-  const authHandler = async (err, data) => {
-    if (err) {
-      return;
-    }
-    if (data == null) {
-      toast.warn("Oups, impossible de continuer l'authentification. Vérifier si les pop-ups ne sont pas bloqués.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
-    await axios({
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + data.accessToken,
-      },
-      url: process.env.API + "/api/user/login/microsoft",
-    })
-      .then(async (response) => {
-        if (response.status == 200) {
-          if (checked) {
-            setCookies("jwt", response.data.dvflCookie, { expires: new Date(Date.now() + 2592000) });
-          } else {
-            setCookies("jwt", response.data.dvflCookie);
-          }
-          toast.success("Vous êtes désormais connecté ! Bienvenue " + data.givenName + " !", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
-
-          await axios({
-            method: "GET",
-            headers: {
-              dvflCookie: getCookie("jwt"),
-            },
-            url: process.env.API + "/api/user/authorization",
-          }).then((response) => {
-            if (response.data.myFabAgent == 1) {
-              router.push("/panel/admin");
-            } else {
-              router.push("/panel");
-            }
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setError(true);
-        setTimeout(() => setError(false), 5000);
-        toast.error("Impossible de vous connecter. Veuillez contacter fablab@devinci.fr.", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        window.sessionStorage.clear();
-        router.replace(router.asPath);
-      });
-  };
-  const microsoftAvalable = false;
-
   return (
     <div className="min-h-screen bg-white flex">
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
@@ -245,70 +137,39 @@ export default function Auth() {
 
                 <div className="mt-1">
                   <div className="">
-                    {typeof window === "undefined" || !microsoftAvalable ? (
-                      <div>
-                        <div
-                          className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
-                          onClick={() => {
-                            axios({
-                              method: "GET",
-                              headers: {
-                                Accept: "application/json",
-                                "Content-Type": "application/json",
-                              },
-                              url: process.env.API + "/api/myFabOpen",
-                            }).then((response) => {
-                              if (response.data.myFabOpen === true) {
-                                const timeout = 5000;
-                                toast.success("Lorsque vous serez connecté, revenez sur cette page pour utiliser MyFab.", {
-                                  position: "top-right",
-                                  autoClose: timeout,
-                                  hideProgressBar: true,
-                                  closeOnClick: true,
-                                  pauseOnHover: true,
-                                  draggable: true,
-                                  progress: undefined,
-                                });
-                                setTimeout(() => {
-                                  router.push(
-                                    "https://adfs.devinci.fr/adfs/ls/?SAMLRequest=fVPbjtowEH3fr0B5h1yAXWKRSBR6QaKAIO1DXypjT7qWEjv1THbZv69j2ML2Ql6izJxz5hx7MkVeVw2btfSod%2FCzBaS7Xu9YVxqZb2VBazUzHBUyzWtARoLtZ59XLBlErLGGjDBV8IZ0m8MRwZIyuiMtF1mwWb9fbT4u19%2B5GMVyNEnS5CDvk8kDTMZlPIxGqYA0uk%2BTeAglj1PZEb%2BCRaeRBU7SCyG2sNRIXJMrRknSj6N%2BPCziBzYesnHyrUMtXD6lOXnmI1GDLAy5LHEg4UlpoQal9d9hhWFH2J4DvlNaKv3jdrLDCYTsU1Fs%2B9vNvugkZq9550ZjW4Pdg31SAr7sVhcP0lX%2B8tAYpB1g43jg3TgxIqsOLcFJzE07qy21hGMWxEHucdPuHpg%2FFJv%2FIT4Nr5sXeMPWLtJysTWVEi%2B%2B3j0fjK05%2FT95PIh9Rcl%2B6aGs1diAUKUCGfyWmVWVeZ5b4ARZQLaFoBe%2BGX5eP5B%2BGV0%2BgiP15qZuuFXYXRgcuaBzwEvIa%2Fi8ctu1gzK%2FuYCCiQ7nylv3ejZWdtcMws0uLHfmjaXzIf1T%2FOQ6vGE7v3ttX%2F9Z%2BS8%3D&RelayState=https%3A%2F%2Fdvic.devinci.fr%2Fadfs%2FpostResponse%2F"
-                                  );
-                                }, timeout);
-                              } else {
-                                toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
-                                  position: "top-right",
-                                  autoClose: 3000,
-                                  hideProgressBar: true,
-                                  closeOnClick: true,
-                                  pauseOnHover: true,
-                                  draggable: true,
-                                  progress: undefined,
-                                });
-                              }
-                            });
-                          }}
-                        >
-                          <span className="sr-only">Mon compte LéoID</span>
-                          <img src={process.env.BASE_PATH + "/photo/Microsoft_logo.svg"} className="h-5 w-5" />
-                          <p className="ml-2">Mon compte LéoID</p>
-                        </div>
+                    <div>
+                      <div
+                        className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300"
+                        onClick={() => {
+                          axios({
+                            method: "GET",
+                            headers: {
+                              Accept: "application/json",
+                              "Content-Type": "application/json",
+                            },
+                            url: process.env.API + "/api/myFabOpen",
+                          }).then((response) => {
+                            if (response.data.myFabOpen === true) {
+                              router.push(process.env.API + "/api/user/login/adfs/");
+                            } else {
+                              toast.error("MyFab est actuellement fermé merci de réessayer plus tard.", {
+                                position: "top-right",
+                                autoClose: 3000,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                              });
+                            }
+                          });
+                        }}
+                      >
+                        <span className="sr-only">Mon compte LéoID</span>
+                        <img src={process.env.BASE_PATH + "/photo/Microsoft_logo.svg"} className="h-5 w-5" />
+                        <p className="ml-2">Mon compte LéoID</p>
                       </div>
-                    ) : (
-                      <MicrosoftLogin
-                        clientId={"ef1c4fd1-7f30-4d56-b2f0-d6191b5319ba"}
-                        authCallback={authHandler}
-                        prompt="select_account"
-                        withUserData={true}
-                        debug={true}
-                        children={
-                          <div className="cursor-pointer w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-105 hover:bg-black hover:text-white duration-300">
-                            <span className="sr-only">Mon compte LéoID</span>
-                            <img src="/photo/Microsoft_logo.svg" className="h-5 w-5" />
-                            <p className="ml-2">Mon compte LéoID</p>
-                          </div>
-                        }
-                      />
-                    )}
+                    </div>
                   </div>
                 </div>
               </div>
