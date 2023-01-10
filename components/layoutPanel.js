@@ -29,7 +29,7 @@ export default function LayoutPanel({ children, user, role, authorizations, titl
     { name: "Gestions des utilisateurs", href: "/panel/users", icon: UsersIcon, current: pn === "/panel/users", show: authorizations.myFabAgent == 1 },
     //{ name: "Gestions du blog", href: process.env.GHOST_URL + "/ghost", icon: ClipboardListIcon, current: false, show: authorizations.myFabAgent == 1 },
     { name: "Assemblée générale", href: "/ag/settings", icon: ClipboardListIcon, current: false, show: false }, // Mettre les autorisations
-    { name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
+    //{ name: "Retourner au site", href: "/", icon: CubeIcon, current: false, show: true },
   ];
 
   useEffect(function () {
