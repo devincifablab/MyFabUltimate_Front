@@ -27,16 +27,18 @@ export default function NewPanel({ data, user, role, authorizations, highDemand 
   const [userTicketResult, setIserTicketResult] = useState([]);
   const faq = [
     {
-      question: "La FAQ, n'a pas de vraie question pourquoi ?",
-      answer: "On n'a pas pris le temps de l'écrire.",
+      question: "Quels sont les fichiers acceptés ?",
+      answer: "Les fichiers doivent être des fichiers 3D au format STL pour être accepté.",
     },
     {
-      question: "Comment je fais pour rajouter une question dans la FAQ ?",
-      answer: "Pose ta question à un membre du DeVinci FabLab, et je (le grand concepteur du site) serai ravie de la rajouter ici.",
+      question: "Quand est que ma pièce sera réalisée ?",
+      answer:
+        "Cela dépend du nombre de pièces dans le ticket et du nombre total de demandes que nous avons actuellement. Cela est donc très variable. Nous pouvons mettre jusqu'à deux semaines pour traiter une demande. Merci de prévoir du temps pour que nous puissions traiter votre demande. Nous ne pouvons pas imprimer une pièce du jour au lendemain.",
     },
     {
-      question: "Quand est-ce que la FAQ sera disponible ?",
-      answer: "Aucune idée, mais la patience est une vertue.",
+      question: "Quels sont les types de projets que je peux réaliser ?",
+      answer:
+        "Les projets doivent avoir un but pédagogique. Cela peut être un projet demandé par l'école ou un projet personnel. Tous les fichiers 3D sont accepté, tant que vous avez réalisé la modélisation, qui ne s'agit pas d'une arme/objet choquant et que l'impression 3D est la meilleure solution pour cette pièce.",
     },
     // More questions...
   ];
@@ -141,8 +143,8 @@ export default function NewPanel({ data, user, role, authorizations, highDemand 
                   <div className="relative pb-6 bg-white rounded">
                     <div className="">
                       <h3 className="text-xl font-bold">FAQ</h3>
-                      <p className="text-sm text-gray-500">
-                        Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.
+                      <p className="text-sm text-gray-500 text-justify">
+                        Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre de l'association.
                       </p>
                     </div>
                     <dl className="divide-y divide-gray-200">
@@ -159,7 +161,7 @@ export default function NewPanel({ data, user, role, authorizations, highDemand 
                                 </Disclosure.Button>
                               </dt>
                               <Disclosure.Panel as="dd" className="mt-2 pr-12">
-                                <p className="text-sm text-gray-500">{faq.answer}</p>
+                                <p className="text-sm text-gray-500 text-justify">{faq.answer}</p>
                               </Disclosure.Panel>
                             </>
                           )}

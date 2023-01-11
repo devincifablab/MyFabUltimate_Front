@@ -5,16 +5,23 @@ import Link from "next/link";
 
 const faqs = [
   {
-    question: "La FAQ, n'a pas de vraie question pourquoi ?",
-    answer: "On n'a pas pris le temps de l'écrire.",
+    question: "Comment choisir une demande à traiter ?",
+    answer: "Les demandes sont triées du plus ancien, au plus récent. Pour choisir une demande, il faut commencer par les plus anciennes.",
   },
   {
-    question: "Comment je fais pour rajouter une question dans la FAQ ?",
-    answer: "Pose ta question sur la conv du Fab, et je (le grand concepteur du site) serai ravie de la rajouter ici.",
+    question: "Comment fonctionnent le système de priorité ?",
+    answer:
+      "Le système de priorité fonctionne automatiquement et il n'est pas possible de modifier une priorité manuellement. Ce sont des indicateurs de temps, 'normal' signifie que la demande a été créé il y a moins d'une semaine, 'A traiter' plus d'une semaine et 'Urgent' plus de deux semaines.",
   },
   {
-    question: "Quand est-ce que la FAQ sera disponible ?",
-    answer: "Aucune idée, mais la patience est une vertue.",
+    question: "Quelles sont étapes pour réaliser une demande ?",
+    answer:
+      "Pour réaliser une demande, il faut en premier temps, regarder les fichiers envoyés pour savoir si les pièces sont imprimables/l'impression 3D est le plus intéressant pour faire cette pièce. Ensuite, il faut lancer l'impression 3D sur une de nos imprimantes et indiquer dans le ticket sur quelle imprimante la pièce a été lancé. Après l'impression de toutes les pièces, le ticket doit être mis en statut 'Fermé'",
+  },
+  {
+    question: "Quels sont différents statuts ?",
+    answer:
+      "'Ouvert' signifie que la demande est en attente de réalisation, 'En attente de réponse' qu'une question a été posé au demandeur, 'Fermé' que l'impression a été réalisé, 'Refusé' que les fichiers ne sont pas imprimable ou que le projet a été refusé, 'Impression commencé' que l'impression est en cours, 'Annulée' que la demande a été annulée par le demandeur",
   },
   // More questions...
 ];
@@ -64,8 +71,8 @@ export default function OverviewAdmin({ tickets, maxPage, actualPage, nextPrevPa
             <div className="relative px-6 pb-6 py-4 bg-white rounded">
               <div className="">
                 <h3 className="text-xl font-bold">FAQ</h3>
-                <p className="text-sm text-gray-500">
-                  Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre du staff.
+                <p className="text-sm text-gray-500 text-justify">
+                  Un trou de mémoire ? Vous n'êtes pas sûr de ce que vous allez faire ? Consultez d'abord cette mini FAQ avant de demander à un membre de l'association.
                 </p>
               </div>
               <dl className="divide-y divide-gray-200">
@@ -82,7 +89,7 @@ export default function OverviewAdmin({ tickets, maxPage, actualPage, nextPrevPa
                           </Disclosure.Button>
                         </dt>
                         <Disclosure.Panel as="dd" className="mt-2 pr-12">
-                          <p className="text-sm text-gray-500">{faq.answer}</p>
+                          <p className="text-sm text-gray-500 text-justify">{faq.answer}</p>
                         </Disclosure.Panel>
                       </>
                     )}
