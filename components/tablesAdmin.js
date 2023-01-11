@@ -21,10 +21,10 @@ function dateDiff(date1, date2) {
   const diffHour = date2.getDate() - date1.getDate();
   if (diffHour !== 0) return `${diffHour} heure${diffHour > 1 ? "s" : ""}`;
 
-  const diffMinute = date2.setMinutes() - date1.setMinutes();
+  const diffMinute = date2.getMinutes() - date1.getMinutes();
   if (diffMinute !== 0) return `${diffMinute} minute${diffMinute > 1 ? "s" : ""}`;
 
-  const diffSecond = date2.setSeconds() - date1.setSeconds();
+  const diffSecond = date2.getSeconds() - date1.getSeconds();
   if (diffSecond !== 0) return `${diffSecond} seconde${diffSecond > 1 ? "s" : ""}`;
 }
 
