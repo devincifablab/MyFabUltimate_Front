@@ -20,7 +20,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function NewPanel({ data, user, role, authorizations }) {
+export default function NewPanel({ data, user, role, authorizations, highDemand }) {
   const [maxPage, setMaxPage] = useState(1);
   const [actualPage, setActualPage] = useState(0);
   let newActualPage = 0;
@@ -172,7 +172,15 @@ export default function NewPanel({ data, user, role, authorizations }) {
             </div>
             <hr className="mb-5 mt-5 block lg:hidden" />
             <main className="col-span-9">
-              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate">Vos demandes d'impressions 3D</h1>
+              {highDemand ? (
+                <div class="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4" role="alert">
+                  <p class="font-bold">Attention</p>
+                  <p>Il y a actuellement beaucoup de demandes d'impression 3D. Merci pour votre patience.</p>
+                </div>
+              ) : (
+                <div></div>
+              )}
+              <h1 className="text-lg font-medium leading-6 text-gray-900 sm:truncate mt-5">Vos demandes d'impressions 3D</h1>
               <div className="block mt-5">
                 {/* big projects */}
                 <div className="align-middle inline-block min-w-full border-b border-gray-200 hidden sm:block">
@@ -298,8 +306,10 @@ export async function getServerSideProps({ req }) {
   if (resUserConnected) return resUserConnected;
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
+  const highDemand = await fetchAPIAuth("/ticket/highDemand/", cookies.jwt);
+  console.log(highDemand);
 
   return {
-    props: { user, role, authorizations }, // will be passed to the page component as props
+    props: { user, role, authorizations, highDemand: highDemand.result ? highDemand.result : false }, // will be passed to the page component as props
   };
 }
