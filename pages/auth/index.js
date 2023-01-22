@@ -26,6 +26,17 @@ export default function Auth() {
         progress: undefined,
       });
     }
+    if (router.query.error != null) {
+      toast.error("Il y a une erreur avec le système de connexion. Merci de réessayer plus tard.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
     if (router.query.mail != null) {
       if (router.query.mail == "ok") {
         toast.success("Votre e-mail a été vérifié. Vous pouvez désormais vous connecter.", {

@@ -31,8 +31,12 @@ export default function Forget({}) {
         }
       })
       .catch((error) => {
-        if (error.response.status === 403) {
+        if (error.response.status === 400) {
+          router.push("/auth/?error=true");
+        } else if (error.response.status === 403) {
           router.push("/auth/?close=true");
+        } else if (error.response.status === 404) {
+          router.push("/auth/");
         }
       });
   }, []);
