@@ -309,7 +309,6 @@ export async function getServerSideProps({ req }) {
   const role = await fetchAPIAuth("/user/role", cookies.jwt);
   const authorizations = await fetchAPIAuth("/user/authorization/", cookies.jwt);
   const highDemand = await fetchAPIAuth("/ticket/highDemand/", cookies.jwt);
-  console.log(highDemand);
 
   return {
     props: { user, role, authorizations, highDemand: highDemand.result ? highDemand.result : false }, // will be passed to the page component as props
