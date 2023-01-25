@@ -52,22 +52,22 @@ services:
     container_name: Myfab_Front
     depends_on:
       - "back"
-      - "ghost"
+    #      - "ghost"
     ports:
       - 3000:3000
     networks:
       - MyFab
 
-  ghost:
-    image: ghost:alpine
-    restart: always
-    container_name: Myfab_Ghost
-    volumes:
-      - ../MyFabUltimate_Back/data/ghost:/var/lib/ghost/content/
-    ports:
-      - 2368:2368
-    networks:
-      - MyFab
+#  ghost:
+#    image: ghost:alpine
+#    restart: always
+#    container_name: Myfab_Ghost
+#    volumes:
+#      - ../MyFabUltimate_Back/data/ghost:/var/lib/ghost/content/
+#    ports:
+#      - 2368:2368
+#    networks:
+#      - MyFab
 
 networks:
   MyFab:

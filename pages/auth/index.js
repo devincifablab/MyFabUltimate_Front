@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import router from "next/router";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import MicrosoftLogin from "react-microsoft-login";
 import { fetchAPIAuth, parseCookies } from "../../lib/api";
 
 export default function Auth() {

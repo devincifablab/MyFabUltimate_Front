@@ -2,9 +2,9 @@ FROM node:lts
 WORKDIR /my-project
 COPY package.json ./
 RUN npm i -g next
-RUN npm install --force
+RUN npm install
 COPY . .
-RUN npm run build
+RUN next build
 ENV NODE_ENV production
 
 EXPOSE 3000

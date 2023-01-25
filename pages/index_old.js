@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout";
-import { fetchAPIAuth, getPosts } from "../lib/api";
-import { MailIcon, PhoneIcon } from "@heroicons/react/outline";
+import { fetchAPIAuth } from "../lib/api";
 import Link from "next/link";
-import Moment from "react-moment";
 import { getCookie } from "cookies-next";
 
 const footer = [
@@ -262,16 +260,6 @@ const Home = ({ posts }) => {
 };
 
 export async function getServerSideProps() {
-  /*
-  const posts = await getPosts();
-
-  if (!posts) {
-    return {
-      props: { posts: {} }
-    }
-  }
-  */
-
   return {
     props: {},
   };
